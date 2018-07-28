@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2037
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bus Management System", "Bus Management System\Bus Management System.csproj", "{73D1F4B6-D723-4421-93A4-833895816DF7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{73D1F4B6-D723-4421-93A4-833895816DF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73D1F4B6-D723-4421-93A4-833895816DF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73D1F4B6-D723-4421-93A4-833895816DF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73D1F4B6-D723-4421-93A4-833895816DF7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {89DCB2E0-6520-443F-B8F5-A08B7BEB58B0}
+	EndGlobalSection
+EndGlobal
