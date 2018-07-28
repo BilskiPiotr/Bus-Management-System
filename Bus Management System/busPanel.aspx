@@ -12,8 +12,10 @@
 </head>
 <body>
         <script>
-        var lat = document.getElementById("Latitude");
-        var lon = document.getElementById("Longitude");
+            var lat = document.getElementById("Latitude");
+            var lon = document.getElementById("Longitude");
+
+            setInterval(getLocation, 5000);
 
         function getLocation()
         {
