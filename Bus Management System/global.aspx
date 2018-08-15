@@ -15,22 +15,7 @@
         <form id="login_form" runat="server" DefaultButton="bt_submitLogin">
             <div class="header">
                 <div class="topnav">
-                    <asp:Menu   ID="loginMenu" 
-                                CssClass="login"
-                                StaticMenuStyle-CssClass="sms"
-                                StaticMenuItemStyle-CssClass="smis"
-                                StaticHoverStyle-CssClass="menuHover" 
-                                DynamicHoverStyle-CssClass="menuHover"
-                                Orientation="Horizontal" 
-                                MaximumDynamicDisplayLevels="0" 
-                                runat="server" 
-                                OnMenuItemClick="LoginMenu_MenuItemClick">
-                        <Items>
-                            <asp:MenuItem NavigateUrl="~/global.aspx" Selected="True" Text="Home" Value="Home"></asp:MenuItem>
-                            <asp:MenuItem NavigateUrl="~/kontakt.aspx" Text="Kontakt" Value="Kontakt"></asp:MenuItem>
-                            <asp:MenuItem NavigateUrl="~/about.aspx" Text="About" Value="About"></asp:MenuItem>
-                        </Items>
-                    </asp:Menu>
+
                 </div>
                 <div class="siteInfo">
                     <a class="right-lbl"><asp:Label ID="lb_errorMsg" runat="server"></asp:Label></a>

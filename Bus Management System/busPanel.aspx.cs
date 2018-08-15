@@ -24,9 +24,17 @@ namespace Bus_Management_System
                     lb_loggedUser.Text = "";
                     lb_loggedUser.Text += (string)loggedUser.FirstName + " " + (string)loggedUser.LastName + "       ID: " + ((int)loggedUser.CompanyId).ToString();
 
+                    LoadVehicles();
                     SetActiveView(loggedUser, menuItems);
                 }
             }
+        }
+
+        protected void Timer1_Tick(object sender, EventArgs e)
+        {
+            string dlugosc = lb_Latitude.Text;
+            Label6.Text = "A teraz długość to : " + dlugosc;
+             //DateTime.Now.ToLongTimeString();
         }
 
         protected void MineMenu_MenuItemClick(object sender, MenuEventArgs e)
@@ -260,7 +268,30 @@ namespace Bus_Management_System
                 BusManagement.SetActiveView(Bus);
         }
 
-        protected void bt_GetPosition_Click(object sender, EventArgs e)
+        [System.Web.Services.WebMethod]
+        public static string GetCurrentTime(string name)
+        {
+            return name + DateTime.Now.ToString();
+        }
+        //    ToDegrees newCoordinates = new ToDegrees
+        //    {
+        //        Latitude = latitude,
+        //        Longitude = longitude
+        //    };
+
+
+        //    // zwraca wszystkie znaki po 3-cim znaku wartosci latitude
+        //    string minuty = latitude.Substring(3);
+        //    return null;
+        //}
+
+
+        private void LoadVehicles()
+        {
+
+        }
+
+        protected void btnGetTime_Click(object sender, EventArgs e)
         {
 
         }

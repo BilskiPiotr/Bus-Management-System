@@ -54,6 +54,33 @@ CREATE TABLE [dbo].[Gates]
 
 );
 
+CREATE TABLE [dbo].[Vehicles]
+(
+	[Id]			INT PRIMARY KEY IDENTITY(1,1)	NOT NULL,
+	[VehicleNb]		VARCHAR(4)						NOT NULL,
+	[Status]		INT	DEFAULT (1)					NOT NULL
+);
+
+/* unavailable - 0,  empty - 1, free - 2, in work - 3  (default - empty) */
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('032');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('033');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('1165');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('1167');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2067');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2068');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2069');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2072');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2073');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2074');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2075');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2076');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2077');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2078');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2079');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2082');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2083');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2084');
+
 /* Operations - Odlot (0) / Przylot (1) */
 CREATE TABLE [dbo].[Operations]
 (

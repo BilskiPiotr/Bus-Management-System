@@ -22,15 +22,6 @@ namespace Bus_Management_System {
         protected global::System.Web.UI.HtmlControls.HtmlForm login_form;
         
         /// <summary>
-        /// Kontrolka loginMenu.
-        /// </summary>
-        /// <remarks>
-        /// Pole generowane automatycznie.
-        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Menu loginMenu;
-        
-        /// <summary>
         /// Kontrolka lb_errorMsg.
         /// </summary>
         /// <remarks>

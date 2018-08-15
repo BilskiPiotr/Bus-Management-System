@@ -84,25 +84,5 @@ namespace Bus_Management_System
             inp_2ndName.Text = "";
             inp_pesel.Text = "";
         }
-
-        protected void LoginMenu_MenuItemClick(object sender, MenuEventArgs e)
-        {
-            MenuItem mnu = (MenuItem)e.Item;
-            switch (mnu.Value)
-            {
-                case "Home":
-                    Response.Redirect("global.aspx");
-                    break;
-                case "Kontakt":
-                    Response.Redirect("kontakt.aspx");
-                    break;
-                case "About":
-                    Response.Redirect("about.aspx");
-                    break;
-                default:
-                    Response.Redirect("global.aspx");
-                    break;
-            }
-        }
     }
 }
