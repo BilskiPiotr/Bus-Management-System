@@ -86,14 +86,19 @@ CREATE TABLE [dbo].[Operations]
 (
 	[Id]						INT PRIMARY KEY IDENTITY(1,1)	NOT NULL,
 	[Employee_Id]				INT								NOT NULL,
-	[Operations]				INT								NOT NULL,
-	[Station_Id]				INT								NOT NULL,
-	[Gate_Id]					INT								NOT NULL,
-	[AirPort_Id]				INT								NOT NULL,
-	[Start_Boardiong]			DATETIME						NULL,
-	[Start_DeBoarding]			DATETIME						NULL,
-	[Begin_Operation]			DATETIME						NOT NULL,
-	[End_Operation]				DATETIME						NULL
+	[Operation]					INT								NOT NULL,
+	[FlightNb]					VARCHAR(7)						NOT NULL,
+	[Pax]						INT								NOT NULL,
+	[AirPort]					INT								NOT NULL,
+	[PPS]						INT								NOT NULL,
+	[Gate]						INT								NOT NULL,
+	[Bus]						INT								NOT NULL,
+	[Created]					DATETIME						NOT NULL,
+	[Accepted]					DATETIME						NULL,
+	[StartLoad]					DATETIME						NULL,
+	[StartDrive]				DATETIME						NULL,
+	[StartUnload]				DATETIME						NULL,
+	[EndOp]						DATETIME						NULL
 );
 
 INSERT INTO [dbo].[Employees_Basic] ([Employee_CompanyId], [Employee_PESEL], [Employee_Imie], [Employee_Nazwisko], [Employee_Priv]) VALUES ('12345', '11111111111', 'Imie1', 'Nazwisko1', 0);
@@ -492,6 +497,7 @@ ALTER TABLE Operations ADD CONSTRAINT UC_Operations UNIQUE (Id);
 ALTER TABLE Employees_Status ADD CONSTRAINT FK_Employees_Status_01 FOREIGN KEY (Employee_Id) REFERENCES Employees_Basic(Id);
 ALTER TABLE AirPorts ADD CONSTRAINT FK_AirPorts_01 FOREIGN KEY (Country_Id) REFERENCES Countries(Id);
 ALTER TABLE Operations ADD CONSTRAINT FK_Operations_01 FOREIGN KEY (Employee_Id) REFERENCES Employees_Basic(Id);
-ALTER TABLE Operations ADD CONSTRAINT FK_Operations_02 FOREIGN KEY (Station_Id) REFERENCES Stations(Id);
-ALTER TABLE Operations ADD CONSTRAINT FK_Operations_03 FOREIGN KEY (Gate_Id) REFERENCES Gates(Id);
-ALTER TABLE Operations ADD CONSTRAINT FK_Operations_04 FOREIGN KEY (AirPort_Id) REFERENCES AirPorts(Id);
+ALTER TABLE Operations ADD CONSTRAINT FK_Operations_02 FOREIGN KEY (PPS) REFERENCES Stations(Id);
+ALTER TABLE Operations ADD CONSTRAINT FK_Operations_03 FOREIGN KEY (Gate) REFERENCES Gates(Id);
+ALTER TABLE Operations ADD CONSTRAINT FK_Operations_04 FOREIGN KEY (AirPort) REFERENCES AirPorts(Id);
+ALTER TABLE Operations ADD CONSTRAINT FK_Operations_05 FOREIGN KEY (Bus) REFERENCES Vehicles(Id);

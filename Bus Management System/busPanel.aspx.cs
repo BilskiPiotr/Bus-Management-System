@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Device.Location;
 using System.Drawing;
 using System.Globalization;
+using System.Reflection;
+using System.Web;
+using System.Web.SessionState;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -14,12 +19,20 @@ namespace Bus_Management_System
         private static DataAccessLayer dal = new DataAccessLayer();
         protected void Page_Load(object sender, EventArgs e)
         {
-            User loggedUser = (User)Session["loggedUser"];
-
-            ScriptManager.RegisterClientScriptBlock(this, GetType(), "przeliczOdleglosc", "getLocation();", true);
-
             if (!IsPostBack)
             {
+                string userId = "";
+
+                if (Request.Cookies["BusManagement"] != null)
+                {
+                    userId = Convert.ToString(Request.Cookies["BusManagement"].Values["userId"]);
+                }
+
+                // dodać sprawdzenie, czy taka sesja już istnieje, a jeśli nie - to dodać
+                User loggedUser = (User)Session[userId];
+
+                ScriptManager.RegisterClientScriptBlock(this, GetType(), "przeliczOdleglosc", "getLocation();", true);
+
                 MenuItemCollection menuItems = mineMenu.Items;
 
                 if (loggedUser != null)
@@ -78,7 +91,7 @@ namespace Bus_Management_System
         {
             string dlugosc = lb_Latitude.Text;
             Label6.Text = "A teraz długość to : " + dlugosc;
-             //DateTime.Now.ToLongTimeString();
+            //DateTime.Now.ToLongTimeString();
         }
 
         protected void MineMenu_MenuItemClick(object sender, MenuEventArgs e)
@@ -317,17 +330,6 @@ namespace Bus_Management_System
         {
             return name + DateTime.Now.ToString();
         }
-        //    ToDegrees newCoordinates = new ToDegrees
-        //    {
-        //        Latitude = latitude,
-        //        Longitude = longitude
-        //    };
-
-
-        //    // zwraca wszystkie znaki po 3-cim znaku wartosci latitude
-        //    string minuty = latitude.Substring(3);
-        //    return null;
-        //}
 
 
         private void LoadGates()
@@ -379,10 +381,10 @@ namespace Bus_Management_System
 
         private void LoadBus()
         {
-            DataTable buses = bl.GetBus();
+            DataSet buses = bl.GetBus();
             ddl_Bus.DataSource = buses;
             ddl_Bus.DataTextField = "VehicleNb";
-            ddl_Bus.DataValueField = "Status";
+            ddl_Bus.DataValueField = "Id";
             ddl_Bus.DataBind();
 
             // dodanie pierwszej linii do ddl
@@ -395,15 +397,13 @@ namespace Bus_Management_System
         }
 
 
-        private void SetBusStatus(DataTable buses)
+        private void SetBusStatus(DataSet buses)
         {
-            //string[] labele = bl.BusLabelsList();
-
-            for (int i = 0; i < buses.Rows.Count; i++)
+            for (int i = 0; i < buses.Tables[0].Rows.Count; i++)
             {
-                string numer = buses.Rows[i].Field<string>("VehicleNb");
+                string numer = buses.Tables[0].Rows[i].Field<string>("VehicleNb");
 
-                string str = "lb_Vehicle" + (i+1).ToString();
+                string str = "lb_Vehicle" + (i + 1).ToString();
 
                 Label label = this.FindControl(str) as Label;
                 if (label != null)
@@ -413,7 +413,7 @@ namespace Bus_Management_System
                 }
 
 
-                int status = buses.Rows[i].Field<int>("Status");
+                int status = buses.Tables[0].Rows[i].Field<int>("Status");
 
                 switch (status)
                 {
@@ -430,7 +430,6 @@ namespace Bus_Management_System
                         break;
                 }
             }
-
         }
 
 
@@ -476,21 +475,106 @@ namespace Bus_Management_System
 
         }
 
+
         protected void Bt_AlocatorReset_Click(object sender, EventArgs e)
         {
             Clear_Alocator();
         }
 
+
         protected void Bt_AlocatorAccept_Click(object sender, EventArgs e)
         {
-            if (rb_Odlot.Checked)
-                bl.OperationType = 1;
-            else
-                bl.OperationType = 2;
+            NewOperation newOp = new NewOperation();
 
-            bl.FlightNb = tb_AlocatorFNb.Text;
-            bl.PaxCount = tb_Pax.Text;
-            bl.Port = ddl_Port.Text;
+            if (rb_Odlot.Checked)
+                newOp.OperationType = 1;
+            else
+                newOp.OperationType = 2;
+
+            newOp.FlightNb = tb_AlocatorFNb.Text;
+            newOp.PaxCount = Convert.ToInt32(tb_Pax.Text);
+            newOp.Port = Convert.ToInt32(ddl_Port.SelectedItem.Value);
+            newOp.GateNb = Convert.ToInt32(ddl_Gate.SelectedItem.Value);
+            newOp.PPSNb = Convert.ToInt32(ddl_PPS.SelectedItem.Value);
+            newOp.BusSelected = Convert.ToInt32(ddl_Bus.SelectedItem.Value);
+            newOp.RadioGate = tb_RadioGate.Text;
+            newOp.RadioNeon = tb_RadioNeon.Text;
+
+            int id = 0;
+
+            if (Request.Cookies["BusManagement"] != null)
+            {
+                id = Convert.ToInt32(Request.Cookies["BusManagement"].Values["Id"]);
+            }
+
+            bool result = bl.AddNewOperation(newOp, id);
+
+            if (result)
+            {
+                ClearAlocatorControls();
+                UpdateAlocatorPanel(newOp.BusSelected);
+            }
+                
+            else
+            {
+                // wyświetlić na panelu że się nie udało i z jakiego powodu!
+            }
+        }
+
+        private void UpdateAlocatorPanel(int selectedBusStatus)
+        {
+            for (int i = 0; i <36; i++)
+            {
+                string str = "lb_Vehicle" + (i + 1).ToString();
+
+                Label label = this.FindControl(str) as Label;
+                if (label != null && label.Text == selectedBusStatus.ToString())
+                {
+                    label.ForeColor = Color.Red;
+                    label.BackColor = Color.Yellow;
+                }
+            }
+        }
+
+        //private List<String> getOnlineUsers()
+        //{
+        //    List<String> activeSessions = new List<String>();
+        //    object obj = typeof(HttpRuntime).GetProperty("CacheInternal", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null, null);
+        //    object[] obj2 = (object[])obj.GetType().GetField("_caches", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(obj);
+        //    for (int i = 0; i < obj2.Length; i++)
+        //    {
+        //        Hashtable c2 = (Hashtable)obj2[i].GetType().GetField("_entries", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(obj2[i]);
+        //        foreach (DictionaryEntry entry in c2)
+        //        {
+        //            object o1 = entry.Value.GetType().GetProperty("Value", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(entry.Value, null);
+        //            if (o1.GetType().ToString() == "System.Web.SessionState.InProcSessionState")
+        //            {
+        //                SessionStateItemCollection sess = (SessionStateItemCollection)o1.GetType().GetField("_sessionItems", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(o1);
+        //                if (sess != null)
+        //                {
+        //                    if (sess["loggedInUserId"] != null)
+        //                    {
+        //                        activeSessions.Add(sess["loggedInUserId"].ToString());
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    return activeSessions;
+        //}
+
+        private void ClearAlocatorControls()
+        {
+            rb_Przylot.Checked = true;
+            rb_Odlot.Checked = false;
+            tb_AlocatorFNb.Text = "";
+            tb_Pax.Text = "";
+            ddl_Bus.SelectedIndex = -1;
+            ddl_Gate.SelectedIndex = -1;
+            ddl_Port.SelectedIndex = -1;
+            ddl_PPS.SelectedIndex = -1;
+            tb_RadioNeon.Text = "";
+            tb_RadioGate.Text = "";
         }
     }
 }

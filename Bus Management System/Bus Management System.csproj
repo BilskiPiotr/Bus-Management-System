@@ -128,6 +128,7 @@
       <DependentUpon>kontakt.aspx</DependentUpon>
     </Compile>
     <Compile Include="LoggedUser.cs" />
+    <Compile Include="NewOperation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="testmenu.aspx.cs">
       <DependentUpon>testmenu.aspx</DependentUpon>
@@ -136,7 +137,6 @@
     <Compile Include="testmenu.aspx.designer.cs">
       <DependentUpon>testmenu.aspx</DependentUpon>
     </Compile>
-    <Compile Include="ToDegrees.cs" />
     <Compile Include="User.cs" />
     <Compile Include="VerifyLayer.cs" />
   </ItemGroup>

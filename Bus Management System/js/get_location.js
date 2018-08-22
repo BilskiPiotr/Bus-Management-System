@@ -1,7 +1,4 @@
-﻿//var lat = document.getElementById("Latitude");
-//var lon = document.getElementById("Longitude");
-
-setInterval(getLocation, 5000);
+﻿setInterval(getLocation, 5000);
 
 function getLocation() {
     if (navigator.geolocation) {
@@ -25,21 +22,5 @@ function ShowCurrentTime() {
 
 function OnSuccess(response, userContext, methodName) {
     document.getElementById("<%=lb_ActualTime.ClientID %>").innerHTML = response;
-}
+    }
 
-        //function showError(error) {
-        //    switch (error.code) {
-        //        case error.PREMISSION_DENIED:
-        //            lat.innerHTML = "Użytkownik odmówił pobrania lokalizacji"
-        //            break;
-        //        case error.POSITION_UNAVAILABLE:
-        //            lat.innerHTML = "Informacje o lokalizacji są niedostępne"
-        //            break;
-        //        case error.TIMEOUT:
-        //            lat.innerHTML = "Przekroczenie czasu oczekiwania na pobranie współrzędnych"
-        //            break;
-        //        case error.UNKNOWN_ERROR:
-        //            lat.innerHTML = "Wystąpił nieznany błąd"
-        //            break;
-        //    }
-        //}

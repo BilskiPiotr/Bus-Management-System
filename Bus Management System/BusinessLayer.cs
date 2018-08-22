@@ -10,17 +10,9 @@ namespace Bus_Management_System
     public class BusinessLayer
     {
         DataAccessLayer dal = new DataAccessLayer();
-         
-        public int OperationType { get; set; }
-        public string FlightNb { get; set; }
-        public string PaxCount { get; set; }
-        public string RadioGate { get; set; }
-        public string RadioNeon { get; set; }
-        public string PPSNb { get; set; }
-        public string Port { get; set; }
-        public string GateNb { get; set; }
-        public string[] BusSelected { get; set; }
-        
+        NewOperation newOp = new NewOperation();
+
+
 
 
         public void ClearFields(BusinessLayer bl)
@@ -61,14 +53,69 @@ namespace Bus_Management_System
         }
 
 
-        public DataTable GetBus()
+        public DataSet GetBus()
         {
-            string sqlQuery = "SELECT Status, VehicleNb FROM Vehicles";
-            DataTable dt = new DataTable();
+            string sqlQuery = "SELECT Id, Status, VehicleNb FROM Vehicles";
+            DataSet ds = new DataSet();
             SqlCommand sqlCmd = new SqlCommand(sqlQuery);
-            dt = dal.GetDataTable(sqlCmd);
+            ds = dal.GetDataSet(sqlCmd);
 
-            return dt;
+            return ds;
+        }
+
+
+        public Boolean AddNewOperation(NewOperation newOp, int id)
+        {
+            SqlCommand sqlCmd = new SqlCommand();
+
+            DateTime dateTime = DateTime.Now;
+
+            int operation = newOp.OperationType;
+            int paxCount = newOp.PaxCount;
+            string flightNumber = newOp.FlightNb;
+            int busNb = newOp.BusSelected;
+            int iataName = newOp.Port;
+            int planeStation = newOp.PPSNb;
+            int gateNb = newOp.GateNb;
+
+            sqlCmd.CommandText = "Update Vehicles SET Status = @status WHERE VehicleNb = @busSelected";
+            sqlCmd.Parameters.Add(new SqlParameter("@status", 3));
+            sqlCmd.Parameters.Add(new SqlParameter("@busSelected", busNb));
+
+            try
+            {
+                dal.QueryExecution(sqlCmd);
+            }
+            catch (Exception ex)
+            {
+                // dodać obsługę błędu
+            }
+
+
+            sqlCmd.CommandText = " INSERT INTO Operations (Employee_Id, Operation, FlightNb, Pax, AirPort, PPS, Gate, Bus, Created) VALUES (@basicUserId, @operation, @flightNb, @pax, @airPort, @pps, @gate, @bus, @created)";
+
+            //+ " WHERE (airPort = (SELECT Id FROM AirPorts WHERE IATA_Name = '" + iataName + "'), PPS = (SELECT Id FROM Stations WHERE StationNb = '" + pps + "'), Gate = (SELECT Id FROM Gates WHERE GateNb = '" + gate + "'), Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = '" + bus + "')";
+
+            sqlCmd.Parameters.AddWithValue("@basicUserId", id);
+            sqlCmd.Parameters.AddWithValue("@operation", operation);
+            sqlCmd.Parameters.AddWithValue("@flightNb", flightNumber);
+            sqlCmd.Parameters.AddWithValue("@pax", paxCount);
+            sqlCmd.Parameters.AddWithValue("@airPort", iataName);
+            sqlCmd.Parameters.AddWithValue("@pps", planeStation);
+            sqlCmd.Parameters.AddWithValue("@gate", gateNb);
+            sqlCmd.Parameters.AddWithValue("@bus", busNb);
+            sqlCmd.Parameters.AddWithValue("@created", dateTime);
+
+            try
+            {
+                dal.QueryExecution(sqlCmd);
+            }
+            catch (Exception ex)
+            {
+                // dodać obsługę błędu
+            }
+
+            return true;
         }
     }
 }

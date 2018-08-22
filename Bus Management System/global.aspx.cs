@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Web;
 using System.Web.UI.WebControls;
 
 namespace Bus_Management_System
@@ -10,10 +11,7 @@ namespace Bus_Management_System
         {
             if (!IsPostBack)
             {
-                /*Właściwość tę najczęściej wykorzystujemy w przypadku 
-                kiedy w metodzie Load strony podpinamy jakieś źródło 
-                danych czy też wypełniamy kontrolki danymi. 
-                Dzięki temu unikamy zdublowaniu danych w kontrolkach.*/
+
             }
 
             Server.ClearError();
@@ -64,8 +62,16 @@ namespace Bus_Management_System
                         LastName = (string)loggedUserData.Rows[0][2],
                         AdminPrivileges = Convert.ToInt32(loggedUserData.Rows[0][3])
                     };
+                    string sessionName = (string)loggedUserData.Rows[0][0];
+                    Session[sessionName] = user;
 
-                    Session["loggedUser"] = user;
+                    HttpCookie BusCookie = new HttpCookie("BusManagement");
+                    BusCookie.Values["userId"] = sessionName;
+                    BusCookie.Values["Id"] = iD.ToString();
+                    BusCookie.Values["lastVisit"] = DateTime.Now.ToString();
+                    BusCookie.Expires = DateTime.Now.AddHours(8);
+                    Response.Cookies.Add(BusCookie);
+
                     Response.Redirect("busPanel.aspx");
                 }
                 else

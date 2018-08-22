@@ -456,7 +456,7 @@ img
     width: 100%;
     font: 12px tahoma;
     overflow-y: scroll;
-    position: relative;
+    top: 13px;
 }
 
 #gv_OperationList

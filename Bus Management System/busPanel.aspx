@@ -10,7 +10,7 @@
     <meta name="SysBus_Management" content:"" />
 	<link rel="stylesheet" href="css/style.css" />
 </head>
-<body>
+<body runat="server" id="BodyTag">
     <script type="text/javascript">
 
         var wartosc1 = "";
@@ -400,16 +400,16 @@
                                 </tr>
                                 <tr class="tr_26">
                                     <td class="td_center">
-                                        <asp:Label ID="lb_AlocatorBusOpis" runat="server" Text="Free Bus :"></asp:Label>
+                                        <asp:Label ID="lb_AlocatorBusOpis" runat="server" EnableViewState="false" Text="Free Bus :"></asp:Label>
                                     </td>
                                     <td class="td_center">
-                                        <asp:Label ID="lb_AlocatorBusCount" runat="server" Text="000"></asp:Label>
+                                        <asp:Label ID="lb_AlocatorBusCount" runat="server" EnableViewState="false" Text="000"></asp:Label>
                                     </td>
                                     <td class="td_center">
-                                        <asp:Label ID="lb_AlocatorDate" runat="server" Text="DATA"></asp:Label>
+                                        <asp:Label ID="lb_AlocatorDate" runat="server" EnableViewState="false" Text="DATA"></asp:Label>
                                     </td>
                                     <td class="td_center">
-                                        <asp:Label ID="lb_AlocatorHour" runat="server" Text="GODZINA"></asp:Label>
+                                        <asp:Label ID="lb_AlocatorHour" runat="server" EnableViewState="false" Text="GODZINA"></asp:Label>
                                     </td>
                                 </tr>
                                 <tr class="tr_26">
@@ -425,13 +425,13 @@
                                         <asp:Label ID="lb_AlocatorFNb1" runat="server" Text="Flight Nb :"></asp:Label>
                                     </td>
                                     <td>
-                                        <asp:TextBox CssClass="table_Tb" ID="tb_AlocatorFNb" runat="server" MaxLength="7"></asp:TextBox>
+                                        <asp:TextBox CssClass="table_Tb" ID="tb_AlocatorFNb" runat="server" AutoCompleteType="Disabled" MaxLength="7"></asp:TextBox>
                                     </td>
                                     <td class="td_left">
                                         <asp:Label ID="lb_Pax" runat="server" Text="Pax"></asp:Label>
                                     </td>
                                     <td>
-                                        <asp:TextBox CssClass="table_Tb" ID="tb_Pax" runat="server" MaxLength="3" onkeypress="if(event.keyCode<48 || event.keyCode>57)event.returnValue=false;"></asp:TextBox>
+                                        <asp:TextBox CssClass="table_Tb" ID="tb_Pax" runat="server" AutoCompleteType="Disabled" MaxLength="3" onkeypress="if(event.keyCode<48 || event.keyCode>57)event.returnValue=false;"></asp:TextBox>
                                     </td>
                                 </tr>
                                 <tr class="tr_26">
@@ -445,7 +445,7 @@
                                         <asp:Label ID="lb_Gate" runat="server" Text="Gate"></asp:Label>
                                     </td>
                                     <td class="td_center">
-                                        <asp:Label ID="lb_Bus" runat="server" Text="Bus"></asp:Label>
+                                        <asp:Label ID="lb_Bus" runat="server" Text="Bus" ></asp:Label>
                                     </td>
                                 </tr>
                                 <tr class="tr_90">
@@ -483,13 +483,13 @@
                                         <asp:Label ID="lb_RadioNeon" runat="server" Text="Neon"></asp:Label>
                                     </td>
                                     <td>
-                                        <asp:TextBox CssClass="table_Tb" ID="tb_RadioNeon" runat="server" MaxLength="3" onkeypress="if(event.keyCode<48 || event.keyCode>57)event.returnValue=false;"></asp:TextBox>
+                                        <asp:TextBox CssClass="table_Tb" ID="tb_RadioNeon" runat="server" AutoCompleteType="Disabled" MaxLength="3" onkeypress="if(event.keyCode<48 || event.keyCode>57)event.returnValue=false;"></asp:TextBox>
                                     </td>
                                     <td class="td_left">
                                         <asp:Label ID="lb_RadioGate" runat="server" Text="Gate"></asp:Label>
                                     </td>
                                     <td>
-                                        <asp:TextBox CssClass="table_Tb" ID="tb_RadioGate" runat="server" MaxLength="3" onkeypress="if(event.keyCode<48 || event.keyCode>57)event.returnValue=false;"></asp:TextBox>
+                                        <asp:TextBox CssClass="table_Tb" ID="tb_RadioGate" runat="server" AutoCompleteType="Disabled" MaxLength="3" onkeypress="if(event.keyCode<48 || event.keyCode>57)event.returnValue=false;"></asp:TextBox>
                                     </td>
                                 </tr>
                                 <tr class="tr_26">
@@ -500,6 +500,7 @@
                                         <asp:Button CssClass="table_Bt" ID="bt_AlocatorAccept" runat="server" class="table_Bt" Text="ACCEPT" OnClick="Bt_AlocatorAccept_Click" />
                                     </td>
                                 </tr>
+
                             </table>
                         </div>
                         <div class ="alocator-Right">
