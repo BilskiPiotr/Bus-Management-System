@@ -48,6 +48,7 @@
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Device" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -77,9 +78,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="about.aspx" />
-    <Content Include="busPanel.aspx" />
+    <Content Include="BusPanel.aspx" />
     <Content Include="css\style-old.css" />
     <Content Include="css\style.css" />
+    <Content Include="Formatowanie.aspx" />
     <Content Include="global.aspx" />
     <Content Include="js\get_location.js" />
     <Content Include="kontakt.aspx" />
@@ -96,14 +98,21 @@
       <DependentUpon>about.aspx</DependentUpon>
     </Compile>
     <Compile Include="BusinessLayer.cs" />
-    <Compile Include="busPanel.aspx.cs">
-      <DependentUpon>busPanel.aspx</DependentUpon>
+    <Compile Include="BusPanel.aspx.cs">
+      <DependentUpon>BusPanel.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="busPanel.aspx.designer.cs">
-      <DependentUpon>busPanel.aspx</DependentUpon>
+    <Compile Include="BusPanel.aspx.designer.cs">
+      <DependentUpon>BusPanel.aspx</DependentUpon>
     </Compile>
     <Compile Include="DataAccessLayer.cs" />
+    <Compile Include="Formatowanie.aspx.cs">
+      <DependentUpon>Formatowanie.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Formatowanie.aspx.designer.cs">
+      <DependentUpon>Formatowanie.aspx</DependentUpon>
+    </Compile>
     <Compile Include="global.aspx.cs">
       <DependentUpon>global.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

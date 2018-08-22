@@ -61,7 +61,7 @@ CREATE TABLE [dbo].[Vehicles]
 	[Status]		INT	DEFAULT (1)					NOT NULL
 );
 
-/* unavailable - 0,  empty - 1, free - 2, in work - 3  (default - empty) */
+/* unavailable - 0,  no driver - 1, free - 2, in work - 3  (default - empty) */
 INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('032');
 INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('033');
 INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('1165');

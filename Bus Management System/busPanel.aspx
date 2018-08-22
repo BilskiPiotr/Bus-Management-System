@@ -11,35 +11,48 @@
 	<link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-<script >
-    setInterval(getLocation, 5000);
+    <script type="text/javascript">
 
-function getLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showCoordinates, function () { }, { enableHighAccuracy: true });
-    }
-    else {
-        lat.innerHTML = "Ta przeglądarka nie obsługuje geolokacji.";
-    }
-}
+        var wartosc1 = "";
+        var wartosc2 = "";
+        var wartosc3 = "";
+        var error = "";
+        var dane = new Array();
 
-function showCoordinates(coordinates) {
+        setInterval(getLocation, 5000);
 
-    document.getElementById("<%=lb_Latitude.ClientID %>").innerHTML = coordinates.coords.latitude;
-    document.getElementById("<%=lb_Longitude.ClientID %>").innerHTML = coordinates.coords.longitude;
-    document.getElementById("<%=lb_Accuracy.ClientID %>").innerHTML = coordinates.coords.accuracy;
-}
+        function getLocation() {
+            if (navigator.geolocation)
+            {
+                navigator.geolocation.getCurrentPosition(KonstruujArray, function () { }, { enableHighAccuracy: true });
+            }
+            else {
+                error.innerHTML = "Ta przeglądarka nie obsługuje geolokacji.";
+            }
+        }
 
-function ShowCurrentTime() {
-    PageMethods.GetCurrentTime(document.getElementById("<%=tb_JakiesDane.ClientID%>").value, OnSuccess);
-}
-
-function OnSuccess(response, userContext, methodName) {
-    document.getElementById("<%=lb_ActualTime.ClientID %>").innerHTML = response;
-}
+        function KonstruujArray(coordinates) {
+            wartosc1 = coordinates.coords.latitude;
+            wartosc2 = coordinates.coords.longitude;
+            wartosc3 = coordinates.coords.accuracy;
+            document.getElementById("<%=HiddenField1.ClientID%>").value = wartosc1;
+            document.getElementById("<%=HiddenField2.ClientID%>").value = wartosc2;
+            document.getElementById("<%=HiddenField3.ClientID%>").value = wartosc3;
+            dane[0] = document.getElementById("<%=HiddenField1.ClientID%>").value;
+            dane[1] = document.getElementById("<%=HiddenField2.ClientID%>").value;
+            dane[2] = document.getElementById("<%=HiddenField3.ClientID%>").value;
+            PageMethods.PrzeliczArray(dane, OnSuccess);
+        }
+        function OnSuccess(response, userContext, methodName) {
+            document.getElementById("<%=lb_BusLatitude.ClientID %>").innerHTML = response[0];
+            document.getElementById("<%=lb_BusLongitude.ClientID %>").innerHTML = response[1];
+            document.getElementById("<%=lb_BusDistance.ClientID %>").innerHTML = response[2];
+            document.getElementById("<%=lb_BusAccuracy.ClientID %>").innerHTML = wartosc3;
+            wartosc1 = "";
+            wartosc2 = "";
+            wartosc3 = "";
+        }
 </script>
-    
-    <div class="content">
         <form id="login_form" runat="server" enctype="multipart/form-data">
             <div class="header">
                 <div class="topnav">
@@ -74,10 +87,8 @@ function OnSuccess(response, userContext, methodName) {
             </div>
 
 
-        <div>
+
         <asp:MultiView ID="BusManagement" runat="server" ActiveViewIndex="0">
-
-
 
             <asp:View ID="Admin" runat="server">
                 <div class="singleCol">
@@ -187,50 +198,57 @@ function OnSuccess(response, userContext, methodName) {
 
             <asp:View ID="Bus" runat="server">
 
-                <!-- The App Section -->
-                <div class="container">
-                    <div class="row">
-                        <div class="column-66">
-                            <h1 class="xlarge-font"><b>The App</b></h1>
-                            <h1 class="large-font" style="color:MediumSeaGreen;"><b>Why buy it?</b></h1>
-                            <p><span style="font-size:36px">Take photos like a pro.</span> You should buy this app because lorem ipsum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                            <button class="button">Download Application</button>
-                        </div>
-                        <div class="column-33">
-                            <img src="/w3images/img_app.jpg" width="335" height="471" />
-                        </div>
-                    </div>
+                <div class="bus-Panel">
+	                <div class="busHeader">
+                        <p> nagłówek </p>
+	                </div>
+	                <div class="busLeft">
+                        <p>lewa część ekranu </p>
+	                </div>
+	                <div class="busRight">
+		                <div class="busRightTop">
+                            <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
+                            <asp:HiddenField ID="HiddenField1" runat="server" />
+                            <asp:HiddenField ID="HiddenField2" runat="server" />
+                            <asp:HiddenField ID="HiddenField3" runat="server" />
+
+                            <table id="currentLoc-table" style="width: auto; height: auto;">
+                            <tr>
+                                <td class="dane-C1"><asp:Label ID="lb_LatOpis" runat="server" Text="Lat :"></asp:Label></td>
+                                <td class="dane-C2"><asp:Label ID="lb_BusLatitude" runat="server" Text="" Width="100px"></asp:Label></td>
+                            </tr>
+                            <tr>
+                                <td class="odstep" colspan="2"></td>
+                            </tr>
+                            <tr>
+                                <td class="dane-C1"><asp:Label ID="lb_LonOpis" runat="server" Text="Lon :"></asp:Label></td>
+                                <td class="dane-C2"><asp:Label ID="lb_BusLongitude" runat="server" Text="" Width="100px"></asp:Label></td>
+                            </tr>
+                            <tr>
+                                <td class="odstep" colspan="2"></td>
+                            </tr>
+                            <tr>
+                                <td class="dane-C1"><asp:Label ID="lb_DisOpis" runat="server" Text="Dis :"></asp:Label></td>
+                                <td class="dane-C2"><asp:Label ID="lb_BusDistance" runat="server" Text="" Width="100px"></asp:Label></td>
+                            </tr>
+                                                        <tr>
+                                <td class="odstep" colspan="2"></td>
+                            </tr>
+                            <tr>
+                                <td class="dane-C1"><asp:Label ID="lb_AccOpis" runat="server" Text="Acc :"></asp:Label></td>
+                                <td class="dane-C2"><asp:Label ID="lb_BusAccuracy" runat="server" Text="" Width="100px"></asp:Label></td>
+                            </tr>
+                        </table>
+		                </div>
+		                <div class="busRightMiddle">
+                            <p>prawa middle</p>
+		                </div>
+		                <div class="busRightBottom">
+                            <p>prawa bottom</p>
+		                </div>
+	                </div>
                 </div>
 
-                <!-- Clarity Section -->
-                <div class="container" style="background-color:#f1f1f1">
-                    <div class="row">
-                        <div class="column-33">
-                            <img src="/w3images/app5.jpg" alt="App" width="335" height="471" />
-                        </div>
-                        <div class="column-66">
-                            <h1 class="xlarge-font"><b>Clarity</b></h1>
-                            <h1 class="large-font" style="color:red;"><b>Pixels, who?</b></h1>
-                            <p><span style="font-size:24px">A revolution in resolution.</span> Sharp and clear photos with the world's best photo engine, incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquipex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-                            <button class="button" style="background-color:red">Read More</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- The App Section -->
-                <div class="container">
-                    <div class="row">
-                        <div class="column-66">
-                            <h1 class="xlarge-font"><b>The App</b></h1>
-                            <h1 class="large-font" style="color:MediumSeaGreen;"><b>Why buy it?</b></h1>
-                            <p><span style="font-size:36px">Take photos like a pro.</span> You should buy this app because lorem ipsum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-                            <button class="button">Download Application</button>
-                        </div>
-                        <div class="column-33">
-                            <img src="/w3images/img_app.jpg" width="335" height="471" />
-                        </div>
-                    </div>
-                </div>
             </asp:View>
 
 
@@ -294,7 +312,6 @@ function OnSuccess(response, userContext, methodName) {
                                 <td class="odstep" colspan="2"></td>
                             </tr>
                             <tr>
-                                <asp:ScriptManager runat="server" id="ScriptManager1"/>
                                     <asp:UpdatePanel runat="server" id="UpdatePanel2">
                                         <ContentTemplate>
                                             <asp:Timer runat="server" id="Timer2" Interval="10000" OnTick="Timer1_Tick"></asp:Timer>
@@ -328,46 +345,196 @@ function OnSuccess(response, userContext, methodName) {
             <asp:View ID="Alocator" runat="server">
                 <div id="alocator">
                     <div >
-                        <table style="width: 100%;" cellpadding="2">
+                        <table class="alocator_TopTable">
                             <tbody>
                                 <tr>
-                                    <td class="center"><asp:Label ID="lb_Vehicle001" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle002" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle003" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle004" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle005" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle006" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle007" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle008" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle009" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle010" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle011" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle012" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle1" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle2" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle3" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle4" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle5" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle6" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle7" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle8" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle9" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle10" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle11" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle12" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
                                 </tr>
                                 <tr>
-                                    <td class="center"><asp:Label ID="lb_Vehicle013" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle014" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle015" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle016" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle017" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle018" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle019" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle020" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle021" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle022" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle023" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle024" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle13" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle14" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle15" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle16" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle17" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle18" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle19" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle20" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle21" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle22" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle23" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle24" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                </tr>
+                                <tr>
+                                    <td class="center"><asp:Label ID="lb_Vehicle25" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle26" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle27" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle28" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle29" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle30" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle31" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle32" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle33" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle34" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle35" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                                    <td class="center"><asp:Label ID="lb_Vehicle36" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    <table id="alocator-table" style="width: auto; height: auto;">
-                        <tr>
-                            <td>
-                                @NSTB
-                            </td>
-                        </tr>
-                    </table>
+                    <div class="alocator-Panel">
+                        <div class="alocator-Left">
+                            <table id="alocator-LeftTable">
+                                <tr class="tr_26">
+                                    <th colspan="4">ZARZĄDZANIE</th>
+                                </tr>
+                                <tr class="tr_26">
+                                    <td class="td_center">
+                                        <asp:Label ID="lb_AlocatorBusOpis" runat="server" Text="Free Bus :"></asp:Label>
+                                    </td>
+                                    <td class="td_center">
+                                        <asp:Label ID="lb_AlocatorBusCount" runat="server" Text="000"></asp:Label>
+                                    </td>
+                                    <td class="td_center">
+                                        <asp:Label ID="lb_AlocatorDate" runat="server" Text="DATA"></asp:Label>
+                                    </td>
+                                    <td class="td_center">
+                                        <asp:Label ID="lb_AlocatorHour" runat="server" Text="GODZINA"></asp:Label>
+                                    </td>
+                                </tr>
+                                <tr class="tr_26">
+                                    <td colspan="2" class="td_center">
+                                        <asp:RadioButton ID="rb_Przylot" runat="server" Text="Przylot" AutoPostBack="True" Checked="True" OnCheckedChanged="Rb_Przylot_CheckedChanged" />
+                                    </td>
+                                    <td colspan="2" class="td_center">
+                                        <asp:RadioButton ID="rb_Odlot" runat="server" Text="Odlot" AutoPostBack="True" OnCheckedChanged="Rb_Odlot_CheckedChanged" />
+                                    </td>
+                                </tr>
+                                <tr class="tr_26">
+                                    <td class="td_left">
+                                        <asp:Label ID="lb_AlocatorFNb1" runat="server" Text="Flight Nb :"></asp:Label>
+                                    </td>
+                                    <td>
+                                        <asp:TextBox CssClass="table_Tb" ID="tb_AlocatorFNb" runat="server" MaxLength="7"></asp:TextBox>
+                                    </td>
+                                    <td class="td_left">
+                                        <asp:Label ID="lb_Pax" runat="server" Text="Pax"></asp:Label>
+                                    </td>
+                                    <td>
+                                        <asp:TextBox CssClass="table_Tb" ID="tb_Pax" runat="server" MaxLength="3" onkeypress="if(event.keyCode<48 || event.keyCode>57)event.returnValue=false;"></asp:TextBox>
+                                    </td>
+                                </tr>
+                                <tr class="tr_26">
+                                    <td class="td_center">
+                                        <asp:Label ID="lb_Port" runat="server" Text="Port"></asp:Label>
+                                    </td>
+                                    <td class="td_center">
+                                        <asp:Label ID="lb_PPS" runat="server" Text="PPS"></asp:Label>
+                                    </td>
+                                    <td class="td_center">
+                                        <asp:Label ID="lb_Gate" runat="server" Text="Gate"></asp:Label>
+                                    </td>
+                                    <td class="td_center">
+                                        <asp:Label ID="lb_Bus" runat="server" Text="Bus"></asp:Label>
+                                    </td>
+                                </tr>
+                                <tr class="tr_90">
+                                    <td class="td_center td_top">
+                                        <asp:DropDownList   CssClass="ddl" ID="ddl_Port" runat="server"
+                                                            onMouseOver="this.size=5;"
+                                                            onClick="this.size=1;" 
+                                                            onMouseOut="this.size=1;">
+                                        </asp:DropDownList>
+                                    </td>
+                                    <td class="td_center td_top">
+                                        <asp:DropDownList   CssClass="ddl" ID="ddl_PPS" runat="server"
+                                                            onMouseOver="this.size=5;"
+                                                            onClick="this.size=1;"
+                                                            onMouseOut="this.size=1;">
+                                        </asp:DropDownList>
+                                    </td>
+                                    <td class="td_center td_top">
+                                        <asp:DropDownList   CssClass="ddl" ID="ddl_Gate" runat="server"
+                                                            onMouseOver="this.size=5;"
+                                                            onClick="this.size=1;" 
+                                                            onMouseOut="this.size=1;">
+                                        </asp:DropDownList>
+                                    </td>
+                                    <td class="td_center td_top">
+                                        <asp:DropDownList   CssClass="ddl" ID="ddl_Bus" runat="server"
+                                                            onMouseOver="this.size=5;"
+                                                            onClick="this.size=1;" 
+                                                            onMouseOut="this.size=1;">
+                                        </asp:DropDownList>
+                                    </td>
+                                </tr>
+                                <tr class="tr_26">
+                                    <td class="td_left">
+                                        <asp:Label ID="lb_RadioNeon" runat="server" Text="Neon"></asp:Label>
+                                    </td>
+                                    <td>
+                                        <asp:TextBox CssClass="table_Tb" ID="tb_RadioNeon" runat="server" MaxLength="3" onkeypress="if(event.keyCode<48 || event.keyCode>57)event.returnValue=false;"></asp:TextBox>
+                                    </td>
+                                    <td class="td_left">
+                                        <asp:Label ID="lb_RadioGate" runat="server" Text="Gate"></asp:Label>
+                                    </td>
+                                    <td>
+                                        <asp:TextBox CssClass="table_Tb" ID="tb_RadioGate" runat="server" MaxLength="3" onkeypress="if(event.keyCode<48 || event.keyCode>57)event.returnValue=false;"></asp:TextBox>
+                                    </td>
+                                </tr>
+                                <tr class="tr_26">
+                                    <td colspan="2">
+                                        <asp:Button CssClass="table_Bt" ID="bt_AlocatorReset" runat="server" class="table_Bt" Text="CLEAR" OnClick="Bt_AlocatorReset_Click" />
+                                    </td>
+                                    <td colspan="2">
+                                        <asp:Button CssClass="table_Bt" ID="bt_AlocatorAccept" runat="server" class="table_Bt" Text="ACCEPT" OnClick="Bt_AlocatorAccept_Click" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class ="alocator-Right">
+                            <table id="alocator-RightTable">
+                                <tr>
+                                    <td class="center">
+                                        <asp:GridView ID="gv_OperationList" runat="server" AutoGenerateColumns="false">
+                                            <Columns>
+                                                <asp:BoundField DataField="StartPort" HeaderText="From" ItemStyle-Width="60px" />
+                                                <asp:BoundField DataField="DestPort" HeaderText="To" ItemStyle-Width="60px" />
+                                                <asp:BoundField DataField="Operation" HeaderText="Operation" ItemStyle-Width="100px" />
+                                                <asp:BoundField DataField="Gate" HeaderText="Gate" ItemStyle-Width="60px" />
+                                                <asp:BoundField DataField="Station" HeaderText="PPS" ItemStyle-Width="60px" />
+                                                <asp:BoundField DataField="Pax" HeaderText="Pax" ItemStyle-Width="60px" />
+                                                <asp:BoundField DataField="RadioNeon" HeaderText="Neon Radio" ItemStyle-Width="60px" />
+                                                <asp:BoundField DataField="RadioGate" HeaderText="Gate Radio" ItemStyle-Width="60px" />
+                                                <asp:BoundField DataField="StartTime" HeaderText="Begin" ItemStyle-Width="60px" />
+                                                <asp:BoundField DataField="BusNb" HeaderText="Bus" ItemStyle-Width="60px" />
+                                                <asp:BoundField DataField="BusStatus" HeaderText="Status" ItemStyle-Width="60px" />
+                                                <asp:BoundField DataField="StatusTime1" HeaderText="Accepted" ItemStyle-Width="60px" />
+                                                <asp:BoundField DataField="StatusTime2" HeaderText="Start Load" ItemStyle-Width="60px" />
+                                                <asp:BoundField DataField="StatusTime3" HeaderText="Start Drive" ItemStyle-Width="60px" />
+                                                <asp:BoundField DataField="StatusTime4" HeaderText="Start Unload" ItemStyle-Width="60px" />
+                                            </Columns>
+                                        </asp:GridView>
+                                    </td>
+                                </tr> 
+                                <tr>
+                                    <td class="center">
+                                        <asp:Button CssClass="table_Bt" ID="Button1" runat="server" Text="ACCEPT" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </asp:View>
 
@@ -380,17 +547,14 @@ function OnSuccess(response, userContext, methodName) {
                 <br />
                     <p><asp:Label ID="lb_error" runat="server" Text="Label"></asp:Label></p>
                 <br />
-                    <p><asp:Button class="singleBt" ID="bt_errorConfirm" runat="server" Text="Powrót" OnClick="Bt_errorConfirm_Click"/></p>
+                    <p><asp:Button CssClass="singleBt" ID="bt_errorConfirm" runat="server" Text="Powrót" OnClick="Bt_errorConfirm_Click"/></p>
                 <br />
                 </div>
             </asp:View>
 
 
             </asp:MultiView>
-
-        </div>
         </form>
-    </div>
 
     <div class= "footer">
 		<p>Projekt Inżynierski - Piotr Bilski - index 43335</p>

@@ -13,9 +13,6 @@
 
 /* INNE */
 
-* {
-    box-sizing: border-box;
-}
 
 /* Create four equal columns that floats next to each other */
 .column {
@@ -157,6 +154,7 @@
 
 .center {
     text-align: center;
+    border: 1px solid blue
 }
 
 .photo {
@@ -591,9 +589,6 @@
     opacity: .6
 }
 
-* {
-    box-sizing: border-box;
-}
 
 /* Create three equal columns that floats next to each other */
 .column {

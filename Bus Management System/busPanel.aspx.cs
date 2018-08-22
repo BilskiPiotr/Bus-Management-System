@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Data;
+using System.Device.Location;
+using System.Drawing;
+using System.Globalization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -9,11 +13,10 @@ namespace Bus_Management_System
         private static BusinessLayer bl = new BusinessLayer();
         private static DataAccessLayer dal = new DataAccessLayer();
         protected void Page_Load(object sender, EventArgs e)
-
         {
             User loggedUser = (User)Session["loggedUser"];
 
-            ScriptManager.RegisterClientScriptBlock(this, GetType(), "pobierzLokalizacje", "getLocation();", true);
+            ScriptManager.RegisterClientScriptBlock(this, GetType(), "przeliczOdleglosc", "getLocation();", true);
 
             if (!IsPostBack)
             {
@@ -24,10 +27,51 @@ namespace Bus_Management_System
                     lb_loggedUser.Text = "";
                     lb_loggedUser.Text += (string)loggedUser.FirstName + " " + (string)loggedUser.LastName + "       ID: " + ((int)loggedUser.CompanyId).ToString();
 
-                    LoadVehicles();
+                    LoadGates();
+                    LoadStations();
+                    LoadAirPorts();
+                    LoadBus();
                     SetActiveView(loggedUser, menuItems);
                 }
             }
+        }
+
+        [System.Web.Services.WebMethod]
+        public static string[] PrzeliczArray(string[] arrayIn)
+        {
+            double latitude = double.Parse(arrayIn[0], CultureInfo.InvariantCulture);
+            double longitude = double.Parse(arrayIn[1], CultureInfo.InvariantCulture);
+            double distance = 0.0;
+
+            // aktualne współrzędne podane ze ClientSide w tablicy
+            GeoCoordinate objectPosition = new GeoCoordinate(latitude, longitude);
+
+            // współrzędne docelowe, pobierane z wysłanego zlecenia
+            GeoCoordinate targetPosition = new GeoCoordinate(52.17021166666667, 20.971659999999996);
+
+            // zwrocenie odleglosci miedzy wspolrzednymi z ograniczeniem do 2 miejsc po przecinku
+            distance = Math.Round(objectPosition.GetDistanceTo(targetPosition), 2, MidpointRounding.AwayFromZero);
+
+            string latitude_Kierunek = (latitude >= 0 ? "N" : "S");
+
+            latitude = Math.Abs(latitude);
+            double minutyLat = ((latitude - Math.Truncate(latitude) / 1) * 60);
+            double sekundyLat = ((minutyLat - Math.Truncate(minutyLat) / 1) * 60);
+
+            string longitude_Kierunek = (longitude >= 0 ? "E" : "W");
+            longitude = Math.Abs(longitude);
+            double minutyLon = ((longitude - Math.Truncate(longitude) / 1) * 60);
+            double sekundyLon = ((minutyLon - Math.Truncate(minutyLon) / 1) * 60);
+
+            string wsp1 = Convert.ToString(Math.Truncate(latitude) + "° " + Math.Truncate(minutyLat) + "' " + Math.Truncate(sekundyLat) + "'' " + latitude_Kierunek);
+            string wsp2 = Convert.ToString(Math.Truncate(longitude) + "° " + Math.Truncate(minutyLon) + "' " + Math.Truncate(sekundyLon) + "'' " + longitude_Kierunek);
+
+            string[] wynikowaArray = new string[3];
+
+            wynikowaArray[0] = wsp1;
+            wynikowaArray[1] = wsp2;
+            wynikowaArray[2] = distance.ToString();
+            return wynikowaArray;
         }
 
         protected void Timer1_Tick(object sender, EventArgs e)
@@ -286,14 +330,167 @@ namespace Bus_Management_System
         //}
 
 
-        private void LoadVehicles()
+        private void LoadGates()
         {
+            DataSet gates = bl.GetGates();
+            ddl_Gate.DataSource = gates;
+            ddl_Gate.DataTextField = "GateNb";
+            ddl_Gate.DataValueField = "Id";
+            ddl_Gate.DataBind();
+
+            // dodanie pierwszej linii do ddl
+            ListItem gate = new ListItem("---", "-1");
+            ddl_Gate.Items.Insert(0, gate);
+
+            gates.Dispose();
+        }
+
+
+        private void LoadStations()
+        {
+            DataSet stations = bl.GetStations();
+            ddl_PPS.DataSource = stations;
+            ddl_PPS.DataTextField = "StationNb";
+            ddl_PPS.DataValueField = "Id";
+            ddl_PPS.DataBind();
+
+            // dodanie pierwszej linii do ddl
+            ListItem station = new ListItem("---", "-1");
+            ddl_PPS.Items.Insert(0, station);
+
+            stations.Dispose();
+        }
+
+
+        private void LoadAirPorts()
+        {
+            DataSet airPorts = bl.GetAirPort();
+            ddl_Port.DataSource = airPorts;
+            ddl_Port.DataTextField = "IATA_Name";
+            ddl_Port.DataValueField = "Id";
+            ddl_Port.DataBind();
+
+            // dodanie pierwszej linii do ddl
+            ListItem airport = new ListItem("---", "-1");
+            ddl_Port.Items.Insert(0, airport);
+
+            airPorts.Dispose();
+        }
+
+        private void LoadBus()
+        {
+            DataTable buses = bl.GetBus();
+            ddl_Bus.DataSource = buses;
+            ddl_Bus.DataTextField = "VehicleNb";
+            ddl_Bus.DataValueField = "Status";
+            ddl_Bus.DataBind();
+
+            // dodanie pierwszej linii do ddl
+            ListItem bus = new ListItem("---", "-1");
+            ddl_Bus.Items.Insert(0, bus);
+
+            SetBusStatus(buses);
+
+            buses.Dispose();
+        }
+
+
+        private void SetBusStatus(DataTable buses)
+        {
+            //string[] labele = bl.BusLabelsList();
+
+            for (int i = 0; i < buses.Rows.Count; i++)
+            {
+                string numer = buses.Rows[i].Field<string>("VehicleNb");
+
+                string str = "lb_Vehicle" + (i+1).ToString();
+
+                Label label = this.FindControl(str) as Label;
+                if (label != null)
+                {
+                    label.Text = numer.ToString();
+                    label.Visible = true;
+                }
+
+
+                int status = buses.Rows[i].Field<int>("Status");
+
+                switch (status)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        label.BackColor = Color.Gray;
+                        break;
+                    case 2:
+                        label.BackColor = Color.Green;
+                        break;
+                    case 3:
+                        label.BackColor = Color.Red;
+                        break;
+                }
+            }
 
         }
 
-        protected void btnGetTime_Click(object sender, EventArgs e)
-        {
 
+
+        protected void Rb_Przylot_CheckedChanged(object sender, EventArgs e)
+        {
+            if(rb_Przylot.Checked)
+            {
+                rb_Odlot.Checked = false;
+                Clear_Alocator();
+            }
+            else
+            {
+                Clear_Alocator();
+            }
+        }
+
+        protected void Rb_Odlot_CheckedChanged(object sender, EventArgs e)
+        {
+            if(rb_Odlot.Checked)
+            {
+                if (rb_Przylot.Checked)
+                    rb_Przylot.Checked = false;
+                Clear_Alocator();
+            }
+            else
+            {
+                Clear_Alocator();
+            }
+        }
+
+
+        private void Clear_Alocator()
+        {
+            ddl_Port.SelectedIndex = 0;
+            ddl_PPS.SelectedIndex = 0;
+            ddl_Gate.SelectedIndex = 0;
+            ddl_Bus.SelectedIndex = 0;
+            tb_AlocatorFNb.Text = "";
+            tb_Pax.Text = "";
+            tb_RadioGate.Text = "";
+            tb_RadioNeon.Text = "";
+
+        }
+
+        protected void Bt_AlocatorReset_Click(object sender, EventArgs e)
+        {
+            Clear_Alocator();
+        }
+
+        protected void Bt_AlocatorAccept_Click(object sender, EventArgs e)
+        {
+            if (rb_Odlot.Checked)
+                bl.OperationType = 1;
+            else
+                bl.OperationType = 2;
+
+            bl.FlightNb = tb_AlocatorFNb.Text;
+            bl.PaxCount = tb_Pax.Text;
+            bl.Port = ddl_Port.Text;
         }
     }
 }

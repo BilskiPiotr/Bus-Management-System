@@ -11,7 +11,7 @@
 	<link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-    <div class="content">
+    <div>
         <form id="login_form" runat="server" DefaultButton="bt_submitLogin">
             <div class="header">
                 <div class="topnav">
@@ -36,7 +36,7 @@
                         <td class="dane-C2"><asp:TextBox ID="inp_name" runat="server" Width="150px"></asp:TextBox></td>
                     </tr>
                     <tr>
-                        <td class="odstep" colspan="2"></td>
+                        <td class="odstep" colspan="2"></td> 
                     </tr>
                     <tr>
                         <td class="dane-C1"><asp:Label ID="lb_2ndName" runat="server" Text="2'nd Name :"></asp:Label></td>
@@ -54,8 +54,8 @@
                     </tr>
                     <tr>                    
                         <td colspan="2">
-                            <asp:Button class="dualBt" ID="bt_resetLogin" runat="server" Text="Reset" TabIndex="1" OnClick="Bt_resetLogin_Click" />
-                            <asp:Button class="dualBt" ID="bt_submitLogin" runat="server" Text="Login" OnClick="Bt_submitLogin_Click"/>
+                            <asp:Button CssClass="dualBt" ID="bt_resetLogin" runat="server" Text="Reset" TabIndex="1" OnClick="Bt_resetLogin_Click" />
+                            <asp:Button CssClass="dualBt" ID="bt_submitLogin" runat="server" Text="Login" OnClick="Bt_submitLogin_Click"/>
                         </td>
                     </tr>
                 </table>

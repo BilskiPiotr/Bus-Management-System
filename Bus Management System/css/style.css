@@ -1,8 +1,4 @@
-﻿* 
-{
-    box-sizing: border-box;
-}
-
+﻿
 body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
@@ -101,12 +97,11 @@ img
     border: 2px solid blue;
 }
 
-.siteInfo
+.siteInfo 
 {
-    width: 65%;
+    width: 64.4%;
     border: 2px solid orange;
     float: right;
-    padding: 6px 10px
 }
 
 .topnav a 
@@ -117,16 +112,18 @@ img
     text-decoration: none;
     font-size: 1rem;
     margin-right: 10px;
+    margin-top: 6px;
 }
 
 .topnav a:hover 
 {
-    color: #ff0051;
+    color: #fff;
 }
 
 .siteInfo a 
 {
     float: right;
+    margin-top: 6px;
 }
 
 
@@ -164,6 +161,7 @@ img
 #lb_errorMsg 
 {
     margin-right: 10px;
+    margin-top: 40px;
     font-size: 0.9rem;
     font-weight: bold;
 }
@@ -233,7 +231,7 @@ img
 
 .dane-C1 
 {
-    padding: 2px 15px 2px 0px;
+    padding: 2px 15px 2px 0.1px;
     font-size: 0.8rem;
     font-weight: bold;
     text-shadow: 1px 1px 1px #bed3c7;
@@ -271,4 +269,199 @@ img
     background-color: #003300;
     border-color: #ded821;
     color: #ebe54d;
+}
+
+
+/* Bus-Panel formatowanie*/
+
+.bus-Panel,
+.alocator-Panel
+{
+    clear: both;
+    display: block;
+    width: 900px;
+    height: 900px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.busHeader 
+{
+    background-color: rgb(50, 70, 90);
+    float: left;
+    clear: none;
+    height: 5%;
+    width: 99.3%;
+    border: 3px solid red;
+}
+
+.busLeft
+{
+    background-color: yellow;
+    float: left;
+    clear: none;
+    height: 66%;
+    width: 76.3%;
+    border: 3px solid blue;
+}
+
+.busRight,
+.alocator-Right
+{
+    background-color: rgb(120, 100, 80);
+    float: right;
+    clear: none;
+    height: 66%;
+    width: 22.3%;
+    border: 3px solid green;
+}
+
+.busRightTop 
+{
+    background-color: red;
+    width: 100%;
+    height: 33.2%;
+}
+
+.busRightMiddle
+{
+    background-color: green;
+    width: 100%;
+    height: 33.2%;
+}
+
+.busRightBottom 
+{
+    background-color: blue;
+    width: 100%;
+    min-height: 33.2%;
+}
+
+.busRightTop p,
+.busRightMiddle p,
+.busRightBottom p
+{
+    margin: 0 auto;
+}
+
+
+/* Alocator Panel - formatowanie*/
+
+.alocator-Panel 
+{
+    clear: both;
+    display: block;
+    width: 1300px;
+    height: 500px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.alocator-Left
+{
+    background-color: yellow;
+    float: left;
+    clear: none;
+    height: 450px;
+    width: 34%;
+    border: 3px solid blue;
+}
+
+.alocator-Right
+{
+    background-color: rgb(120, 100, 80);
+    float: right;
+    clear: none;
+    height: 450px;
+    width: 65%;
+    border: 3px solid green;
+}
+
+
+
+/* Alokator Top Table*/
+
+.alocator_TopTable,
+#alocator-LeftTable,
+#alocator_RightTable
+{
+    width: 100%;
+    margin-top: 5px;
+}
+
+#alocator-LeftTable td
+{
+    width: 25%;
+    border: 1px solid black;
+    padding: 3px 15px;
+    margin: 5px;
+}
+
+.td_left
+{
+    text-align: left;
+}
+
+.td_center
+{
+    text-align: center;
+}
+
+.td_right
+{
+    text-align: right;
+}
+
+.td_top
+{
+    vertical-align: top;
+}
+
+.tr_26
+{
+    height: 26px;
+}
+
+.tr_space
+{
+    height: 15px;
+}
+
+.tr_90
+{
+    height: 90px;
+}
+
+
+.center 
+{
+    text-align: center;
+    border: 1px solid blue;
+    width: 8.2%;
+    height: 20px;
+}
+
+.table_Tb
+{
+    width: 100%;
+}
+
+.table_Bt 
+{
+    width: 98%;
+}
+
+.ddl 
+{
+    width: 100%;
+    font: 12px tahoma;
+    overflow-y: scroll;
+    position: relative;
+}
+
+#gv_OperationList
+{
+    width: 98%;
+    height: 450px;
+    border: 1px solid green;
 }
