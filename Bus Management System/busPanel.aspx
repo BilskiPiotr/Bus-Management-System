@@ -56,7 +56,7 @@
         <form id="login_form" runat="server" enctype="multipart/form-data">
             <div class="header">
                 <div class="topnav">
-                    <asp:Menu   ID="mineMenu" 
+                    <asp:Menu   ID="mineMenu"
                                 CssClass="mine"
                                 StaticMenuStyle-CssClass="sms"
                                 StaticMenuItemStyle-CssClass="smis"
@@ -507,24 +507,40 @@
                             <table id="alocator-RightTable">
                                 <tr>
                                     <td class="center">
-                                        <asp:GridView ID="gv_OperationList" runat="server" AutoGenerateColumns="false">
+                                        <asp:GridView ID="gv_OperationList" runat="server" AutoGenerateColumns="false" AllowSorting="True" EnableSortingAndPagingCallbacks="True">
                                             <Columns>
-                                                <asp:BoundField DataField="StartPort" HeaderText="From" ItemStyle-Width="60px" />
-                                                <asp:BoundField DataField="DestPort" HeaderText="To" ItemStyle-Width="60px" />
-                                                <asp:BoundField DataField="Operation" HeaderText="Operation" ItemStyle-Width="100px" />
-                                                <asp:BoundField DataField="Gate" HeaderText="Gate" ItemStyle-Width="60px" />
-                                                <asp:BoundField DataField="Station" HeaderText="PPS" ItemStyle-Width="60px" />
-                                                <asp:BoundField DataField="Pax" HeaderText="Pax" ItemStyle-Width="60px" />
-                                                <asp:BoundField DataField="RadioNeon" HeaderText="Neon Radio" ItemStyle-Width="60px" />
-                                                <asp:BoundField DataField="RadioGate" HeaderText="Gate Radio" ItemStyle-Width="60px" />
-                                                <asp:BoundField DataField="StartTime" HeaderText="Begin" ItemStyle-Width="60px" />
-                                                <asp:BoundField DataField="BusNb" HeaderText="Bus" ItemStyle-Width="60px" />
-                                                <asp:BoundField DataField="BusStatus" HeaderText="Status" ItemStyle-Width="60px" />
-                                                <asp:BoundField DataField="StatusTime1" HeaderText="Accepted" ItemStyle-Width="60px" />
-                                                <asp:BoundField DataField="StatusTime2" HeaderText="Start Load" ItemStyle-Width="60px" />
-                                                <asp:BoundField DataField="StatusTime3" HeaderText="Start Drive" ItemStyle-Width="60px" />
-                                                <asp:BoundField DataField="StatusTime4" HeaderText="Start Unload" ItemStyle-Width="60px" />
+                                                <asp:BoundField DataField="AirPort" HeaderText="Air Port" ItemStyle-Width="30px" >
+                                                <ItemStyle Width="30px" />
+                                                </asp:BoundField>
+                                                <asp:BoundField DataField="FlightNb" HeaderText="Rejs No:" ItemStyle-Width="30px" >
+                                                <ItemStyle Width="30px" />
+                                                </asp:BoundField>
+                                                <asp:BoundField DataField="Operation" HeaderText="Operation" ItemStyle-Width="30px" >
+                                                <ItemStyle Width="30px" />
+                                                </asp:BoundField>
+                                                <asp:BoundField DataField="Gate" HeaderText="Gate" ItemStyle-Width="30px" >
+                                                <ItemStyle Width="30px" />
+                                                </asp:BoundField>
+                                                <asp:BoundField DataField="PPS" HeaderText="PPS" ItemStyle-Width="30px" >
+                                                <ItemStyle Width="30px" />
+                                                </asp:BoundField>
+                                                <asp:BoundField DataField="Pax" HeaderText="Pax" ItemStyle-Width="30px" >
+                                                <ItemStyle Width="30px" />
+                                                </asp:BoundField>
+                                                <asp:BoundField DataField="RadioNeon" HeaderText="Neon Radio" ItemStyle-Width="30px" >
+                                                <ItemStyle Width="30px" />
+                                                </asp:BoundField>
+                                                <asp:BoundField DataField="RadioGate" HeaderText="Gate Radio" ItemStyle-Width="30px" >
+                                                <ItemStyle Width="30px" />
+                                                </asp:BoundField>
+                                                <asp:BoundField DataField="Created" HeaderText="Begin" ItemStyle-Width="30px" >
+                                                <ItemStyle Width="30px" />
+                                                </asp:BoundField>
+                                                <asp:BoundField DataField="Bus" HeaderText="Bus" ItemStyle-Width="30px" >
+                                                <ItemStyle Width="30px" />
+                                                </asp:BoundField>
                                             </Columns>
+                                            <HeaderStyle BackColor="#FF6600" Font-Bold="True" Font-Names="Tahoma" Font-Size="Small" ForeColor="#FFFFCC" />
                                         </asp:GridView>
                                     </td>
                                 </tr> 

@@ -64,6 +64,112 @@ namespace Bus_Management_System
         }
 
 
+        public string GetOpData(int id, int dataSource)
+        {
+            string sqlQuery = "";
+
+            switch (dataSource)
+            {
+                case 1:
+                    sqlQuery = "SELECT Employee_CompanyId FROM Employees_Basic WHERE Id = '" + id + "'";
+                    break;
+                case 2:
+                    sqlQuery = "SELECT IATA_Name FROM AirPorts WHERE Id = '" + id + "'";
+                    break;
+                case 3:
+                    sqlQuery = "SELECT StationNb FROM  Stations WHERE Id = '" + id + "'";
+                    break;
+                case 4:
+                    sqlQuery = "SELECT GateNb FROM  Gates WHERE Id = '" + id + "'";
+                    break;
+                case 5:
+                    sqlQuery = "SELECT VehicleNb FROM  Vehicles WHERE Id = '" + id + "'";
+                    break;
+            }
+            DataTable dt = new DataTable();
+            SqlCommand sqlCmd = new SqlCommand(sqlQuery);
+            dt= dal.GetDataTable(sqlCmd);
+
+            return Convert.ToString(dt.Rows[0][0]);
+        }
+
+
+        public DataTable GetCurrentOp(DataSet rawData, ref string errorMsg)
+        {
+            DataTable op = new DataTable();
+
+            for (int i = 0; i < rawData.Tables[0].Rows.Count; i++)
+            {
+                string employeeId = GetOpData(Convert.ToInt32(rawData.Tables[0].Rows[0][1]), 1);
+                string operationId = Convert.ToString(rawData.Tables[0].Rows[0][2]);
+                string flightNb = Convert.ToString(rawData.Tables[0].Rows[0][3]);
+                string paxCount = Convert.ToString(rawData.Tables[0].Rows[0][4]);
+                string airPort = GetOpData(Convert.ToInt32(rawData.Tables[0].Rows[0][5]), 2);
+                string pps = GetOpData(Convert.ToInt32(rawData.Tables[0].Rows[0][6]), 3);
+                string gate = GetOpData(Convert.ToInt32(rawData.Tables[0].Rows[0][7]), 4);
+                string bus = GetOpData(Convert.ToInt32(rawData.Tables[0].Rows[0][8]), 5);
+                if (rawData.Tables[0].Rows[0][9] != null)
+                {
+                    string created = Convert.ToString(rawData.Tables[0].Rows[0][9]).Substring(11, 5);
+                }
+                else
+                {
+                    string created = "";
+                }
+                if (rawData.Tables[0].Rows[0][10] != null)
+                {
+                    string accepted = Convert.ToString(rawData.Tables[0].Rows[0][10]).Substring(11, 5);
+                }
+                {
+                    string accepted = "";
+                }
+                if (rawData.Tables[0].Rows[0][11] != null)
+                {
+                    string startLoad = Convert.ToString(rawData.Tables[0].Rows[0][11]).Substring(11, 5);
+                }
+                {
+                    string startLoad = "";
+                }
+                if (rawData.Tables[0].Rows[0][12] != null)
+                {
+                    string startDrive = Convert.ToString(rawData.Tables[0].Rows[0][12]).Substring(11, 5);
+                }
+                {
+                    string startDrive = "";
+                }
+                if (rawData.Tables[0].Rows[0][13] != null)
+                {
+                    string startUnload = Convert.ToString(rawData.Tables[0].Rows[0][13]).Substring(11, 5);
+                }
+                {
+                    string startUnload = "";
+                }
+                if (rawData.Tables[0].Rows[0][14] != null)
+                {
+                    string ednOp = Convert.ToString(rawData.Tables[0].Rows[0][14]).Substring(11, 5);
+                }
+                {
+                    string endOp = "";
+                }
+                string radioGate = (string)rawData.Tables[0].Rows[0][15];
+                string radioNeon = (string)rawData.Tables[0].Rows[0][16];
+            }
+
+            return op;
+        }
+
+
+        public DataSet GetOperations()
+        {
+            string sqlQuery = "SELECT * FROM Operations";
+            DataSet ds = new DataSet();
+            SqlCommand sqlCmd = new SqlCommand(sqlQuery);
+            ds = dal.GetDataSet(sqlCmd);
+
+            return ds;
+        }
+
+
         public Boolean AddNewOperation(NewOperation newOp, int id)
         {
             SqlCommand sqlCmd = new SqlCommand();
@@ -77,6 +183,8 @@ namespace Bus_Management_System
             int iataName = newOp.Port;
             int planeStation = newOp.PPSNb;
             int gateNb = newOp.GateNb;
+            string radioNeon = newOp.RadioNeon;
+            string radioGate = newOp.RadioGate;
 
             sqlCmd.CommandText = "Update Vehicles SET Status = @status WHERE VehicleNb = @busSelected";
             sqlCmd.Parameters.Add(new SqlParameter("@status", 3));
@@ -92,7 +200,7 @@ namespace Bus_Management_System
             }
 
 
-            sqlCmd.CommandText = " INSERT INTO Operations (Employee_Id, Operation, FlightNb, Pax, AirPort, PPS, Gate, Bus, Created) VALUES (@basicUserId, @operation, @flightNb, @pax, @airPort, @pps, @gate, @bus, @created)";
+            sqlCmd.CommandText = " INSERT INTO Operations (Employee_Id, Operation, FlightNb, Pax, AirPort, PPS, Gate, Bus, RadioGate, RadioNeon, Created) VALUES (@basicUserId, @operation, @flightNb, @pax, @airPort, @pps, @gate, @bus, @radioGate, @radioNeon, @created)";
 
             //+ " WHERE (airPort = (SELECT Id FROM AirPorts WHERE IATA_Name = '" + iataName + "'), PPS = (SELECT Id FROM Stations WHERE StationNb = '" + pps + "'), Gate = (SELECT Id FROM Gates WHERE GateNb = '" + gate + "'), Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = '" + bus + "')";
 
@@ -104,6 +212,8 @@ namespace Bus_Management_System
             sqlCmd.Parameters.AddWithValue("@pps", planeStation);
             sqlCmd.Parameters.AddWithValue("@gate", gateNb);
             sqlCmd.Parameters.AddWithValue("@bus", busNb);
+            sqlCmd.Parameters.AddWithValue("@radioGate", radioGate);
+            sqlCmd.Parameters.AddWithValue("@radioNeon", radioNeon);
             sqlCmd.Parameters.AddWithValue("@created", dateTime);
 
             try

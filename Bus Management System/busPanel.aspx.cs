@@ -46,6 +46,8 @@ namespace Bus_Management_System
                     LoadBus();
                     SetActiveView(loggedUser, menuItems);
                 }
+
+                FillOperationList();
             }
         }
 
@@ -436,49 +438,36 @@ namespace Bus_Management_System
 
         protected void Rb_Przylot_CheckedChanged(object sender, EventArgs e)
         {
-            if(rb_Przylot.Checked)
+            if (rb_Przylot.Checked)
             {
                 rb_Odlot.Checked = false;
-                Clear_Alocator();
+                ClearAlocatorControls();
             }
             else
             {
-                Clear_Alocator();
+                ClearAlocatorControls();
             }
         }
 
         protected void Rb_Odlot_CheckedChanged(object sender, EventArgs e)
         {
-            if(rb_Odlot.Checked)
+            if (rb_Odlot.Checked)
             {
                 if (rb_Przylot.Checked)
                     rb_Przylot.Checked = false;
-                Clear_Alocator();
+                ClearAlocatorControls();
             }
             else
             {
-                Clear_Alocator();
+                ClearAlocatorControls();
             }
         }
 
-
-        private void Clear_Alocator()
-        {
-            ddl_Port.SelectedIndex = 0;
-            ddl_PPS.SelectedIndex = 0;
-            ddl_Gate.SelectedIndex = 0;
-            ddl_Bus.SelectedIndex = 0;
-            tb_AlocatorFNb.Text = "";
-            tb_Pax.Text = "";
-            tb_RadioGate.Text = "";
-            tb_RadioNeon.Text = "";
-
-        }
 
 
         protected void Bt_AlocatorReset_Click(object sender, EventArgs e)
         {
-            Clear_Alocator();
+            ClearAlocatorControls();
         }
 
 
@@ -514,7 +503,7 @@ namespace Bus_Management_System
                 ClearAlocatorControls();
                 UpdateAlocatorPanel(newOp.BusSelected);
             }
-                
+
             else
             {
                 // wyświetlić na panelu że się nie udało i z jakiego powodu!
@@ -523,7 +512,7 @@ namespace Bus_Management_System
 
         private void UpdateAlocatorPanel(int selectedBusStatus)
         {
-            for (int i = 0; i <36; i++)
+            for (int i = 0; i < 36; i++)
             {
                 string str = "lb_Vehicle" + (i + 1).ToString();
 
@@ -536,32 +525,7 @@ namespace Bus_Management_System
             }
         }
 
-        //private List<String> getOnlineUsers()
-        //{
-        //    List<String> activeSessions = new List<String>();
-        //    object obj = typeof(HttpRuntime).GetProperty("CacheInternal", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null, null);
-        //    object[] obj2 = (object[])obj.GetType().GetField("_caches", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(obj);
-        //    for (int i = 0; i < obj2.Length; i++)
-        //    {
-        //        Hashtable c2 = (Hashtable)obj2[i].GetType().GetField("_entries", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(obj2[i]);
-        //        foreach (DictionaryEntry entry in c2)
-        //        {
-        //            object o1 = entry.Value.GetType().GetProperty("Value", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(entry.Value, null);
-        //            if (o1.GetType().ToString() == "System.Web.SessionState.InProcSessionState")
-        //            {
-        //                SessionStateItemCollection sess = (SessionStateItemCollection)o1.GetType().GetField("_sessionItems", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(o1);
-        //                if (sess != null)
-        //                {
-        //                    if (sess["loggedInUserId"] != null)
-        //                    {
-        //                        activeSessions.Add(sess["loggedInUserId"].ToString());
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //    return activeSessions;
-        //}
+
 
         private void ClearAlocatorControls()
         {
@@ -575,6 +539,30 @@ namespace Bus_Management_System
             ddl_PPS.SelectedIndex = -1;
             tb_RadioNeon.Text = "";
             tb_RadioGate.Text = "";
+        }
+
+
+        private void FillOperationList()
+        {
+            DataSet operations = bl.GetOperations();
+
+            string errorMsg = "";
+            DataTable opDataTable = bl.GetCurrentOp(operations, ref errorMsg);
+
+            if (errorMsg == "")
+            {
+
+            }
+            else
+            {
+                Response.Write("<script> alert('" + errorMsg + "') </script>");
+            }
+
+            gv_OperationList.DataSource = opDataTable;
+            gv_OperationList.DataBind();
+
+            operations.Dispose();
+            opDataTable.Dispose();
         }
     }
 }

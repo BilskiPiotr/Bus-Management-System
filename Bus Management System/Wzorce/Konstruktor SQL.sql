@@ -93,6 +93,8 @@ CREATE TABLE [dbo].[Operations]
 	[PPS]						INT								NOT NULL,
 	[Gate]						INT								NOT NULL,
 	[Bus]						INT								NOT NULL,
+	[RadioGate]					VARCHAR(3)						NULL,
+	[RadioNeon]					VARCHAR(3)						NULL,
 	[Created]					DATETIME						NOT NULL,
 	[Accepted]					DATETIME						NULL,
 	[StartLoad]					DATETIME						NULL,
