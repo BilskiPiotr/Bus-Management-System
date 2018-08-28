@@ -33,33 +33,29 @@
             <Columns>
  
             <asp:TemplateField>
-
-                <HeaderTemplate>Operacja</HeaderTemplate>
-            
+                <HeaderTemplate>Dodano</HeaderTemplate>         
                 <ItemTemplate>
                     <asp:Label ID ="lblId" runat="server"
-                                           Text='<%#Bind("Employee_Id")%>'>
+                                           Text='<%#Bind("created")%>'>
                     </asp:Label>
                 </ItemTemplate>
             </asp:TemplateField>
  
             <asp:TemplateField>
-                <HeaderTemplate>Name</HeaderTemplate>
-
+                <HeaderTemplate>Operacja</HeaderTemplate>
                 <ItemTemplate>
                     <asp:Label ID ="lblName" runat="server" 
-                                             Text='<%#Bind("Operation") %>'>
+                                             Text='<%#Bind("operationId") %>'>
                     </asp:Label>
                 </ItemTemplate>
-
                 <EditItemTemplate>
                     <asp:TextBox ID="txtName" runat="server" 
-                                              Text='<%#Bind("Operation") %>' 
+                                              Text='<%#Bind("operationId") %>' 
                                               MaxLength="20">
                     </asp:TextBox>
                     <asp:RequiredFieldValidator ID="rfvtxtName" runat="server"  
                                                                 Text="*" 
-                                                                ToolTip="Enter name" 
+                                                                ToolTip="Ustal typ operacji" 
                                                                 ControlToValidate="txtName">
                     </asp:RequiredFieldValidator>
                     <asp:RegularExpressionValidator ID="revtxtName" runat="server" 
@@ -77,7 +73,7 @@
 
                     <asp:RequiredFieldValidator ID="rfvtxtNewName" runat="server" 
                                                                    Text="*" 
-                                                                   ToolTip="Enter name" 
+                                                                   ToolTip="Ustal typ operacji" 
                                                                    ControlToValidate="txtNewName">
                     </asp:RequiredFieldValidator>
     
@@ -91,29 +87,29 @@
             </asp:TemplateField>
            
             <asp:TemplateField>
-                <HeaderTemplate>Age</HeaderTemplate>
+                <HeaderTemplate>Rejs</HeaderTemplate>
 
                 <ItemTemplate>
                     <asp:Label ID="lblAge" runat ="server" 
-                                           Text='<%#Bind("FlightNb") %>'>
+                                           Text='<%#Bind("flightNb") %>'>
                     </asp:Label>
                 </ItemTemplate>
 
                 <EditItemTemplate>
                     <asp:TextBox ID ="txtAge" runat="server" 
-                                              Text='<%#Bind("FlightNb") %>' 
-                                              MaxLength="2">
+                                              Text='<%#Bind("flightNb") %>' 
+                                              MaxLength="7">
                     </asp:TextBox>
 
                     <asp:RequiredFieldValidator ID="rfvtxtAge" runat="server" 
                                                                Text="*" 
-                                                               ToolTip="Enter age" 
+                                                               ToolTip="Wprowadź numer rejsu" 
                                                                ControlToValidate="txtAge">
                     </asp:RequiredFieldValidator>
 
                     <asp:RegularExpressionValidator ID="revtxtAge" runat="server" 
                                                                    Text="*" 
-                                                                   ToolTip="Enter numeric value" 
+                                                                   ToolTip="Pole nie może zawierać spacji" 
                                                                    ControlToValidate="txtAge" 
                                                                    ValidationExpression="^[0-9]+$">
                     </asp:RegularExpressionValidator>
@@ -121,18 +117,18 @@
 
                 <FooterTemplate>
                     <asp:TextBox ID="txtNewAge" runat="server" 
-                                                MaxLength="2">
+                                                MaxLength="7">
                     </asp:TextBox>
 
                     <asp:RequiredFieldValidator ID="rfvtxtNewAge" runat="server" 
                                                                   Text="*" 
-                                                                  ToolTip="Enter age" 
+                                                                  ToolTip="Wprowadź numer rejsu" 
                                                                   ControlToValidate="txtNewAge">
                     </asp:RequiredFieldValidator>
                     
                     <asp:RegularExpressionValidator ID="revNewtxtAge" runat="server" 
                                                                       Text="*" 
-                                                                      ToolTip="Enter numeric value" 
+                                                                      ToolTip="Pole nie może zawierać spacji" 
                                                                       ControlToValidate="txtNewAge" 
                                                                       ValidationExpression="^[0-9]+$">
                     </asp:RegularExpressionValidator>
@@ -140,29 +136,29 @@
             </asp:TemplateField>
  
             <asp:TemplateField>
-                <HeaderTemplate>Salary</HeaderTemplate>
+                <HeaderTemplate>Pax</HeaderTemplate>
 
                 <ItemTemplate>
                     <asp:Label ID = "lblSalary" runat="server" 
-                                                Text='<%#Bind("Pax") %>'>
+                                                Text='<%#Bind("pax") %>'>
                     </asp:Label>
                 </ItemTemplate>
 
                 <EditItemTemplate>
                     <asp:TextBox ID="txtSalary" runat="server" 
-                                                Text='<%#Bind("Pax") %>'  
-                                                MaxLength="10">
+                                                Text='<%#Bind("pax") %>'  
+                                                MaxLength="3">
                     </asp:TextBox>
 
                     <asp:RequiredFieldValidator ID="rfvtxtSalary" runat="server" 
                                                                   Text="*"  
-                                                                  ToolTip="Enter salary" 
+                                                                  ToolTip="Wprowadź liczbę pasażerów" 
                                                                   ControlToValidate="txtSalary">
                     </asp:RequiredFieldValidator>
 
                     <asp:RegularExpressionValidator ID="revtxtSalary" runat="server" 
                                                                       Text="*" 
-                                                                      ToolTip="Enter numeric value" 
+                                                                      ToolTip="Tylko cyfry" 
                                                                       ControlToValidate="txtSalary" 
                                                                       ValidationExpression="^[0-9]+$">
                     </asp:RegularExpressionValidator>
@@ -170,18 +166,18 @@
 
                 <FooterTemplate>
                     <asp:TextBox ID="txtNewSalary" runat="server"           
-                                                   MaxLength="10">
+                                                   MaxLength="3">
                     </asp:TextBox>
 
                     <asp:RequiredFieldValidator ID="rfvtxtNewSalary" runat="server" 
                                                                      Text="*"  
-                                                                     ToolTip="Enter salary" 
+                                                                     ToolTip="Wprowadź liczbę pasażerów" 
                                                                      ControlToValidate="txtNewSalary">
                     </asp:RequiredFieldValidator>
 
                     <asp:RegularExpressionValidator ID="revtxtNewSalary" runat="server" 
                                                                          Text="*" 
-                                                                         ToolTip="Enter numeric value" 
+                                                                         ToolTip="Tylko cyfry" 
                                                                          ControlToValidate="txtNewSalary" 
                                                                          ValidationExpression="^[0-9]+$">
                     </asp:RegularExpressionValidator>

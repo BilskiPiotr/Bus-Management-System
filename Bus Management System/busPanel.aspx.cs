@@ -545,25 +545,25 @@ namespace Bus_Management_System
 
         private void FillOperationList()
         {
-            DataSet operations = bl.GetOperations();
+            //DataSet operations = bl.GetOperations();
 
-            string errorMsg = "";
-            DataTable opDataTable = bl.GetCurrentOp(operations, ref errorMsg);
+            //string errorMsg = "";
+            //DataTable opDataTable = bl.GetCurrentOp(operations, ref errorMsg);
 
-            if (errorMsg == "")
-            {
+            //if (errorMsg == "")
+            //{
 
-            }
-            else
-            {
-                Response.Write("<script> alert('" + errorMsg + "') </script>");
-            }
+            //}
+            //else
+            //{
+            //    Response.Write("<script> alert('" + errorMsg + "') </script>");
+            //}
 
-            gv_OperationList.DataSource = opDataTable;
-            gv_OperationList.DataBind();
+            //gv_OperationList.DataSource = opDataTable;
+            //gv_OperationList.DataBind();
 
-            operations.Dispose();
-            opDataTable.Dispose();
+            //operations.Dispose();
+            //opDataTable.Dispose();
         }
     }
 }

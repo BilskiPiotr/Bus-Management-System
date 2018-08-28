@@ -17,8 +17,6 @@ namespace Bus_Management_System
         public static string imgEditPath;
 
 
-
-
         public void ClearFields(BusinessLayer bl)
         {
 
@@ -98,12 +96,12 @@ namespace Bus_Management_System
         }
 
 
-        public DataTable FillAlocatorGrid()
-        {
-            DataSet ds = GetOperations();
-            dt = GetCurrentOp(ds);
+        //public static DataTable FillAlocatorGrid()
+        //{
+            //DataSet ds = GetOperations();
+            //dt = GetCurrentOp(ds);
 
-        }
+        //}
 
 
         public DataTable GetCurrentOp(DataSet rawData)

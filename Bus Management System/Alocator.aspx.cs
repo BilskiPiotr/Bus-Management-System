@@ -27,16 +27,33 @@ namespace Bus_Management_System
         /// </summary>
         public void FillGridView()
         {
+            // przetworzenie danych do wyświetlania
             try
             {
-                string cnString = ConfigurationManager.ConnectionStrings["BusData"].ConnectionString;
-                SqlConnection con = new SqlConnection(cnString);
-                BusinessLayer.adap = new SqlDataAdapter("select Employee_Id, Operation, FlightNb, Pax, RadioGate, RadioNeon, Created from Operations", con);
-                SqlCommandBuilder bui = new SqlCommandBuilder(BusinessLayer.adap);
-                BusinessLayer.dt = new DataTable(BusinessLayer.GetCurrentOp());
-                BusinessLayer.adap.Fill(BusinessLayer.dt);
+                BusinessLayer bl = new BusinessLayer();
+                BusinessLayer.dt = bl.GetCurrentOp(bl.GetOperations());
+
                 GridView1.DataSource = BusinessLayer.dt;
                 GridView1.DataBind();
+            }
+            catch
+            {
+                Response.Write("<script> alert('Błąd pobierania listy operacji') </script>");
+            }
+
+
+            try
+            {
+
+
+                //string cnString = ConfigurationManager.ConnectionStrings["BusData"].ConnectionString;
+                //SqlConnection con = new SqlConnection(cnString);
+                //BusinessLayer.adap = new SqlDataAdapter("select Employee_Id, Operation, FlightNb, Pax, RadioGate, RadioNeon, Created from Operations", con);
+                //SqlCommandBuilder bui = new SqlCommandBuilder(BusinessLayer.adap);
+                //BusinessLayer.dt = new DataTable(BusinessLayer.GetCurrentOp());
+                //BusinessLayer.adap.Fill(BusinessLayer.dt);
+                //GridView1.DataSource = BusinessLayer.dt;
+                //GridView1.DataBind();
             }
             catch
             {
