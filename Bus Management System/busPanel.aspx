@@ -375,20 +375,6 @@
                                     <td class="center"><asp:Label ID="lb_Vehicle23" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
                                     <td class="center"><asp:Label ID="lb_Vehicle24" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
                                 </tr>
-                                <tr>
-                                    <td class="center"><asp:Label ID="lb_Vehicle25" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle26" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle27" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle28" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle29" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle30" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle31" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle32" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle33" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle34" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle35" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                    <td class="center"><asp:Label ID="lb_Vehicle36" runat="server" Text="- - -" style="text-align: center; background-color: #999999;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -509,35 +495,25 @@
                                     <td class="center">
                                         <asp:GridView ID="gv_OperationList" runat="server" AutoGenerateColumns="false" AllowSorting="True" EnableSortingAndPagingCallbacks="True">
                                             <Columns>
-                                                <asp:BoundField DataField="AirPort" HeaderText="Air Port" ItemStyle-Width="30px" >
-                                                <ItemStyle Width="30px" />
+                                                <asp:BoundField DataField="airPort" HeaderText="Air Port" ItemStyle-Width="30px" >
                                                 </asp:BoundField>
-                                                <asp:BoundField DataField="FlightNb" HeaderText="Rejs No:" ItemStyle-Width="30px" >
-                                                <ItemStyle Width="30px" />
+                                                <asp:BoundField DataField="flightNb" HeaderText="Rejs No:" ItemStyle-Width="30px" >
                                                 </asp:BoundField>
-                                                <asp:BoundField DataField="Operation" HeaderText="Operation" ItemStyle-Width="30px" >
-                                                <ItemStyle Width="30px" />
+                                                <asp:BoundField DataField="operationId" HeaderText="Operation" ItemStyle-Width="30px" >
                                                 </asp:BoundField>
-                                                <asp:BoundField DataField="Gate" HeaderText="Gate" ItemStyle-Width="30px" >
-                                                <ItemStyle Width="30px" />
+                                                <asp:BoundField DataField="gate" HeaderText="Gate" ItemStyle-Width="30px" >
                                                 </asp:BoundField>
-                                                <asp:BoundField DataField="PPS" HeaderText="PPS" ItemStyle-Width="30px" >
-                                                <ItemStyle Width="30px" />
+                                                <asp:BoundField DataField="pps" HeaderText="PPS" ItemStyle-Width="30px" >
                                                 </asp:BoundField>
-                                                <asp:BoundField DataField="Pax" HeaderText="Pax" ItemStyle-Width="30px" >
-                                                <ItemStyle Width="30px" />
+                                                <asp:BoundField DataField="paxCount" HeaderText="Pax" ItemStyle-Width="30px" >
                                                 </asp:BoundField>
-                                                <asp:BoundField DataField="RadioNeon" HeaderText="Neon Radio" ItemStyle-Width="30px" >
-                                                <ItemStyle Width="30px" />
+                                                <asp:BoundField DataField="radioNeon" HeaderText="Neon Radio" ItemStyle-Width="30px" >
                                                 </asp:BoundField>
-                                                <asp:BoundField DataField="RadioGate" HeaderText="Gate Radio" ItemStyle-Width="30px" >
-                                                <ItemStyle Width="30px" />
+                                                <asp:BoundField DataField="radioGate" HeaderText="Gate Radio" ItemStyle-Width="30px" >
                                                 </asp:BoundField>
-                                                <asp:BoundField DataField="Created" HeaderText="Begin" ItemStyle-Width="30px" >
-                                                <ItemStyle Width="30px" />
+                                                <asp:BoundField DataField="created" HeaderText="Begin" ItemStyle-Width="30px" >
                                                 </asp:BoundField>
-                                                <asp:BoundField DataField="Bus" HeaderText="Bus" ItemStyle-Width="30px" >
-                                                <ItemStyle Width="30px" />
+                                                <asp:BoundField DataField="bus" HeaderText="Bus" ItemStyle-Width="30px" >
                                                 </asp:BoundField>
                                             </Columns>
                                             <HeaderStyle BackColor="#FF6600" Font-Bold="True" Font-Names="Tahoma" Font-Size="Small" ForeColor="#FFFFCC" />

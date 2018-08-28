@@ -11,6 +11,10 @@ namespace Bus_Management_System
     {
         DataAccessLayer dal = new DataAccessLayer();
         NewOperation newOp = new NewOperation();
+        public static SqlDataAdapter adap;
+        public static DataTable dt;
+        // Stored image path before updating the record
+        public static string imgEditPath;
 
 
 
@@ -94,65 +98,100 @@ namespace Bus_Management_System
         }
 
 
-        public DataTable GetCurrentOp(DataSet rawData, ref string errorMsg)
+        public DataTable FillAlocatorGrid()
         {
+            DataSet ds = GetOperations();
+            dt = GetCurrentOp(ds);
+
+        }
+
+
+        public DataTable GetCurrentOp(DataSet rawData)
+        {
+            string created = "";
+            string accepted = "";
+            string startLoad = "";
+            string startDrive = "";
+            string startUnload = "";
+            string endOp = "";
+
             DataTable op = new DataTable();
+
+            op.Columns.Add("employeeId", typeof(string));
+            op.Columns.Add("operationId", typeof(string));
+            op.Columns.Add("flightNb", typeof(string));
+            op.Columns.Add("paxCount", typeof(string));
+            op.Columns.Add("airPort", typeof(string));
+            op.Columns.Add("pps", typeof(string));
+            op.Columns.Add("gate", typeof(string));
+            op.Columns.Add("bus", typeof(string));
+            op.Columns.Add("created", typeof(string));
+            op.Columns.Add("accepted", typeof(string));
+            op.Columns.Add("startLoad", typeof(string));
+            op.Columns.Add("startDrive", typeof(string));
+            op.Columns.Add("startUnload", typeof(string));
+            op.Columns.Add("endOp", typeof(string));
+            op.Columns.Add("radioGate", typeof(int));
+            op.Columns.Add("radioNeon", typeof(int));
+
 
             for (int i = 0; i < rawData.Tables[0].Rows.Count; i++)
             {
-                string employeeId = GetOpData(Convert.ToInt32(rawData.Tables[0].Rows[0][1]), 1);
-                string operationId = Convert.ToString(rawData.Tables[0].Rows[0][2]);
-                string flightNb = Convert.ToString(rawData.Tables[0].Rows[0][3]);
-                string paxCount = Convert.ToString(rawData.Tables[0].Rows[0][4]);
-                string airPort = GetOpData(Convert.ToInt32(rawData.Tables[0].Rows[0][5]), 2);
-                string pps = GetOpData(Convert.ToInt32(rawData.Tables[0].Rows[0][6]), 3);
-                string gate = GetOpData(Convert.ToInt32(rawData.Tables[0].Rows[0][7]), 4);
-                string bus = GetOpData(Convert.ToInt32(rawData.Tables[0].Rows[0][8]), 5);
-                if (rawData.Tables[0].Rows[0][9] != null)
+                string employeeId = GetOpData(Convert.ToInt32(rawData.Tables[0].Rows[i][1]), 1);
+                string operationId = Convert.ToString(rawData.Tables[0].Rows[i][2]);
+                string flightNb = Convert.ToString(rawData.Tables[0].Rows[i][3]);
+                string paxCount = Convert.ToString(rawData.Tables[0].Rows[i][4]);
+                string airPort = GetOpData(Convert.ToInt32(rawData.Tables[0].Rows[i][5]), 2);
+                string pps = GetOpData(Convert.ToInt32(rawData.Tables[0].Rows[i][6]), 3);
+                string gate = GetOpData(Convert.ToInt32(rawData.Tables[0].Rows[i][7]), 4);
+                string bus = GetOpData(Convert.ToInt32(rawData.Tables[0].Rows[i][8]), 5);
+                if (rawData.Tables[0].Rows[i][9] != null && Convert.ToString(rawData.Tables[0].Rows[i][9]) != "")
                 {
-                    string created = Convert.ToString(rawData.Tables[0].Rows[0][9]).Substring(11, 5);
+                    created = Convert.ToString(rawData.Tables[0].Rows[i][9]).Substring(11, 5);
                 }
                 else
                 {
-                    string created = "";
+                    created = "00:00";
                 }
-                if (rawData.Tables[0].Rows[0][10] != null)
+                if (rawData.Tables[0].Rows[i][10] != null && Convert.ToString(rawData.Tables[0].Rows[i][10]) != "")
                 {
-                    string accepted = Convert.ToString(rawData.Tables[0].Rows[0][10]).Substring(11, 5);
-                }
-                {
-                    string accepted = "";
-                }
-                if (rawData.Tables[0].Rows[0][11] != null)
-                {
-                    string startLoad = Convert.ToString(rawData.Tables[0].Rows[0][11]).Substring(11, 5);
+                    accepted = Convert.ToString(rawData.Tables[0].Rows[i][10]).Substring(11, 5);
                 }
                 {
-                    string startLoad = "";
+                    accepted = "00:00";
                 }
-                if (rawData.Tables[0].Rows[0][12] != null)
+                if (rawData.Tables[0].Rows[i][11] != null && Convert.ToString(rawData.Tables[0].Rows[i][11]) != "")
                 {
-                    string startDrive = Convert.ToString(rawData.Tables[0].Rows[0][12]).Substring(11, 5);
-                }
-                {
-                    string startDrive = "";
-                }
-                if (rawData.Tables[0].Rows[0][13] != null)
-                {
-                    string startUnload = Convert.ToString(rawData.Tables[0].Rows[0][13]).Substring(11, 5);
+                    startLoad = Convert.ToString(rawData.Tables[0].Rows[i][11]).Substring(11, 5);
                 }
                 {
-                    string startUnload = "";
+                    startLoad = "00:00";
                 }
-                if (rawData.Tables[0].Rows[0][14] != null)
+                if (rawData.Tables[0].Rows[i][12] != null && Convert.ToString(rawData.Tables[0].Rows[i][12]) != "")
                 {
-                    string ednOp = Convert.ToString(rawData.Tables[0].Rows[0][14]).Substring(11, 5);
+                    startDrive = Convert.ToString(rawData.Tables[0].Rows[i][12]).Substring(11, 5);
                 }
                 {
-                    string endOp = "";
+                    startDrive = "00:00";
                 }
-                string radioGate = (string)rawData.Tables[0].Rows[0][15];
-                string radioNeon = (string)rawData.Tables[0].Rows[0][16];
+                if (rawData.Tables[0].Rows[i][13] != null && Convert.ToString(rawData.Tables[0].Rows[i][13]) != "")
+                {
+                    startUnload = Convert.ToString(rawData.Tables[0].Rows[i][13]).Substring(11, 5);
+                }
+                {
+                    startUnload = "00:00";
+                }
+                if (rawData.Tables[0].Rows[i][14] != null && Convert.ToString(rawData.Tables[0].Rows[i][14]) != "")
+                {
+                    endOp = Convert.ToString(rawData.Tables[0].Rows[i][14]).Substring(11, 5);
+                }
+                {
+                    endOp = "00:00";
+                }
+                string radioGate = (string)rawData.Tables[0].Rows[i][15];
+                string radioNeon = (string)rawData.Tables[0].Rows[i][16];
+
+                op.Rows.Add(employeeId, operationId, flightNb, paxCount, airPort, pps, gate, bus, created, accepted, startLoad, startDrive, startUnload, endOp, radioGate, radioNeon);
             }
 
             return op;

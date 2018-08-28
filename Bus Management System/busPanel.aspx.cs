@@ -321,7 +321,8 @@ namespace Bus_Management_System
                 BusManagement.SetActiveView(Admin);
             else
                 if (loggedUser.AdminPrivileges == 1)
-                BusManagement.SetActiveView(Alocator);
+                //BusManagement.SetActiveView(Alocator);
+                Response.Redirect("Alocator.aspx");
             else
                 if (loggedUser.AdminPrivileges == 2)
                 BusManagement.SetActiveView(Bus);
