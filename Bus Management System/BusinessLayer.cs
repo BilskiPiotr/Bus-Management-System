@@ -136,7 +136,11 @@ namespace Bus_Management_System
             for (int i = 0; i < rawData.Tables[0].Rows.Count; i++)
             {
                 string employeeId = GetOpData(Convert.ToInt32(rawData.Tables[0].Rows[i][1]), 1);
-                string operationId = Convert.ToString(rawData.Tables[0].Rows[i][2]);
+                string operationId = "";
+                if (Convert.ToString(rawData.Tables[0].Rows[i][2]) == "0")
+                    operationId = "Odlot";
+                else
+                    operationId = "Przylot";
                 string flightNb = Convert.ToString(rawData.Tables[0].Rows[i][3]);
                 string paxCount = Convert.ToString(rawData.Tables[0].Rows[i][4]);
                 string airPort = GetOpData(Convert.ToInt32(rawData.Tables[0].Rows[i][5]), 2);

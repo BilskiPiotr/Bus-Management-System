@@ -30,28 +30,33 @@
                 <RowStyle BackColor="#E3EAEB" />
                 <SelectedRowStyle BackColor="#C5BBAF" Font-Bold="True" ForeColor="#333333" />
  
+<%-- DODANO --%>
             <Columns>
- 
+
             <asp:TemplateField>
                 <HeaderTemplate>Dodano</HeaderTemplate>         
                 <ItemTemplate>
                     <asp:Label ID ="lblId" runat="server"
-                                           Text='<%#Bind("created")%>'>
+                                           Text='<%#Bind("created")%>'
+                                           Width="30px">
                     </asp:Label>
                 </ItemTemplate>
             </asp:TemplateField>
- 
+
+
+<%-- OPERACJA --%>
             <asp:TemplateField>
                 <HeaderTemplate>Operacja</HeaderTemplate>
                 <ItemTemplate>
                     <asp:Label ID ="lblName" runat="server" 
-                                             Text='<%#Bind("operationId") %>'>
+                                             Text='<%#Bind("operationId") %>'
+                                             Width="30px">
                     </asp:Label>
                 </ItemTemplate>
                 <EditItemTemplate>
                     <asp:TextBox ID="txtName" runat="server" 
                                               Text='<%#Bind("operationId") %>' 
-                                              MaxLength="20">
+                                              Width="30px">
                     </asp:TextBox>
                     <asp:RequiredFieldValidator ID="rfvtxtName" runat="server"  
                                                                 Text="*" 
@@ -68,7 +73,7 @@
 
                 <FooterTemplate>
                     <asp:TextBox ID="txtNewName" runat="server" 
-                                                 MaxLength="20">
+                                                 Width="30px">
                     </asp:TextBox>
 
                     <asp:RequiredFieldValidator ID="rfvtxtNewName" runat="server" 
@@ -85,7 +90,9 @@
                     </asp:RegularExpressionValidator>
                 </FooterTemplate>
             </asp:TemplateField>
-           
+
+
+<%-- REJS --%>         
             <asp:TemplateField>
                 <HeaderTemplate>Rejs</HeaderTemplate>
 
@@ -119,7 +126,6 @@
                     <asp:TextBox ID="txtNewAge" runat="server" 
                                                 MaxLength="7">
                     </asp:TextBox>
-
                     <asp:RequiredFieldValidator ID="rfvtxtNewAge" runat="server" 
                                                                   Text="*" 
                                                                   ToolTip="Wprowadź numer rejsu" 
@@ -134,28 +140,27 @@
                     </asp:RegularExpressionValidator>
                 </FooterTemplate>
             </asp:TemplateField>
- 
+
+
+<%-- PAX --%>
             <asp:TemplateField>
                 <HeaderTemplate>Pax</HeaderTemplate>
-
                 <ItemTemplate>
                     <asp:Label ID = "lblSalary" runat="server" 
-                                                Text='<%#Bind("pax") %>'>
+                                                Text='<%#Bind("paxCount") %>'>
                     </asp:Label>
                 </ItemTemplate>
 
                 <EditItemTemplate>
                     <asp:TextBox ID="txtSalary" runat="server" 
-                                                Text='<%#Bind("pax") %>'  
+                                                Text='<%#Bind("paxCount") %>'  
                                                 MaxLength="3">
                     </asp:TextBox>
-
                     <asp:RequiredFieldValidator ID="rfvtxtSalary" runat="server" 
                                                                   Text="*"  
                                                                   ToolTip="Wprowadź liczbę pasażerów" 
                                                                   ControlToValidate="txtSalary">
                     </asp:RequiredFieldValidator>
-
                     <asp:RegularExpressionValidator ID="revtxtSalary" runat="server" 
                                                                       Text="*" 
                                                                       ToolTip="Tylko cyfry" 
@@ -168,13 +173,11 @@
                     <asp:TextBox ID="txtNewSalary" runat="server"           
                                                    MaxLength="3">
                     </asp:TextBox>
-
                     <asp:RequiredFieldValidator ID="rfvtxtNewSalary" runat="server" 
                                                                      Text="*"  
                                                                      ToolTip="Wprowadź liczbę pasażerów" 
                                                                      ControlToValidate="txtNewSalary">
                     </asp:RequiredFieldValidator>
-
                     <asp:RegularExpressionValidator ID="revtxtNewSalary" runat="server" 
                                                                          Text="*" 
                                                                          ToolTip="Tylko cyfry" 
@@ -183,25 +186,27 @@
                     </asp:RegularExpressionValidator>
                 </FooterTemplate>
             </asp:TemplateField>
- 
+
+
+<%-- PORT --%>
             <asp:TemplateField>
-                <HeaderTemplate>Country</HeaderTemplate>
+                <HeaderTemplate>Port</HeaderTemplate>
 
                 <ItemTemplate>
                     <asp:Label ID = "lblCountry" runat="server" 
-                                                 Text='<%#Bind("RadioGate") %>'>
+                                                 Text='<%#Bind("airPort") %>'>
                     </asp:Label>
                 </ItemTemplate>
 
                 <EditItemTemplate>
                     <asp:TextBox ID="txtCountry" runat="server" 
-                                                 Text='<%#Bind("RadioGate") %>' 
+                                                 Text='<%#Bind("airPort") %>' 
                                                  MaxLength="20">
                     </asp:TextBox>
 
                     <asp:RequiredFieldValidator ID="rfvtxtCountry" runat="server" 
                                                                    Text="*" 
-                                                                   ToolTip="Enter country" 
+                                                                   ToolTip="Wybierz Air Port" 
                                                                    ControlToValidate="txtCountry">
                     </asp:RequiredFieldValidator>
                 </EditItemTemplate>
@@ -213,30 +218,32 @@
 
                     <asp:RequiredFieldValidator ID="rfvtxtNewCountry" runat="server" 
                                                                       Text="*" 
-                                                                      ToolTip="Enter country" 
+                                                                      ToolTip="Wybierz Air Port" 
                                                                       ControlToValidate="txtNewCountry">
                     </asp:RequiredFieldValidator>
                 </FooterTemplate>
             </asp:TemplateField>
  
+
+<%-- GATE --%>
             <asp:TemplateField>
-                <HeaderTemplate>City</HeaderTemplate>
+                <HeaderTemplate>Gate</HeaderTemplate>
 
                 <ItemTemplate>
                     <asp:Label ID = "lblCity" runat="server" 
-                                              Text='<%#Bind("RadioNeon") %>'>
+                                              Text='<%#Bind("gate") %>'>
                     </asp:Label>
                 </ItemTemplate>
 
                 <EditItemTemplate>
                     <asp:TextBox ID="txtCity" runat="server" 
-                                              Text='<%#Bind("RadioNeon") %>' 
+                                              Text='<%#Bind("gate") %>' 
                                               MaxLength="20">
                     </asp:TextBox>
 
                     <asp:RequiredFieldValidator ID="rfvtxtCity" runat="server" 
                                                                 Text="*" 
-                                                                ToolTip="Enter city" 
+                                                                ToolTip="WYbierz Gate" 
                                                                 ControlToValidate="txtCity">
                     </asp:RequiredFieldValidator>
                 </EditItemTemplate>
@@ -248,7 +255,7 @@
 
                     <asp:RequiredFieldValidator ID="rfvtxtNewCity" runat="server" 
                                                                    Text="*" 
-                                                                   ToolTip="Enter city" 
+                                                                   ToolTip="Wybierz Gate" 
                                                                    ControlToValidate="txtNewCity">
                     </asp:RequiredFieldValidator>
                 </FooterTemplate>
@@ -256,34 +263,34 @@
  
 
                     
-
+<%-- PPS --%>
             <asp:TemplateField>
-                <HeaderTemplate>Porty</HeaderTemplate>
+                <HeaderTemplate>PPS</HeaderTemplate>
 
                 <ItemTemplate>
                     <asp:Label ID ="lb_port" runat="server" 
-                                             Text='<%#Bind("Created") %>'>
+                                             Text='<%#Bind("pps") %>'>
                     </asp:Label>
                 </ItemTemplate>
 
                 <EditItemTemplate>
                     <asp:DropDownList ID="ddlPorts" runat="server" 
-                                                    Width="50px">
+                                                    Width="30px">
                     </asp:DropDownList>
                     <asp:RequiredFieldValidator ID="rfvdldlPorts" runat="server" 
                                                                   ErrorMessage="*" 
-                                                                  ToolTip="Wybierz Port" 
+                                                                  ToolTip="Wybierz pole postojowe samolotu" 
                                                                   ControlToValidate="ddlPorts">
                     </asp:RequiredFieldValidator>
                 </EditItemTemplate>
 
                 <FooterTemplate>
                     <asp:DropDownList ID="ddlEditPorts" runat="server" 
-                                                        Width="50px">
+                                                        Width="30px">
                     </asp:DropDownList>
                     <asp:RequiredFieldValidator ID="rfvdldlEditPorts" runat="server" 
                                                                       ErrorMessage="*" 
-                                                                      ToolTip="Wybierz Port" 
+                                                                      ToolTip="Wybierz pole postojowe samolotu" 
                                                                       ControlToValidate="ddlEditPorts">
                     </asp:RequiredFieldValidator>
                 </FooterTemplate>
