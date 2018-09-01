@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
+using System.Web.UI.WebControls;
 
 namespace Bus_Management_System
 {
@@ -267,6 +268,16 @@ namespace Bus_Management_System
             }
 
             return true;
+        }
+
+
+        public static void CreateOperationDDL(ref DropDownList ddl, DataTable emptyDT)
+        {
+
+            ddl.DataSource = emptyDT;
+            ddl.DataTextField = "opType";
+            ddl.DataValueField = "opValue";
+            ddl.DataBind();
         }
     }
 }

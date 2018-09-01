@@ -17,7 +17,7 @@ namespace Bus_Management_System
         {
             if (!IsPostBack)
             {
-                // Call FillGridView Method
+                // załadowanie danych do GridView Alocator
                 FillGridView();
             }
         }
@@ -36,14 +36,14 @@ namespace Bus_Management_System
                 GridView1.DataSource = BusinessLayer.dt;
                 GridView1.DataBind();
             }
-            catch
+            catch (Exception ex)
             {
                 Response.Write("<script> alert('Błąd pobierania listy operacji') </script>");
             }
 
 
-            try
-            {
+            //try
+            //{
 
 
                 //string cnString = ConfigurationManager.ConnectionStrings["BusData"].ConnectionString;
@@ -54,12 +54,74 @@ namespace Bus_Management_System
                 //BusinessLayer.adap.Fill(BusinessLayer.dt);
                 //GridView1.DataSource = BusinessLayer.dt;
                 //GridView1.DataBind();
-            }
-            catch
-            {
-                Response.Write("<script> alert('Connection String Error...') </script>");
-            }
+            //}
+            //catch
+            //{
+            //    Response.Write("<script> alert('Connection String Error...') </script>");
+            //}
         }
+
+
+        // Skonstruowanie i załadowanie danych do ddl_Operacje
+        private DataTable BuildOperationDDL()
+        {
+            DataTable op = new DataTable();
+
+            op.Columns.Add("opType", typeof(string));
+            op.Columns.Add("opValue", typeof(int));
+
+            DataRow dtrow = op.NewRow();
+            dtrow[0] = "operacja";
+            dtrow[1] = -1;
+            op.Rows.Add(dtrow);
+
+            dtrow = op.NewRow();
+            dtrow[0] = "Odlot";
+            dtrow[1] = 0;
+            op.Rows.Add(dtrow);
+
+            dtrow = op.NewRow();
+            dtrow[0] = "Przylot";
+            dtrow[1] = 1;
+            op.Rows.Add(dtrow);
+
+            return op;
+        }
+
+        protected void OnDataBound(object sender, EventArgs e)
+        {
+
+            DropDownList DropDownList1 = GridView1.FooterRow.FindControl("ddl_AlocatorNewOperation") as DropDownList;
+            DropDownList DropDownList2 = GridView1.FooterRow.FindControl("ddl_AlocatorEditOperation") as DropDownList;
+
+            DataTable dtOperation = new DataTable();
+            dtOperation = BuildOperationDDL();
+
+            if (DropDownList1 != null)
+            {
+                BusinessLayer.CreateOperationDDL(ref DropDownList1, dtOperation);
+            }
+
+            if (DropDownList2 != null)
+            {
+                BusinessLayer.CreateOperationDDL(ref DropDownList1, dtOperation);
+            }
+
+            DropDownList DropDownList3 = GridView1.FooterRow.FindControl("ddl_AlocatorNewOperation") as DropDownList;
+            //if (DropDownList1 != null)
+            //{
+            //    DataTable dt = new DataTable();
+            //    dt = BuildOperationDDL();
+            //    DropDownList1.DataSource = dt;
+
+            //    DropDownList1.DataTextField = "opType";
+            //    DropDownList1.DataValueField = "opValue";
+
+            //    DropDownList1.DataBind();
+            //}
+        }
+
+
         /// <summary>
         /// Edit record
         /// </summary>
@@ -67,12 +129,12 @@ namespace Bus_Management_System
         /// <param name="e"></param>
         protected void editRecord(object sender, GridViewEditEventArgs e)
         {
-            // Get the image path for remove old image after update record
-            Image imgEditPhoto = GridView1.Rows[e.NewEditIndex].FindControl("imgPhoto") as Image;
-            BusinessLayer.imgEditPath = imgEditPhoto.ImageUrl;
-            // Get the current row index for edit record
-            GridView1.EditIndex = e.NewEditIndex;
-            FillGridView();
+            //// Get the image path for remove old image after update record
+            //Image imgEditPhoto = GridView1.Rows[e.NewEditIndex].FindControl("imgPhoto") as Image;
+            //BusinessLayer.imgEditPath = imgEditPhoto.ImageUrl;
+            //// Get the current row index for edit record
+            //GridView1.EditIndex = e.NewEditIndex;
+            //FillGridView();
         }
 
         /// <summary>
@@ -98,6 +160,7 @@ namespace Bus_Management_System
                 if (BusinessLayer.dt.Rows.Count > 0)
                 {
                     GridView1.EditIndex = -1;
+
                     GridView1.ShowFooter = true;
                     FillGridView();
                 }
@@ -150,7 +213,7 @@ namespace Bus_Management_System
                     BusinessLayer.dt.Rows[0].Delete();
                     BusinessLayer.adap.Update(BusinessLayer.dt);
                 }
-                TextBox txtName = GridView1.FooterRow.FindControl("txtNewName") as TextBox;
+                //TextBox txtName = GridView1.FooterRow.FindControl("txtNewName") as TextBox;
                 TextBox txtAge = GridView1.FooterRow.FindControl("txtNewAge") as TextBox;
                 TextBox txtSalary = GridView1.FooterRow.FindControl("txtNewSalary") as TextBox;
                 TextBox txtCountry = GridView1.FooterRow.FindControl("txtNewCountry") as TextBox;
@@ -159,7 +222,7 @@ namespace Bus_Management_System
                 Guid FileName = Guid.NewGuid();
                 fuPhoto.SaveAs(Server.MapPath("~/Images/" + FileName + ".png"));
                 DataRow dr = BusinessLayer.dt.NewRow();
-                dr["name"] = txtName.Text.Trim();
+                //dr["name"] = txtName.Text.Trim();
                 dr["age"] = txtAge.Text.Trim();
                 dr["salary"] = txtSalary.Text.Trim();
                 dr["country"] = txtCountry.Text.Trim();
@@ -185,7 +248,7 @@ namespace Bus_Management_System
         {
             try
             {
-                TextBox txtName = GridView1.Rows[e.RowIndex].FindControl("txtName") as TextBox;
+                //TextBox txtName = GridView1.Rows[e.RowIndex].FindControl("txtName") as TextBox;
                 TextBox txtAge = GridView1.Rows[e.RowIndex].FindControl("txtAge") as TextBox;
                 TextBox txtSalary = GridView1.Rows[e.RowIndex].FindControl("txtSalary") as TextBox;
                 TextBox txtCountry = GridView1.Rows[e.RowIndex].FindControl("txtCountry") as TextBox;
@@ -198,7 +261,7 @@ namespace Bus_Management_System
                     BusinessLayer.dt.Rows[GridView1.Rows[e.RowIndex].RowIndex]["photopath"] = "~/Images/" + FileName + ".png";
                     File.Delete(Server.MapPath(BusinessLayer.imgEditPath));
                 }
-                BusinessLayer.dt.Rows[GridView1.Rows[e.RowIndex].RowIndex]["name"] = txtName.Text.Trim();
+                //BusinessLayer.dt.Rows[GridView1.Rows[e.RowIndex].RowIndex]["name"] = txtName.Text.Trim();
                 BusinessLayer.dt.Rows[GridView1.Rows[e.RowIndex].RowIndex]["age"] = Convert.ToInt32(txtAge.Text.Trim());
                 BusinessLayer.dt.Rows[GridView1.Rows[e.RowIndex].RowIndex]["salary"] = Convert.ToInt32(txtSalary.Text.Trim());
                 BusinessLayer.dt.Rows[GridView1.Rows[e.RowIndex].RowIndex]["country"] = txtCountry.Text.Trim();

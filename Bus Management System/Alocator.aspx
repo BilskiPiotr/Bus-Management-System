@@ -16,6 +16,7 @@
                                                         OnRowCancelingEdit="cancelRecord" 
                                                         OnRowEditing="editRecord"
                                                         OnRowUpdating="updateRecord" 
+                                                        OnDataBound = "OnDataBound"
                                                         CellPadding="1"
                                                         EnableModelValidation="True" 
                                                         GridLines="None" 
@@ -33,79 +34,69 @@
 <%-- DODANO --%>
             <Columns>
 
-            <asp:TemplateField>
+            <asp:TemplateField ItemStyle-Width="60px">
                 <HeaderTemplate>Dodano</HeaderTemplate>         
                 <ItemTemplate>
-                    <asp:Label ID ="lblId" runat="server"
-                                           Text='<%#Bind("created")%>'
-                                           Width="30px">
+                    <asp:Label ID ="lb_AlocatorCreated" runat="server"
+                                                        Text='<%#Bind("created")%>'
+                                                        Width="30px">
                     </asp:Label>
                 </ItemTemplate>
             </asp:TemplateField>
 
 
 <%-- OPERACJA --%>
-            <asp:TemplateField>
+            <asp:TemplateField ItemStyle-Width="80px">
                 <HeaderTemplate>Operacja</HeaderTemplate>
                 <ItemTemplate>
-                    <asp:Label ID ="lblName" runat="server" 
-                                             Text='<%#Bind("operationId") %>'
-                                             Width="30px">
+                    <asp:Label ID ="lb_AlocatorOperation" runat="server" 
+                                                          Text='<%#Bind("operationId") %>'
+                                                          Width="30px">
                     </asp:Label>
                 </ItemTemplate>
                 <EditItemTemplate>
-                    <asp:TextBox ID="txtName" runat="server" 
-                                              Text='<%#Bind("operationId") %>' 
-                                              Width="30px">
-                    </asp:TextBox>
-                    <asp:RequiredFieldValidator ID="rfvtxtName" runat="server"  
-                                                                Text="*" 
-                                                                ToolTip="Ustal typ operacji" 
-                                                                ControlToValidate="txtName">
+                    <asp:DropDownList ID="ddl_AlocatorEditOperation" runat="server"
+                                                                     Width="30px">                                   
+                    </asp:DropDownList>
+                    <asp:RequiredFieldValidator ID="rfv_AlocatorEditOperation" runat="server" 
+                                                                               ControlToValidate="ddl_AlocatorEditOperation" 
+                                                                               InitialValue="0" 
+                                                                               ErrorMessage="Type required"
+                                                                               Text="*">
                     </asp:RequiredFieldValidator>
-                    <asp:RegularExpressionValidator ID="revtxtName" runat="server" 
-                                                                    Text="*" 
-                                                                    ToolTip="Enter alphabate" 
-                                                                    ControlToValidate="txtName"  
-                                                                    ValidationExpression="^[a-zA-Z'.\s]{1,40}$">
-                    </asp:RegularExpressionValidator>
                 </EditItemTemplate>
 
                 <FooterTemplate>
-                    <asp:TextBox ID="txtNewName" runat="server" 
-                                                 Width="30px">
-                    </asp:TextBox>
-
-                    <asp:RequiredFieldValidator ID="rfvtxtNewName" runat="server" 
-                                                                   Text="*" 
-                                                                   ToolTip="Ustal typ operacji" 
-                                                                   ControlToValidate="txtNewName">
+                    <asp:DropDownList ID="ddl_AlocatorNewOperation" runat="server"
+                                                                    Width="30px">             
+                    </asp:DropDownList>
+                    <asp:RequiredFieldValidator ID="rfv_AlocatorNewOperation" runat="server" 
+                                                                              ControlToValidate="ddl_AlocatorNewOperation" 
+                                                                              InitialValue="0" 
+                                                                              ErrorMessage="Type required"
+                                                                              Text="*">
                     </asp:RequiredFieldValidator>
-    
-                    <asp:RegularExpressionValidator ID="revtxtNewName" runat="server" 
-                                                                       Text="*" 
-                                                                       ToolTip="Enter alphabate" 
-                                                                       ControlToValidate="txtNewName" 
-                                                                       ValidationExpression="^[a-zA-Z'.\s]{1,40}$">
-                    </asp:RegularExpressionValidator>
+
                 </FooterTemplate>
             </asp:TemplateField>
 
 
 <%-- REJS --%>         
-            <asp:TemplateField>
+            <asp:TemplateField ItemStyle-Width="80px">
                 <HeaderTemplate>Rejs</HeaderTemplate>
 
                 <ItemTemplate>
                     <asp:Label ID="lblAge" runat ="server" 
-                                           Text='<%#Bind("flightNb") %>'>
+                                           Text='<%#Bind("flightNb") %>'
+                                           Width="30px">
                     </asp:Label>
                 </ItemTemplate>
 
                 <EditItemTemplate>
                     <asp:TextBox ID ="txtAge" runat="server" 
                                               Text='<%#Bind("flightNb") %>' 
-                                              MaxLength="7">
+                                              MaxLength="7"
+                                              Width="30px">
                     </asp:TextBox>
 
                     <asp:RequiredFieldValidator ID="rfvtxtAge" runat="server" 
@@ -124,7 +115,8 @@
 
                 <FooterTemplate>
                     <asp:TextBox ID="txtNewAge" runat="server" 
-                                                MaxLength="7">
+                                                MaxLength="7"
+                                                Width="30px">
                     </asp:TextBox>
                     <asp:RequiredFieldValidator ID="rfvtxtNewAge" runat="server" 
                                                                   Text="*" 

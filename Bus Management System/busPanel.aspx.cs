@@ -351,6 +351,15 @@ namespace Bus_Management_System
         }
 
 
+        private void BuildOperationDDL()
+        {
+            DataTable op = new DataTable();
+
+            op.Columns.Add("employeeId", typeof(string));
+            op.Columns.Add("operationId", typeof(string));
+        }
+
+
         private void LoadStations()
         {
             DataSet stations = bl.GetStations();
