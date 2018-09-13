@@ -276,11 +276,6 @@ namespace Bus_Management_System
             }
         }
 
-        /// <summary>
-        /// Delete Record
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         protected void RowDeleting(object sender, GridViewDeleteEventArgs e)
         {
             try
