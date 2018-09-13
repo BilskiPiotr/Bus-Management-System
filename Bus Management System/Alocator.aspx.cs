@@ -46,14 +46,14 @@ namespace Bus_Management_System
             //{
 
 
-                //string cnString = ConfigurationManager.ConnectionStrings["BusData"].ConnectionString;
-                //SqlConnection con = new SqlConnection(cnString);
-                //BusinessLayer.adap = new SqlDataAdapter("select Employee_Id, Operation, FlightNb, Pax, RadioGate, RadioNeon, Created from Operations", con);
-                //SqlCommandBuilder bui = new SqlCommandBuilder(BusinessLayer.adap);
-                //BusinessLayer.dt = new DataTable(BusinessLayer.GetCurrentOp());
-                //BusinessLayer.adap.Fill(BusinessLayer.dt);
-                //GridView1.DataSource = BusinessLayer.dt;
-                //GridView1.DataBind();
+            //string cnString = ConfigurationManager.ConnectionStrings["BusData"].ConnectionString;
+            //SqlConnection con = new SqlConnection(cnString);
+            //BusinessLayer.adap = new SqlDataAdapter("select Employee_Id, Operation, FlightNb, Pax, RadioGate, RadioNeon, Created from Operations", con);
+            //SqlCommandBuilder bui = new SqlCommandBuilder(BusinessLayer.adap);
+            //BusinessLayer.dt = new DataTable(BusinessLayer.GetCurrentOp());
+            //BusinessLayer.adap.Fill(BusinessLayer.dt);
+            //GridView1.DataSource = BusinessLayer.dt;
+            //GridView1.DataBind();
             //}
             //catch
             //{

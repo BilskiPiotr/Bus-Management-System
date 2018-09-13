@@ -1,6 +1,8 @@
 ﻿/* Employee_InWorkNow - InWork (1) / None (0) */
 /* Employee_Priv - Admin (0) / Alocator (1) / Driver (2) */
 
+USE piotrbilski_sysbusmanagement;
+
 CREATE TABLE [dbo].[Employees_Basic] 
 (
     [Id]                      INT PRIMARY KEY IDENTITY(1,1)	NOT NULL,
@@ -61,25 +63,6 @@ CREATE TABLE [dbo].[Vehicles]
 	[Status]		INT	DEFAULT (1)					NOT NULL
 );
 
-/* unavailable - 0,  no driver - 1, free - 2, in work - 3  (default - empty) */
-INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('032');
-INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('033');
-INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('1165');
-INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('1167');
-INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2067');
-INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2068');
-INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2069');
-INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2072');
-INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2073');
-INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2074');
-INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2075');
-INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2076');
-INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2077');
-INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2078');
-INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2079');
-INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2082');
-INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2083');
-INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2084');
 
 /* Operations - Odlot (0) / Przylot (1) */
 CREATE TABLE [dbo].[Operations]
@@ -103,6 +86,43 @@ CREATE TABLE [dbo].[Operations]
 	[EndOp]						DATETIME						NULL
 );
 
+
+/* 0 - Odlot, 1 - Przylot */
+CREATE TABLE [dbo].[OperationType]
+(
+	[Id]			INT PRIMARY KEY IDENTITY(1,1)	NOT NULL,
+	[OpValue]		INT								NOT NULL,
+	[Operation]		VARCHAR(7)						NOT NULL
+);
+
+
+ALTER TABLE Employees_Status ADD CONSTRAINT FK_Employees_Status_01 FOREIGN KEY (Employee_Id) REFERENCES Employees_Basic(Id);
+ALTER TABLE AirPorts ADD CONSTRAINT FK_AirPorts_01 FOREIGN KEY (Country_Id) REFERENCES Countries(Id);
+ALTER TABLE Operations ADD CONSTRAINT FK_Operations_01 FOREIGN KEY (Employee_Id) REFERENCES Employees_Basic(Id);
+ALTER TABLE Operations ADD CONSTRAINT FK_Operations_02 FOREIGN KEY (PPS) REFERENCES Stations(Id);
+ALTER TABLE Operations ADD CONSTRAINT FK_Operations_03 FOREIGN KEY (Gate) REFERENCES Gates(Id);
+ALTER TABLE Operations ADD CONSTRAINT FK_Operations_04 FOREIGN KEY (AirPort) REFERENCES AirPorts(Id);
+ALTER TABLE Operations ADD CONSTRAINT FK_Operations_05 FOREIGN KEY (Bus) REFERENCES Vehicles(Id);
+ALTER TABLE Operations ADD CONSTRAINT FK_Operations_06 FOREIGN KEY (Operation) REFERENCES OperationType(Id);
+
+
+
+ALTER TABLE Employees_Basic ADD CONSTRAINT UC_EmployeeBasic UNIQUE (Id, Employee_CompanyId);
+ALTER TABLE Employees_Status ADD CONSTRAINT UC_EmployeeStatus UNIQUE (Id);
+ALTER TABLE AirPorts ADD CONSTRAINT UC_AirPorts UNIQUE (Id);
+ALTER TABLE Countries ADD CONSTRAINT UC_Countries UNIQUE (Id);
+ALTER TABLE Stations ADD CONSTRAINT UC_Stations UNIQUE (Id);
+ALTER TABLE Gates ADD CONSTRAINT UC_Gates UNIQUE (Id);
+ALTER TABLE Operations ADD CONSTRAINT UC_Operations UNIQUE (Id);
+ALTER TABLE OperationType ADD CONSTRAINT UC_OperationType UNIQUE (Id);
+
+
+
+
+INSERT INTO [dbo].[OperationType] ([OpValue], [Operation]) VALUES (0, 'Przylot');
+INSERT INTO [dbo].[OperationType] ([OpValue], [Operation]) VALUES (1, 'Odlot');
+
+
 INSERT INTO [dbo].[Employees_Basic] ([Employee_CompanyId], [Employee_PESEL], [Employee_Imie], [Employee_Nazwisko], [Employee_Priv]) VALUES ('12345', '11111111111', 'Imie1', 'Nazwisko1', 0);
 INSERT INTO [dbo].[Employees_Basic] ([Employee_CompanyId], [Employee_PESEL], [Employee_Imie], [Employee_Nazwisko], [Employee_Priv]) VALUES ('23232', '22222222222', 'Imie2', 'Nazwisko2', 1);
 INSERT INTO [dbo].[Employees_Basic] ([Employee_CompanyId], [Employee_PESEL], [Employee_Imie], [Employee_Nazwisko], [Employee_Priv]) VALUES ('35353', '33333333333', 'Imie3', 'Nazwisko3', 2);
@@ -110,6 +130,25 @@ INSERT INTO [dbo].[Employees_Basic] ([Employee_CompanyId], [Employee_PESEL], [Em
 INSERT INTO [dbo].[Employees_Basic] ([Employee_CompanyId], [Employee_PESEL], [Employee_Imie], [Employee_Nazwisko], [Employee_Priv]) VALUES ('56353', '55555555555', 'Imie5', 'Nazwisko5', 2);
 
 
+/* unavailable - 0,  no driver - 1, free - 2, in work - 3  (default - empty) */
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('032');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('033');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('1165');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('1167');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2067');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2068');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2069');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2072');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2073');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2074');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2075');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2076');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2077');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2078');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2079');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2082');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2083');
+INSERT INTO [dbo].[Vehicles] ([VehicleNb]) VALUES ('2084');
 
 INSERT INTO [dbo].[Countries] ([Country_Name], [Shengen]) VALUES ('Albania', 1);
 INSERT INTO [dbo].[Countries] ([Country_Name], [Shengen]) VALUES ('Anglia', 1);
@@ -485,21 +524,3 @@ INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALU
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('46R','52.165445','20.973991666666667');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('47','52.166259999999994','20.974708333333336');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('48','52.166145000000001','20.975101666666667');
-
-
-
-ALTER TABLE Employees_Basic ADD CONSTRAINT UC_EmployeeBasic UNIQUE (Id, Employee_CompanyId);
-ALTER TABLE Employees_Status ADD CONSTRAINT UC_EmployeeStatus UNIQUE (Id);
-ALTER TABLE AirPorts ADD CONSTRAINT UC_AirPorts UNIQUE (Id);
-ALTER TABLE Countries ADD CONSTRAINT UC_Countries UNIQUE (Id);
-ALTER TABLE Stations ADD CONSTRAINT UC_Stations UNIQUE (Id);
-ALTER TABLE Gates ADD CONSTRAINT UC_Gates UNIQUE (Id);
-ALTER TABLE Operations ADD CONSTRAINT UC_Operations UNIQUE (Id);
-
-ALTER TABLE Employees_Status ADD CONSTRAINT FK_Employees_Status_01 FOREIGN KEY (Employee_Id) REFERENCES Employees_Basic(Id);
-ALTER TABLE AirPorts ADD CONSTRAINT FK_AirPorts_01 FOREIGN KEY (Country_Id) REFERENCES Countries(Id);
-ALTER TABLE Operations ADD CONSTRAINT FK_Operations_01 FOREIGN KEY (Employee_Id) REFERENCES Employees_Basic(Id);
-ALTER TABLE Operations ADD CONSTRAINT FK_Operations_02 FOREIGN KEY (PPS) REFERENCES Stations(Id);
-ALTER TABLE Operations ADD CONSTRAINT FK_Operations_03 FOREIGN KEY (Gate) REFERENCES Gates(Id);
-ALTER TABLE Operations ADD CONSTRAINT FK_Operations_04 FOREIGN KEY (AirPort) REFERENCES AirPorts(Id);
-ALTER TABLE Operations ADD CONSTRAINT FK_Operations_05 FOREIGN KEY (Bus) REFERENCES Vehicles(Id);

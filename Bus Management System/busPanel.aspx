@@ -400,10 +400,10 @@
                                 </tr>
                                 <tr class="tr_26">
                                     <td colspan="2" class="td_center">
-                                        <asp:RadioButton ID="rb_Przylot" runat="server" Text="Przylot" AutoPostBack="True" Checked="True" OnCheckedChanged="Rb_Przylot_CheckedChanged" />
+                                        <asp:RadioButton ID="rb_Przylot" runat="server" Text="Przylot" Checked="True" OnCheckedChanged="Rb_Przylot_CheckedChanged" />
                                     </td>
                                     <td colspan="2" class="td_center">
-                                        <asp:RadioButton ID="rb_Odlot" runat="server" Text="Odlot" AutoPostBack="True" OnCheckedChanged="Rb_Odlot_CheckedChanged" />
+                                        <asp:RadioButton ID="rb_Odlot" runat="server" Text="Odlot" OnCheckedChanged="Rb_Odlot_CheckedChanged" />
                                     </td>
                                 </tr>
                                 <tr class="tr_26">
