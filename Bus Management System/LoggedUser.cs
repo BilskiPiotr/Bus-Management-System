@@ -13,7 +13,7 @@ namespace Bus_Management_System
         DataAccessLayer dal = new DataAccessLayer();
         SqlCommand sqlcmd = new SqlCommand();
 
-        public DataTable getLoggedUserData(int iD, ref string errorMsg)
+        public DataTable GetLoggedUserData(int iD, ref string errorMsg)
         {
             string sqlQuery = "SELECT Employee_CompanyId, Employee_Imie, Employee_Nazwisko, Employee_Priv FROM Employees_Basic WHERE Id = @userId";
             sqlcmd.CommandText = sqlQuery;

@@ -321,8 +321,8 @@ namespace Bus_Management_System
                 BusManagement.SetActiveView(Admin);
             else
                 if (loggedUser.AdminPrivileges == 1)
-                BusManagement.SetActiveView(Alocator);
-            //Response.Redirect("Alocator.aspx");
+                //BusManagement.SetActiveView(Alocator);
+                Response.Redirect("Alocator.aspx");
             else
                 if (loggedUser.AdminPrivileges == 2)
                 BusManagement.SetActiveView(Bus);
@@ -526,8 +526,7 @@ namespace Bus_Management_System
             {
                 string str = "lb_Vehicle" + (i + 1).ToString();
 
-                Label label = this.FindControl(str) as Label;
-                if (label != null && label.Text == selectedBusStatus.ToString())
+                if (this.FindControl(str) is Label label && label.Text == selectedBusStatus.ToString())
                 {
                     label.ForeColor = Color.Red;
                     label.BackColor = Color.Yellow;

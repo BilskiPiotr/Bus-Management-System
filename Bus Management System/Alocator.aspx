@@ -4,348 +4,318 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title></title>
+    <title>SysBus Management System</title>
+	<meta http-equiv="content-type" content="text/html"; charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="SysBus_Management" content:"" />
+	<link rel="stylesheet" href="css/alocator.css" />
 </head>
 <body>
     <form id="form1" runat="server">
-        <div>
-            <asp:GridView ID="GridView1" runat="server" ShowHeaderWhenEmpty="True"
-                                                        AutoGenerateColumns="False" 
-                                                        onrowdeleting="RowDeleting"
-                                                        OnRowCancelingEdit="cancelRecord" 
-                                                        OnRowEditing="editRecord"
-                                                        OnRowUpdating="updateRecord" 
-                                                        OnDataBound = "OnDataBound"
-                                                        CellPadding="1"
-                                                        EnableModelValidation="True" 
-                                                        GridLines="None" 
-                                                        Width="1350px"
-                                                        ForeColor="#333333" >
-                <RowStyle HorizontalAlign="Center" />
-                <AlternatingRowStyle BackColor="White" />
-                <EditRowStyle BackColor="#7C6F57" />
-                <FooterStyle BackColor="#1C5E55" ForeColor="White" Font-Bold="True" />
-                <HeaderStyle BackColor="#1C5E55" Font-Bold="True" ForeColor="White" />
-                <PagerStyle BackColor="#666666" ForeColor="White" HorizontalAlign="Center" />
-                <RowStyle BackColor="#E3EAEB" />
-                <SelectedRowStyle BackColor="#C5BBAF" Font-Bold="True" ForeColor="#333333" />
- 
-<%-- DODANO --%>
-            <Columns>
+        <div class="header">
+            <div class="topnav">
+                <asp:Menu   ID="alocatorMenu"
+                            StaticMenuStyle-CssClass="sms"
+                            StaticMenuItemStyle-CssClass="smis"
+                            Orientation="Horizontal" 
+                            MaximumDynamicDisplayLevels="1" 
+                            runat="server" 
+                            OnMenuItemClick="MineMenu_MenuItemClick" 
+                            StaticEnableDefaultPopOutImage="false">
+                    <StaticMenuItemStyle />
+                        <Items>
+                            <asp:MenuItem Text="Home" Value="1"></asp:MenuItem>
+                            <asp:MenuItem Text="Logout" Value="2"></asp:MenuItem>
+                        </Items>
 
-            <asp:TemplateField ItemStyle-Width="60px">
-                <HeaderTemplate>Dodano</HeaderTemplate>         
-                <ItemTemplate>
-                    <asp:Label ID ="lb_AlocatorCreated" runat="server"
-                                                        Text='<%#Bind("created")%>'
-                                                        Width="30px">
-                    </asp:Label>
-                </ItemTemplate>
-            </asp:TemplateField>
+                    <StaticMenuItemStyle CssClass="smis" HorizontalPadding="15px" />
+                    <StaticMenuStyle CssClass="sms" />
+                </asp:Menu>
+            </div>
+            <div class="siteInfo">
+                <a class="right-lbl"><asp:Label ID="lb_loggedUser" runat="server"></asp:Label></a>
+                <a class="right-lbl"><asp:Label ID="lb_loggedUserDesc" runat="server" Text="Zalogowano jako:  "></asp:Label></a>
+            </div>
+        </div>
+        <div id="alocator">
+            <div">
+                <table class="alocator_TopTable">
+                    <tbody>
+                        <tr>
+                            <td class="center"><asp:Label ID="lb_Vehicle1" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle2" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle3" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle4" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle5" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle6" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle7" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle8" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle9" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle10" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle11" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle12" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                        </tr>
+                        <tr>
+                            <td class="center"><asp:Label ID="lb_Vehicle13" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle14" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle15" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle16" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle17" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle18" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle19" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle20" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle21" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle22" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle23" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                            <td class="center"><asp:Label ID="lb_Vehicle24" runat="server" Text="- - -" style="text-align: center;" Height="100%" Width="100%" Visible="False"></asp:Label></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="alocator-Panel">
+                <asp:GridView ID="gv_Alocator" runat="server"   AutoGenerateColumns ="False"
+                                                                ShowHeaderWhenEmpty="True"
+                                                                ondatabound="Gv_CheckSecurityZone"
+                                                                onrowdatabound="Gv_Alocator_RowDataBound" 
+                                                                onrowdeleting="Gv_Alocator_RowDeleting"
+                                                                onrowediting="Gv_Alocator_RowEditing" 
+                                                                DataKeyNames="Id"
+                                                                onrowcommand="Gv_Alocator_RowCommand" 
+                                                                onrowupdating="Gv_Alocator_RowUpdating"
+                                                                CellPadding="4" 
+                                                                ForeColor="#333333"
+                                                                onrowcancelingedit="Gv_Alocator_CancelEdit">
 
+                                        <FooterStyle BackColor="#1C5E55" ForeColor="White" Font-Bold="True" />
+                                        <HeaderStyle BackColor="#1C5E55" Font-Bold="True" ForeColor="White" />
+                                        <PagerStyle BackColor="#666666" ForeColor="White" HorizontalAlign="Center" />
+                                        <RowStyle BackColor="#E3EAEB" HorizontalAlign="Center"/>
+                                        <AlternatingRowStyle BackColor="White" />
+                                        <EditRowStyle BackColor="#7C6F57" />
+                                        <SelectedRowStyle BackColor="#C5BBAF" Font-Bold="True" ForeColor="#333333" />
+                                        
 
-<%-- OPERACJA --%>
-            <asp:TemplateField ItemStyle-Width="80px">
-                <HeaderTemplate>Operacja</HeaderTemplate>
-                <ItemTemplate>
-                    <asp:Label ID ="lb_AlocatorOperation" runat="server" 
-                                                          Text='<%#Bind("operationId") %>'
-                                                          Width="30px">
-                    </asp:Label>
-                </ItemTemplate>
-                <EditItemTemplate>
-                    <asp:DropDownList ID="ddl_AlocatorEditOperation" runat="server"
-                                                                     Width="30px">                                   
-                    </asp:DropDownList>
-                    <asp:RequiredFieldValidator ID="rfv_AlocatorEditOperation" runat="server" 
-                                                                               ControlToValidate="ddl_AlocatorEditOperation" 
-                                                                               InitialValue="0" 
-                                                                               ErrorMessage="Type required"
-                                                                               Text="*">
-                    </asp:RequiredFieldValidator>
-                </EditItemTemplate>
+<%-- Data i godzina utworzenia zadania --%>
+                    <Columns >
+                        <asp:TemplateField HeaderText="Utworzono" ItemStyle-Width="12%">
+                            <ItemTemplate>
+                                <%# Eval("Created") %>
+                            </ItemTemplate>
+                            <EditItemTemplate >
+                                <asp:Label ID="lbleid" runat="server" Text='<%#Eval("Created") %>' width ="100%"></asp:Label>
+                            </EditItemTemplate>
+                            <FooterTemplate >
+                                <asp:Button ID="bt_insert" runat="server" Text= "Dodaj" CommandName="Insert" width ="100%" ></asp:Button>
+                            </FooterTemplate>
+                        </asp:TemplateField>
+        
+<%-- Opreślenie typu operacji --%>
+                        <asp:TemplateField HeaderText="Operacja" ItemStyle-Width="6%">
+                            <ItemTemplate>
+                                <asp:Label ID="lb_operation" runat="server" Text='<%#Eval("Operation") %>'></asp:Label>
+                            </ItemTemplate>
+                            <EditItemTemplate >
+                                <asp:DropDownList ID="ddl_operationEdit" runat="server" width ="100%"></asp:DropDownList>
+                            </EditItemTemplate>
+                            <FooterTemplate >
+                                <asp:DropDownList ID="ddl_operationAdd" runat="server" Width="100%"></asp:DropDownList>
+                            </FooterTemplate>
+                        </asp:TemplateField>
 
-                <FooterTemplate>
-                    <asp:DropDownList ID="ddl_AlocatorNewOperation" runat="server"
-                                                                    Width="30px">             
-                    </asp:DropDownList>
-                    <asp:RequiredFieldValidator ID="rfv_AlocatorNewOperation" runat="server" 
-                                                                              ControlToValidate="ddl_AlocatorNewOperation" 
-                                                                              InitialValue="0" 
-                                                                              ErrorMessage="Type required"
-                                                                              Text="*">
-                    </asp:RequiredFieldValidator>
+<%-- Nr rejsu wg przewoźnika --%>
+                        <asp:TemplateField HeaderText="Rejs Nr." ItemStyle-Width="6%">
+                            <ItemTemplate>
+                                <%#Eval("FlightNb") %>
+                            </ItemTemplate>
+                            <EditItemTemplate >
+                                <asp:TextBox ID="tb_flightNbEdit" runat="server" Width="100%" Text='<%#Eval("FlightNb") %>'></asp:TextBox>
+                            </EditItemTemplate> 
+                            <FooterTemplate >
+                                <asp:TextBox ID="tb_flightNbAdd" runat="server" Width="100%"></asp:TextBox>
+                            </FooterTemplate>
+                        </asp:TemplateField>
+        
+<%-- Oznaczenie Portu Lotniczego wg nomenklatury IATA --%>
+                        <asp:TemplateField HeaderText="Port" ItemStyle-Width="5%">
+                            <ItemTemplate>
+                                <%#Eval("IATA_Name") %>
+                            </ItemTemplate>
+                            <EditItemTemplate >
+                                <asp:DropDownList ID="ddl_airPortEdit" runat="server" Width="100%"></asp:DropDownList>
+                            </EditItemTemplate>
+                            <FooterTemplate >
+                                <asp:DropDownList ID="ddl_airPortAdd" runat="server" Width="100%"></asp:DropDownList>
+                            </FooterTemplate>
+                        </asp:TemplateField>
+        
+<%-- Znacznik strefy przylotu jeśli występuje --%>            
+                        <asp:TemplateField HeaderText="Strefa" Visible="False">
+                            <ItemTemplate>
+                                <asp:Label ID="lb_zone" runat="server" Text='<%#Eval("Shengen") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
 
-                </FooterTemplate>
-            </asp:TemplateField>
+<%-- Zadeklarowana liczba pasażerów --%>
+                        <asp:TemplateField HeaderText="PAX" ItemStyle-Width="4%">
+                            <ItemTemplate>
+                                <%#Eval("Pax") %>
+                            </ItemTemplate>
+                            <EditItemTemplate >
+                                <asp:TextBox ID="tb_paxEdit" runat="server" Width="100%" Text='<%#Eval("Pax") %>'></asp:TextBox>
+                            </EditItemTemplate>
+                            <FooterTemplate >
+                                <asp:TextBox ID="tb_paxAdd" runat="server" Width="100%"></asp:TextBox>
+                            </FooterTemplate>
+                        </asp:TemplateField>
 
+<%-- Numer Gate dla odlotu lub miejsce wysadzenia pasażerów dla przylotów --%>
+                        <asp:TemplateField HeaderText="Gate" ItemStyle-Width="5%">
+                            <ItemTemplate>
+                                <%#Eval("GateNb") %>
+                            </ItemTemplate>
+                            <EditItemTemplate >
+                                <asp:DropDownList ID="ddl_gateEdit" runat="server" Width="100%"></asp:DropDownList>
+                            </EditItemTemplate>
+                            <FooterTemplate >
+                                <asp:DropDownList ID="ddl_gateAdd" runat="server" Width="100%"></asp:DropDownList>
+                            </FooterTemplate>
+                        </asp:TemplateField>
 
-<%-- REJS --%>         
-            <asp:TemplateField ItemStyle-Width="80px">
-                <HeaderTemplate>Rejs</HeaderTemplate>
+<%-- Id operacji z bazy danych do rozpoznania rekordu przy operacjach na danych --%>
+                        <asp:TemplateField HeaderText="Id" Visible="False">
+                            <ItemTemplate>
+                                <%# Eval("Id") %>
+                            </ItemTemplate>
+                            <EditItemTemplate >
+                                <asp:Label ID="lb_id" runat="server" Text='<%#Eval("id") %>'></asp:Label>
+                            </EditItemTemplate>
+                            <FooterTemplate >
+                                <asp:LinkButton ID="idinsert" runat="server" Text= "Insert" CommandName="Insert" Width="100%"></asp:LinkButton>
+                            </FooterTemplate>
+                        </asp:TemplateField>
 
-                <ItemTemplate>
-                    <asp:Label ID="lblAge" runat ="server" 
-                                           Text='<%#Bind("flightNb") %>'
-                                           Width="30px">
-                    </asp:Label>
-                </ItemTemplate>
+<%-- Opreślenie miejsca postoju statku powietrznego --%>
+                        <asp:TemplateField HeaderText="PPS"  ItemStyle-Width="5%">
+                            <ItemTemplate>
+                                <%#Eval("StationNb") %>
+                            </ItemTemplate>
+                            <EditItemTemplate >
+                                <asp:DropDownList ID="ddl_ppsEdit" runat="server" Width="100%"></asp:DropDownList>
+                            </EditItemTemplate>
+                            <FooterTemplate >
+                                <asp:DropDownList ID="ddl_ppsAdd" runat="server" Width="100%"></asp:DropDownList>
+                            </FooterTemplate>
+                        </asp:TemplateField>
 
-                <EditItemTemplate>
-                    <asp:TextBox ID ="txtAge" runat="server" 
-                                              Text='<%#Bind("flightNb") %>' 
-                                              MaxLength="7"
-                                              Width="30px">
-                    </asp:TextBox>
+<%-- Określenie autobusu wyznaczonego do wykonania zadania --%>
+                        <asp:TemplateField HeaderText="Bus" ItemStyle-Width="5%">
+                            <ItemTemplate>
+                                <%#Eval("VehicleNb") %>
+                            </ItemTemplate>
+                            <EditItemTemplate >
+                                <asp:DropDownList ID="ddl_busEdit" runat="server" Width="100%"></asp:DropDownList>
+                            </EditItemTemplate>
+                            <FooterTemplate >
+                                <asp:DropDownList ID="ddl_busAdd" runat="server" Width="100%"></asp:DropDownList>
+                            </FooterTemplate>
+                        </asp:TemplateField>
 
-                    <asp:RequiredFieldValidator ID="rfvtxtAge" runat="server" 
-                                                               Text="*" 
-                                                               ToolTip="Wprowadź numer rejsu" 
-                                                               ControlToValidate="txtAge">
-                    </asp:RequiredFieldValidator>
+<%-- Numer radia do obsługi pasażerskiej w Gate --%>
+                        <asp:TemplateField HeaderText="Radio Gate" ItemStyle-Width="5%">
+                            <ItemTemplate>
+                                <%#Eval("RadioGate") %>
+                            </ItemTemplate>
+                            <EditItemTemplate >
+                                <asp:TextBox ID="tb_radioGateEdit" runat="server" Width="100%" Text='<%#Eval("RadioGate") %>'></asp:TextBox>
+                            </EditItemTemplate>
+                            <FooterTemplate >
+                                <asp:TextBox ID="tb_radioGateAdd" runat="server" Width="100%"></asp:TextBox>
+                            </FooterTemplate>
+                        </asp:TemplateField>
 
-                    <asp:RegularExpressionValidator ID="revtxtAge" runat="server" 
-                                                                   Text="*" 
-                                                                   ToolTip="Pole nie może zawierać spacji" 
-                                                                   ControlToValidate="txtAge" 
-                                                                   ValidationExpression="^[0-9]+$">
-                    </asp:RegularExpressionValidator>
-                </EditItemTemplate>
+<%-- Numer radia do Neona odpowiedzialnego za lot --%>
+                        <asp:TemplateField HeaderText="Radio Neon" ItemStyle-Width="5%">
+                            <ItemTemplate>
+                                <%#Eval("RadioNeon") %>
+                            </ItemTemplate>
+                            <EditItemTemplate >
+                                <asp:TextBox ID="tb_radioNeonEdit" runat="server" Width="100%" Text='<%#Eval("RadioNeon") %>'></asp:TextBox>
+                            </EditItemTemplate>
+                            <FooterTemplate >
+                                <asp:TextBox ID="tb_radioNeonAdd" runat="server" Width="100%"></asp:TextBox>
+                            </FooterTemplate>
+                        </asp:TemplateField>
 
-                <FooterTemplate>
-                    <asp:TextBox ID="txtNewAge" runat="server" 
-                                                MaxLength="7"
-                                                Width="30px">
-                    </asp:TextBox>
-                    <asp:RequiredFieldValidator ID="rfvtxtNewAge" runat="server" 
-                                                                  Text="*" 
-                                                                  ToolTip="Wprowadź numer rejsu" 
-                                                                  ControlToValidate="txtNewAge">
-                    </asp:RequiredFieldValidator>
-                    
-                    <asp:RegularExpressionValidator ID="revNewtxtAge" runat="server" 
-                                                                      Text="*" 
-                                                                      ToolTip="Pole nie może zawierać spacji" 
-                                                                      ControlToValidate="txtNewAge" 
-                                                                      ValidationExpression="^[0-9]+$">
-                    </asp:RegularExpressionValidator>
-                </FooterTemplate>
-            </asp:TemplateField>
+<%-- Godzina przyjęcia zlecenia przez operatora Autobusu --%>
+                        <asp:TemplateField HeaderText="Accepted" ItemStyle-Width="6%">
+                            <ItemTemplate>
+                                <%# Eval("Accepted") %>
+                            </ItemTemplate>
+                            <EditItemTemplate >
+                                <asp:Label ID="lb_accepted" runat="server" Text='<%#Eval("Accepted") %>'></asp:Label>
+                            </EditItemTemplate>
+                        </asp:TemplateField>
 
+<%-- Godzina rozpoczęcia załadunku pasażerów --%>
+                        <asp:TemplateField HeaderText="Load" ItemStyle-Width="6%">
+                            <ItemTemplate>
+                                <%# Eval("StartLoad") %>
+                            </ItemTemplate>
+                            <EditItemTemplate >
+                                <asp:Label ID="lb_startLoad" runat="server" Text='<%#Eval("StartLoad") %>'></asp:Label>
+                            </EditItemTemplate>
+                        </asp:TemplateField>
 
-<%-- PAX --%>
-            <asp:TemplateField>
-                <HeaderTemplate>Pax</HeaderTemplate>
-                <ItemTemplate>
-                    <asp:Label ID = "lblSalary" runat="server" 
-                                                Text='<%#Bind("paxCount") %>'>
-                    </asp:Label>
-                </ItemTemplate>
+<%-- rozpoczęcie operacji przewozu pasażerów --%>
+                        <asp:TemplateField HeaderText="Drive" ItemStyle-Width="6%">
+                            <ItemTemplate>
+                                <%# Eval("StartDrive") %>
+                            </ItemTemplate>
+                            <EditItemTemplate >
+                                <asp:Label ID="lb_startDrive" runat="server" Text='<%#Eval("StartDrive") %>'></asp:Label>
+                            </EditItemTemplate>
+                        </asp:TemplateField>
 
-                <EditItemTemplate>
-                    <asp:TextBox ID="txtSalary" runat="server" 
-                                                Text='<%#Bind("paxCount") %>'  
-                                                MaxLength="3">
-                    </asp:TextBox>
-                    <asp:RequiredFieldValidator ID="rfvtxtSalary" runat="server" 
-                                                                  Text="*"  
-                                                                  ToolTip="Wprowadź liczbę pasażerów" 
-                                                                  ControlToValidate="txtSalary">
-                    </asp:RequiredFieldValidator>
-                    <asp:RegularExpressionValidator ID="revtxtSalary" runat="server" 
-                                                                      Text="*" 
-                                                                      ToolTip="Tylko cyfry" 
-                                                                      ControlToValidate="txtSalary" 
-                                                                      ValidationExpression="^[0-9]+$">
-                    </asp:RegularExpressionValidator>
-                </EditItemTemplate>
+<%-- Rozpoczęcie operacji wyładowania pasażerów z Autobusu --%>
+                        <asp:TemplateField HeaderText="Unload" ItemStyle-Width="6%">
+                            <ItemTemplate>
+                                <%# Eval("StartUnload") %>
+                            </ItemTemplate>
+                            <EditItemTemplate >
+                                <asp:Label ID="lb_startUnload" runat="server" Text='<%#Eval("StartUnload") %>'></asp:Label>
+                            </EditItemTemplate>
+                        </asp:TemplateField>
 
-                <FooterTemplate>
-                    <asp:TextBox ID="txtNewSalary" runat="server"           
-                                                   MaxLength="3">
-                    </asp:TextBox>
-                    <asp:RequiredFieldValidator ID="rfvtxtNewSalary" runat="server" 
-                                                                     Text="*"  
-                                                                     ToolTip="Wprowadź liczbę pasażerów" 
-                                                                     ControlToValidate="txtNewSalary">
-                    </asp:RequiredFieldValidator>
-                    <asp:RegularExpressionValidator ID="revtxtNewSalary" runat="server" 
-                                                                         Text="*" 
-                                                                         ToolTip="Tylko cyfry" 
-                                                                         ControlToValidate="txtNewSalary" 
-                                                                         ValidationExpression="^[0-9]+$">
-                    </asp:RegularExpressionValidator>
-                </FooterTemplate>
-            </asp:TemplateField>
+<%-- Zakończenie operacji transportowej --%>
+                        <asp:TemplateField HeaderText="End Op" ItemStyle-Width="6%">
+                            <ItemTemplate>
+                                <%# Eval("EndOp") %>
+                            </ItemTemplate>
+                            <EditItemTemplate >
+                                <asp:Label ID="lb_andOp" runat="server" Text='<%#Eval("EndOp") %>'></asp:Label>
+                            </EditItemTemplate>
+                        </asp:TemplateField>
 
-
-<%-- PORT --%>
-            <asp:TemplateField>
-                <HeaderTemplate>Port</HeaderTemplate>
-
-                <ItemTemplate>
-                    <asp:Label ID = "lblCountry" runat="server" 
-                                                 Text='<%#Bind("airPort") %>'>
-                    </asp:Label>
-                </ItemTemplate>
-
-                <EditItemTemplate>
-                    <asp:TextBox ID="txtCountry" runat="server" 
-                                                 Text='<%#Bind("airPort") %>' 
-                                                 MaxLength="20">
-                    </asp:TextBox>
-
-                    <asp:RequiredFieldValidator ID="rfvtxtCountry" runat="server" 
-                                                                   Text="*" 
-                                                                   ToolTip="Wybierz Air Port" 
-                                                                   ControlToValidate="txtCountry">
-                    </asp:RequiredFieldValidator>
-                </EditItemTemplate>
-
-                <FooterTemplate>
-                    <asp:TextBox ID="txtNewCountry" runat="server" 
-                                                    MaxLength="20">
-                    </asp:TextBox>
-
-                    <asp:RequiredFieldValidator ID="rfvtxtNewCountry" runat="server" 
-                                                                      Text="*" 
-                                                                      ToolTip="Wybierz Air Port" 
-                                                                      ControlToValidate="txtNewCountry">
-                    </asp:RequiredFieldValidator>
-                </FooterTemplate>
-            </asp:TemplateField>
- 
-
-<%-- GATE --%>
-            <asp:TemplateField>
-                <HeaderTemplate>Gate</HeaderTemplate>
-
-                <ItemTemplate>
-                    <asp:Label ID = "lblCity" runat="server" 
-                                              Text='<%#Bind("gate") %>'>
-                    </asp:Label>
-                </ItemTemplate>
-
-                <EditItemTemplate>
-                    <asp:TextBox ID="txtCity" runat="server" 
-                                              Text='<%#Bind("gate") %>' 
-                                              MaxLength="20">
-                    </asp:TextBox>
-
-                    <asp:RequiredFieldValidator ID="rfvtxtCity" runat="server" 
-                                                                Text="*" 
-                                                                ToolTip="WYbierz Gate" 
-                                                                ControlToValidate="txtCity">
-                    </asp:RequiredFieldValidator>
-                </EditItemTemplate>
-
-                <FooterTemplate>
-                    <asp:TextBox ID="txtNewCity" runat="server" 
-                                                 MaxLength="20">
-                    </asp:TextBox>
-
-                    <asp:RequiredFieldValidator ID="rfvtxtNewCity" runat="server" 
-                                                                   Text="*" 
-                                                                   ToolTip="Wybierz Gate" 
-                                                                   ControlToValidate="txtNewCity">
-                    </asp:RequiredFieldValidator>
-                </FooterTemplate>
-            </asp:TemplateField>
- 
-
-                    
-<%-- PPS --%>
-            <asp:TemplateField>
-                <HeaderTemplate>PPS</HeaderTemplate>
-
-                <ItemTemplate>
-                    <asp:Label ID ="lb_port" runat="server" 
-                                             Text='<%#Bind("pps") %>'>
-                    </asp:Label>
-                </ItemTemplate>
-
-                <EditItemTemplate>
-                    <asp:DropDownList ID="ddlPorts" runat="server" 
-                                                    Width="30px">
-                    </asp:DropDownList>
-                    <asp:RequiredFieldValidator ID="rfvdldlPorts" runat="server" 
-                                                                  ErrorMessage="*" 
-                                                                  ToolTip="Wybierz pole postojowe samolotu" 
-                                                                  ControlToValidate="ddlPorts">
-                    </asp:RequiredFieldValidator>
-                </EditItemTemplate>
-
-                <FooterTemplate>
-                    <asp:DropDownList ID="ddlEditPorts" runat="server" 
-                                                        Width="30px">
-                    </asp:DropDownList>
-                    <asp:RequiredFieldValidator ID="rfvdldlEditPorts" runat="server" 
-                                                                      ErrorMessage="*" 
-                                                                      ToolTip="Wybierz pole postojowe samolotu" 
-                                                                      ControlToValidate="ddlEditPorts">
-                    </asp:RequiredFieldValidator>
-                </FooterTemplate>
-            </asp:TemplateField>
-
-
- 
-            <asp:TemplateField>
-                <HeaderTemplate>Operation</HeaderTemplate>
-
-                <ItemTemplate>
-                    <asp:Button ID="btnEdit" runat="server" 
-                                             CommandName="Edit" 
-                                             Text="Edit">
-                    </asp:Button>
-
-                    <asp:Button ID="btnDelete" runat="server" 
-                                               CommandName="Delete" 
-                                               Text="Delete" 
-                                               CausesValidation="true" 
-                                               OnClientClick="return confirm('Are you sure?')">
-                    </asp:Button>
-                </ItemTemplate>
-
-                <EditItemTemplate>      
-                    <asp:Button ID="btnUpdate" runat="server" 
-                                               CommandName="Update" 
-                                               Text="Update">
-                    </asp:Button>
-
-                    <asp:Button ID="btnCancel" runat="server" 
-                                               CommandName="Cancel" 
-                                               Text="Cancel" 
-                                               CausesValidation="false">
-                    </asp:Button>
-                </EditItemTemplate>
- 
-                <FooterTemplate>
-                    <asp:Button ID="btnNewInsert" runat="server" 
-                                                  Text="Insert" 
-                                                  OnClick="InsertNewRecord">
-                    </asp:Button>
-
-                    <asp:Button ID="btnNewCancel" runat="server" 
-                                                  Text="Cancel" 
-                                                  OnClick="AddNewCancel" 
-                                                  CausesValidation="false">
-                    </asp:Button>
-                </FooterTemplate>        
-            </asp:TemplateField> 
-                
-            </Columns>
-
-            <EmptyDataTemplate>
-                  No record available                    
-            </EmptyDataTemplate>       
-            </asp:GridView>
-
+<%-- Konfiguracja kolumny z kontrolkami kontrolnymi dostępnych operacji --%>
+                        <asp:CommandField ControlStyle-ForeColor ="Blue " ButtonType="Button" ShowEditButton="True" ShowDeleteButton="True"  ItemStyle-Width="10%" UpdateText="Popraw">
+                            <ControlStyle ForeColor="Blue"></ControlStyle>
+                        </asp:CommandField>
+                    </Columns>
+                </asp:GridView>
             <br />
-            <asp:Button ID="btnAdd" runat="server" 
-                                    Text="Add New Record" 
-                                    OnClick="AddNewRecord">
-            </asp:Button>
+                <asp:Button ID="btn_addNewOperation" runat="server" 
+                                                     Text="Dodaj Operację"
+                                                     OnClick="Gv_Alocator_NewOperation">
+                </asp:Button>
+                <asp:Button ID="btn_cancelNewOperation" runat="server" 
+                                                        Visible="false"
+                                                        Text="Anuluj"
+                                                        OnClick="Gv_Alocator_CancelNewOperation">
+                </asp:Button>
+            </div>
+        </div>
+        <div class= "footer">
+		    <p>Projekt Inżynierski - Piotr Bilski - index 43335</p>
         </div>
     </form>
 </body>

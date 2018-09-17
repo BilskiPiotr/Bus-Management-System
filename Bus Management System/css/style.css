@@ -274,8 +274,7 @@ img
 
 /* Bus-Panel formatowanie*/
 
-.bus-Panel,
-.alocator-Panel
+.bus-Panel
 {
     clear: both;
     display: block;
@@ -345,49 +344,12 @@ img
 }
 
 
-/* Alocator Panel - formatowanie*/
-
-.alocator-Panel 
-{
-    clear: both;
-    display: block;
-    width: 1300px;
-    height: 500px;
-    margin: 0 auto;
-    overflow: hidden;
-}
-
-.alocator-Left
-{
-    background-color: yellow;
-    float: left;
-    clear: none;
-    height: 450px;
-    width: 34%;
-    border: 3px solid blue;
-}
-
-.alocator-Right
-{
-    background-color: rgb(120, 100, 80);
-    float: right;
-    clear: none;
-    height: 450px;
-    width: 65%;
-    border: 3px solid green;
-}
 
 
 
-/* Alokator Top Table*/
 
-.alocator_TopTable,
-#alocator-LeftTable,
-#alocator_RightTable
-{
-    width: 100%;
-    margin-top: 5px;
-}
+
+
 
 #alocator-LeftTable td
 {

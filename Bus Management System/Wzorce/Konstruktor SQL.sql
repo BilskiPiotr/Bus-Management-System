@@ -56,11 +56,23 @@ CREATE TABLE [dbo].[Gates]
 
 );
 
+/* Vehicles Bus_Status: 0 - Not Available, 1 - Empty, 2 - Have Driver */
+/* Vehicles Work_Status: 0 - Free, 1 - In Work */
 CREATE TABLE [dbo].[Vehicles]
 (
 	[Id]			INT PRIMARY KEY IDENTITY(1,1)	NOT NULL,
 	[VehicleNb]		VARCHAR(4)						NOT NULL,
-	[Status]		INT	DEFAULT (1)					NOT NULL
+	[Bus_Status]	INT	DEFAULT (1)					NOT NULL,
+	[Work_Status]	INT DEFAULT (0)					NOT NULL
+);
+
+CREATE TABLE [dbo].[Vehicles_Status]
+(
+	[Id]			INT PRIMARY KEY IDENTITY(1,1)	NOT NULL,
+	[Employees_Id]	INT								NOT NULL,
+	[Vehicles_Id]	INT								NOT NULL,
+	[Taked]			DATETIME						NULL,
+	[Returned]		DATETIME						NULL
 );
 
 
@@ -104,6 +116,8 @@ ALTER TABLE Operations ADD CONSTRAINT FK_Operations_03 FOREIGN KEY (Gate) REFERE
 ALTER TABLE Operations ADD CONSTRAINT FK_Operations_04 FOREIGN KEY (AirPort) REFERENCES AirPorts(Id);
 ALTER TABLE Operations ADD CONSTRAINT FK_Operations_05 FOREIGN KEY (Bus) REFERENCES Vehicles(Id);
 ALTER TABLE Operations ADD CONSTRAINT FK_Operations_06 FOREIGN KEY (Operation) REFERENCES OperationType(Id);
+ALTER TABLE Vehicles_Status ADD CONSTRAINT FK_Vehicles_Status_01 FOREIGN KEY (Employees_Id) REFERENCES Employees_Basic(Id);
+ALTER TABLE Vehicles_Status ADD CONSTRAINT FK_Vehicles_Status_02 FOREIGN KEY (Vehicles_Id) REFERENCES Vehicles(Id);
 
 
 
@@ -114,7 +128,9 @@ ALTER TABLE Countries ADD CONSTRAINT UC_Countries UNIQUE (Id);
 ALTER TABLE Stations ADD CONSTRAINT UC_Stations UNIQUE (Id);
 ALTER TABLE Gates ADD CONSTRAINT UC_Gates UNIQUE (Id);
 ALTER TABLE Operations ADD CONSTRAINT UC_Operations UNIQUE (Id);
-ALTER TABLE OperationType ADD CONSTRAINT UC_OperationType UNIQUE (Id);
+ALTER TABLE OperationType ADD CONSTRAINT UC_OperationType UNIQUE (Id); 
+ALTER TABLE Vehicles ADD CONSTRAINT UC_Vehicles UNIQUE (Id);
+ALTER TABLE Vehicles_Status ADD CONSTRAINT UC_Vehicle_Status UNIQUE (Id);
 
 
 

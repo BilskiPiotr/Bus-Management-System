@@ -80,9 +80,9 @@
     <Content Include="about.aspx" />
     <Content Include="Alocator.aspx" />
     <Content Include="BusPanel.aspx" />
+    <Content Include="css\alocator.css" />
     <Content Include="css\style-old.css" />
     <Content Include="css\style.css" />
-    <Content Include="Formatowanie.aspx" />
     <Content Include="global.aspx" />
     <Content Include="js\get_location.js" />
     <Content Include="kontakt.aspx" />
@@ -114,13 +114,6 @@
       <DependentUpon>BusPanel.aspx</DependentUpon>
     </Compile>
     <Compile Include="DataAccessLayer.cs" />
-    <Compile Include="Formatowanie.aspx.cs">
-      <DependentUpon>Formatowanie.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Formatowanie.aspx.designer.cs">
-      <DependentUpon>Formatowanie.aspx</DependentUpon>
-    </Compile>
     <Compile Include="global.aspx.cs">
       <DependentUpon>global.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

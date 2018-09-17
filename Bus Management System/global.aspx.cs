@@ -49,7 +49,7 @@ namespace Bus_Management_System
             {
                 LoggedUser loggedUser = new LoggedUser();
                 DataTable loggedUserData = new DataTable();
-                loggedUserData = loggedUser.getLoggedUserData(iD, ref errorMsg);
+                loggedUserData = loggedUser.GetLoggedUserData(iD, ref errorMsg);
 
                 // Session object constructor
                 if (loggedUserData.Rows.Count > 0)

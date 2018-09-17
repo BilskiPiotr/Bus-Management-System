@@ -480,10 +480,10 @@
                                 </tr>
                                 <tr class="tr_26">
                                     <td colspan="2">
-                                        <asp:Button CssClass="table_Bt" ID="bt_AlocatorReset" runat="server" class="table_Bt" Text="CLEAR" OnClick="Bt_AlocatorReset_Click" />
+                                        <asp:Button CssClass="table_Bt" ID="bt_AlocatorReset" runat="server" Text="CLEAR" OnClick="Bt_AlocatorReset_Click" />
                                     </td>
                                     <td colspan="2">
-                                        <asp:Button CssClass="table_Bt" ID="bt_AlocatorAccept" runat="server" class="table_Bt" Text="ACCEPT" OnClick="Bt_AlocatorAccept_Click" />
+                                        <asp:Button CssClass="table_Bt" ID="bt_AlocatorAccept" runat="server" Text="ACCEPT" OnClick="Bt_AlocatorAccept_Click" />
                                     </td>
                                 </tr>
 

@@ -11,11 +11,6 @@ namespace Bus_Management_System
     public class BusinessLayer
     {
         DataAccessLayer dal = new DataAccessLayer();
-        NewOperation newOp = new NewOperation();
-        public static SqlDataAdapter adap;
-        public static DataTable dt;
-        // Stored image path before updating the record
-        public static string imgEditPath;
 
 
         public void ClearFields(BusinessLayer bl)
@@ -95,14 +90,6 @@ namespace Bus_Management_System
 
             return Convert.ToString(dt.Rows[0][0]);
         }
-
-
-        //public static DataTable FillAlocatorGrid()
-        //{
-            //DataSet ds = GetOperations();
-            //dt = GetCurrentOp(ds);
-
-        //}
 
 
         public DataTable GetCurrentOp(DataSet rawData)
@@ -236,7 +223,7 @@ namespace Bus_Management_System
             {
                 dal.QueryExecution(sqlCmd);
             }
-            catch (Exception ex)
+            catch
             {
                 // dodać obsługę błędu
             }
@@ -262,7 +249,7 @@ namespace Bus_Management_System
             {
                 dal.QueryExecution(sqlCmd);
             }
-            catch (Exception ex)
+            catch
             {
                 // dodać obsługę błędu
             }
