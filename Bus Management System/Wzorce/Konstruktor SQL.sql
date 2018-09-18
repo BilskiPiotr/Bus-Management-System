@@ -540,3 +540,21 @@ INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALU
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('46R','52.165445','20.973991666666667');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('47','52.166259999999994','20.974708333333336');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('48','52.166145000000001','20.975101666666667');
+
+INSERT INTO [dbo].[Operations] ([Employee_Id], [Operation], [FlightNb], [Pax], [AirPort], [PPS], [Gate], [Bus], [RadioGate], [RadioNeon], [Created]) VALUES (2, 1, 'EN671', '121', 65, 28, 13, 7, '612', '377', '2018-09-17 09:11:12');
+INSERT INTO [dbo].[Operations] ([Employee_Id], [Operation], [FlightNb], [Pax], [AirPort], [PPS], [Gate], [Bus], [RadioGate], [RadioNeon], [Created]) VALUES (3, 2, 'LO8991', '97', 26, 11, 17, 13, '891', '443', '2018-09-17 09:17:26');
+INSERT INTO [dbo].[Operations] ([Employee_Id], [Operation], [FlightNb], [Pax], [AirPort], [PPS], [Gate], [Bus], [RadioGate], [RadioNeon], [Created]) VALUES (4, 2, 'EN772', '189', 44, 14, 14, 11, '278', '719', '2018-09-17 09:23:41');
+
+UPDATE [dbo].[Vehicles] SET [Status] = 2 WHERE Id = 7;
+UPDATE [dbo].[Vehicles] SET [Status] = 2 WHERE Id = 11;
+UPDATE [dbo].[Vehicles] SET [Status] = 2 WHERE Id = 13;
+
+UPDATE [dbo].[Vehicles] SET [Work_Status] = 1 WHERE [Status] = 2;
+
+INSERT INTO [dbo].[Employees_Status] ([Employee_Id], [Employee_Login]) VALUES (2, '2018-09-17 08:01:12');
+INSERT INTO [dbo].[Employees_Status] ([Employee_Id], [Employee_Login]) VALUES (2, '2018-09-17 08:02:27');
+INSERT INTO [dbo].[Employees_Status] ([Employee_Id], [Employee_Login]) VALUES (2, '2018-09-17 08:02:39');
+
+
+/* zmiana nazwy kolumny w tabeli */
+EXEC sp_RENAME 'Vehicles.Bus_Status', 'Status', 'COLUMN'

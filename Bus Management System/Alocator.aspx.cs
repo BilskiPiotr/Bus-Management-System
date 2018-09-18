@@ -313,7 +313,7 @@ namespace Bus_Management_System
             // pobranie i wypełnienie kontrolek DropDownList numerami autobusów
             try
             {
-                SqlCommand cmd = new SqlCommand("SELECT Id, VehicleNb FROM Vehicles");
+                SqlCommand cmd = new SqlCommand("SELECT Id, VehicleNb FROM Vehicles WHERE Status = '" + 2 + "' AND Work_Status = '" + 0 + "'");
                 DataSet ds = dal.GetDataSet(cmd);
                 DropDownList ddl_busEdit = (DropDownList)e.Row.FindControl("ddl_busEdit");
                 if (ddl_busEdit != null)
@@ -380,9 +380,20 @@ namespace Bus_Management_System
         protected void Gv_Alocator_RowDeleting(object sender, GridViewDeleteEventArgs e)
         {
             int Id = Convert.ToInt32(gv_Alocator.DataKeys[e.RowIndex].Value);
+            GridViewRow row = gv_Alocator.Rows[e.RowIndex];
+            Label bus = (Label)row.FindControl("lb_bus");
+            string busNb = bus.Text;
+
+            SqlCommand cmd1 = new SqlCommand("UPDATE Vehicles SET Work_Status = @work_status WHERE VehicleNb = @vehicleNb");
+            cmd1.Parameters.AddWithValue("@work_status", 0);
+            cmd1.Parameters.AddWithValue("@vehicleNb", bus.Text);
+            dal.QueryExecution(cmd1);
+
             SqlCommand cmd = new SqlCommand("DELETE FROM Operations WHERE Id=@Id");
             cmd.Parameters.AddWithValue("@Id", Id);
             dal.QueryExecution(cmd);
+
+            bus.Dispose();
             BindGrid();
         }
 
@@ -486,13 +497,13 @@ namespace Bus_Management_System
 
                 dal.QueryExecution(cmd);
 
-                SqlCommand cmd1 = new SqlCommand("UPDATE Vehicles SET Status = 3 WHERE VehicleNb = '" + bus + "' ");
+                SqlCommand cmd1 = new SqlCommand("UPDATE Vehicles SET Work_Status = 1 WHERE Id = '" + bus + "' ");
                 dal.QueryExecution(cmd1);
 
                 gv_Alocator.EditIndex = -1;
                 BindGrid();
             }
-            catch
+            catch (Exception ex)
             {
                 Response.Write("<script> alert('Błąd - nie udało się poprawić istniejącej operacji') </script>");
             }
@@ -532,15 +543,21 @@ namespace Bus_Management_System
             //Bus status: 0 - Not Available, 1 - Empty, 2 - Free, 3 - In Work
 
             DataSet buses = bl.GetBus();
+            string numer = "";
+            string str = "";
+            int status = -1;
+            int work_Status = -1;
+
             for (int i = 0; i < buses.Tables[0].Rows.Count; i++)
             {
                 // pobranie numeru autobusu
-                string numer = buses.Tables[0].Rows[i].Field<string>("VehicleNb");
+                numer = buses.Tables[0].Rows[i].Field<string>("VehicleNb");
                 // pobranie statusu tego autobusu
-                int status = buses.Tables[0].Rows[i].Field<int>("Status");
+                status = buses.Tables[0].Rows[i].Field<int>("Status");
+                work_Status = buses.Tables[0].Rows[i].Field<int>("Work_Status");
 
                 //określenie klucza poszukiwań nazewnictwa kontrolek dla kolejnych wpisów w kontenerze DataSet
-                string str = "lb_Vehicle" + (i + 1).ToString();
+                str = "lb_Vehicle" + (i + 1).ToString();
 
                 if (this.FindControl(str) is Label label)
                 {
@@ -551,28 +568,41 @@ namespace Bus_Management_System
                     switch (status)
                     {
                         case 0:
+                            label.BackColor = Color.Black;
+                            label.ForeColor = Color.Yellow;
+                            label.Font.Bold = true;
                             break;
                         case 1:
                             label.BackColor = Color.Gray;
-                            label.ForeColor = Color.White;
+                            label.ForeColor = Color.Yellow;
                             break;
                         case 2:
-                            label.BackColor = Color.Green;
-                            label.ForeColor = Color.White;
-                            break;
-                        case 3:
-                            label.BackColor = Color.Red;
-                            label.ForeColor = Color.White;
-                            label.Font.Bold = true;
+                            switch (work_Status)
+                            {
+                                case 0:
+                                    label.BackColor = Color.Green;
+                                    label.ForeColor = Color.White;
+                                    label.Font.Bold = true;
+                                    break;
+                                case 1:
+                                    label.BackColor = Color.Red;
+                                    label.ForeColor = Color.White;
+                                    label.Font.Bold = true;
+                                    break;
+                            }
                             break;
                     }
 
+                    status = -1;
+                    work_Status = -1;
                     // wyświetlenie kontrolki, jeśli dodano do niej dane
                     label.Visible = true;
+                    label.Dispose();
                 }
 
 
             }
+            buses.Dispose();
         }
     }
 }

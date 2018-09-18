@@ -210,7 +210,7 @@
 <%-- Określenie autobusu wyznaczonego do wykonania zadania --%>
                         <asp:TemplateField HeaderText="Bus" ItemStyle-Width="5%">
                             <ItemTemplate>
-                                <%#Eval("VehicleNb") %>
+                                <asp:Label ID="lb_bus" runat="server" Text='<%#Eval("VehicleNb") %>'></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate >
                                 <asp:DropDownList ID="ddl_busEdit" runat="server" Width="100%"></asp:DropDownList>
