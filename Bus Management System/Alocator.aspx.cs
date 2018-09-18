@@ -173,7 +173,6 @@ namespace Bus_Management_System
                 // dodać potęcjalnie inne porządane zachowania, po testach
             }
 
-
             // pobranie i wypełnienie kontrolek DropDownList listą możliwych operacji
             try
             {
@@ -188,7 +187,8 @@ namespace Bus_Management_System
                     ddl_operationEdit.DataBind();
 
                     // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
-                    ddl_operationEdit.SelectedItem.Text = operacjaCookie;
+                    ddl_operationEdit.SelectedIndex = ddl_operationEdit.Items.IndexOf(ddl_operationEdit.Items.FindByText(operacjaCookie));
+                    //ddl_operationEdit.Text = operacjaCookie;
                     ddl_operationEdit.Dispose();
                 }
                 if (e.Row.RowType == DataControlRowType.Footer)
@@ -320,14 +320,17 @@ namespace Bus_Management_System
                 DropDownList ddl_busEdit = (DropDownList)e.Row.FindControl("ddl_busEdit");
                 if (ddl_busEdit != null)
                 {
-                    ddl_busEdit.DataSource = ds;
-                    ddl_busEdit.DataValueField = "Id";
-                    ddl_busEdit.DataTextField = "VehicleNb";
-                    ddl_busEdit.DataBind();
+                    if (ds.Tables[0].Rows.Count > 0)
+                    {
+                        ddl_busEdit.DataSource = ds;
+                        ddl_busEdit.DataValueField = "Id";
+                        ddl_busEdit.DataTextField = "VehicleNb";
+                        ddl_busEdit.DataBind();
 
-                    // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
-                    ddl_busEdit.SelectedItem.Text = busCookie;
-                    ddl_busEdit.Dispose();
+                        // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
+                        ddl_busEdit.SelectedItem.Text = busCookie;
+                        ddl_busEdit.Dispose();
+                    }
                 }
                 if (e.Row.RowType == DataControlRowType.Footer)
                 {
