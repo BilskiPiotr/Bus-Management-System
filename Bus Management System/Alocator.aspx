@@ -138,7 +138,7 @@
 <%-- Oznaczenie Portu Lotniczego wg nomenklatury IATA --%>
                         <asp:TemplateField HeaderText="Port" ItemStyle-Width="5%">
                             <ItemTemplate>
-                                <%#Eval("IATA_Name") %>
+                                <asp:Label ID="lb_airPort" runat="server" Text='<%#Eval("IATA_Name") %>'></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate >
                                 <asp:DropDownList ID="ddl_airPortEdit" runat="server" Width="100%"></asp:DropDownList>
@@ -171,7 +171,7 @@
 <%-- Numer Gate dla odlotu lub miejsce wysadzenia pasażerów dla przylotów --%>
                         <asp:TemplateField HeaderText="Gate" ItemStyle-Width="5%">
                             <ItemTemplate>
-                                <%#Eval("GateNb") %>
+                                <asp:Label ID="lb_gate" runat="server" Text='<%#Eval("GateNb") %>'></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate >
                                 <asp:DropDownList ID="ddl_gateEdit" runat="server" Width="100%"></asp:DropDownList>
@@ -197,7 +197,7 @@
 <%-- Opreślenie miejsca postoju statku powietrznego --%>
                         <asp:TemplateField HeaderText="PPS"  ItemStyle-Width="5%">
                             <ItemTemplate>
-                                <%#Eval("StationNb") %>
+                                <asp:Label ID="lb_pps" runat="server" Text='<%#Eval("StationNb") %>'></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate >
                                 <asp:DropDownList ID="ddl_ppsEdit" runat="server" Width="100%"></asp:DropDownList>
