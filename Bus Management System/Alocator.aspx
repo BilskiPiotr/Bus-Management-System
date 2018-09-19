@@ -214,6 +214,7 @@
                             </ItemTemplate>
                             <EditItemTemplate >
                                 <asp:DropDownList ID="ddl_busEdit" runat="server" Width="100%"></asp:DropDownList>
+                                <asp:Label ID="lb_busEdit" runat="server" Text="" Visible="False" Width="100%"></asp:Label>
                             </EditItemTemplate>
                             <FooterTemplate >
                                 <asp:DropDownList ID="ddl_busAdd" runat="server" Width="100%"></asp:DropDownList>

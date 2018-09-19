@@ -90,56 +90,9 @@ namespace Bus_Management_System
             }
             catch  // powstaje gdzieś błąd odwołania do obiektu podczazs przeładowania przy pomocy funkcji Edytuj
             {
-                Response.Write("<script> alert('Błąd pobierania listy operacji') </script>");
+                //Response.Write("<script> alert('Linia 93 - Błąd pobierania listy operacji') </script>");
             }
         }
-
-
-
-        // Pobranie danych do edycji zlecenia
-        //private void EditGrid(int selectedIndex)
-        //{
-        //    try
-        //    {
-        //        SqlCommand cmd = new SqlCommand("SELECT a.Id, a.RadioGate, a.Created, a.FlightNb, a.Pax, a.RadioNeon, " +
-        //                                        "a.Accepted, a.StartLoad, a.StartDrive, a.StartUnload, a.EndOp, " +
-        //                                        "b.Operation, c.StationNb, d.IATA_Name, e.GateNb, f.VehicleNb, g.Shengen " +
-        //                                        "FROM Operations AS a " +
-        //                                        "INNER JOIN OperationType AS b ON a.Operation=b.Id " +
-        //                                        "INNER JOIN Stations AS c ON a.PPS = c.Id " +
-        //                                        "INNER JOIN AirPorts AS d ON a.AirPort = d.Id " +
-        //                                        "INNER JOIN Gates AS e ON a.Gate = e.Id " +
-        //                                        "INNER JOIN Vehicles AS f ON a.Bus = f.Id " +
-        //                                        "INNER JOIN Countries AS g ON a.AirPort = d.Id  AND d.Country_Id = g.Id");
-
-        //        DataSet ds = dal.GetDataSet(cmd);
-        //        DataRow dr = ds.Tables[0].Rows[selectedIndex];
-
-        //        // sprawdzenie, czy takie ciasteczko w tej chwili istnieje, jeśli tak, skasowanie go
-        //        // a następnie dodanie nowego ciasteczka na okres z czasem "życia" 10s
-        //        if (Request.Cookies["Alocator"] != null)
-        //            Response.Cookies["Alocator"].Expires = DateTime.Now.AddDays(-1);
-        //        else
-        //        {
-        //            HttpCookie EditOperationValues = new HttpCookie("Alocator");
-        //            EditOperationValues.Values["operation"] = (string)dr.ItemArray.GetValue(11);
-        //            EditOperationValues.Values["pps"] = (string)dr.ItemArray.GetValue(12);
-        //            EditOperationValues.Values["airPort"] = (string)dr.ItemArray.GetValue(13);
-        //            EditOperationValues.Values["gate"] = (string)dr.ItemArray.GetValue(14);
-        //            EditOperationValues.Values["bus"] = (string)dr.ItemArray.GetValue(15);
-        //            EditOperationValues.Expires = DateTime.Now.AddMilliseconds(6000);
-        //            Response.Cookies.Add(EditOperationValues);
-        //        }
-
-        //        gv_Alocator.DataSource = ds;
-        //        gv_Alocator.DataBind();
-        //        SetBusStatus();
-        //    }
-        //    catch // powstaje gdzieś błąd odwołania do obiektu podczazs przeładowania przy pomocy funkcji Edytuj
-        //    {
-        //        Response.Write("<script> alert('Błąd pobierania listy operacji') </script>");
-        //    }
-        //}
 
 
 
@@ -169,7 +122,7 @@ namespace Bus_Management_System
             }
             catch // jeśli ciasteczko już wygadło
             {
-                Response.Write("<script> alert('Za długi czas dostu do serwera danych') </script>");
+                Response.Write("<script> alert('Linia 172 - Za długi czas dostu do serwera danych') </script>");
                 // dodać potęcjalnie inne porządane zachowania, po testach
             }
 
@@ -206,7 +159,7 @@ namespace Bus_Management_System
             }
             catch
             {
-                Response.Write("<script> alert('Błąd ładowania listy typów operacji') </script>");
+                Response.Write("<script> alert('Libia 209 - Błąd ładowania listy typów operacji') </script>");
             }
 
 
@@ -224,7 +177,8 @@ namespace Bus_Management_System
                     ddl_ppsEdit.DataBind();
 
                     // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
-                    ddl_ppsEdit.SelectedItem.Text = ppsCookie;
+                    ddl_ppsEdit.SelectedIndex = ddl_ppsEdit.Items.IndexOf(ddl_ppsEdit.Items.FindByText(ppsCookie));
+                    //ddl_ppsEdit.SelectedItem.Text = ppsCookie;
                     ddl_ppsEdit.Dispose();
                 }
                 if (e.Row.RowType == DataControlRowType.Footer)
@@ -240,7 +194,7 @@ namespace Bus_Management_System
             }
             catch
             {
-                Response.Write("<script> alert('Błąd ładowania listy stanowisk postojowych') </script>");
+                Response.Write("<script> alert('Linia 244 - Błąd ładowania listy stanowisk postojowych') </script>");
             }
 
 
@@ -258,7 +212,8 @@ namespace Bus_Management_System
                     ddl_airPortEdit.DataBind();
 
                     // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
-                    ddl_airPortEdit.SelectedItem.Text = airPortCookie;
+                    ddl_airPortEdit.SelectedIndex = ddl_airPortEdit.Items.IndexOf(ddl_airPortEdit.Items.FindByText(airPortCookie));
+                    //ddl_airPortEdit.SelectedItem.Text = airPortCookie;
                     ddl_airPortEdit.Dispose();
                 }
                 if (e.Row.RowType == DataControlRowType.Footer)
@@ -274,7 +229,7 @@ namespace Bus_Management_System
             }
             catch
             {
-                Response.Write("<script> alert('Błąd ładowania listy obsługiwanych portów lotniczych') </script>");
+                Response.Write("<script> alert('Linia 279 - Błąd ładowania listy obsługiwanych portów lotniczych') </script>");
             }
 
 
@@ -292,7 +247,8 @@ namespace Bus_Management_System
                     ddl_gateEdit.DataBind();
 
                     // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
-                    ddl_gateEdit.SelectedItem.Text = gateCookie;
+                    ddl_gateEdit.SelectedIndex = ddl_gateEdit.Items.IndexOf(ddl_gateEdit.Items.FindByText(gateCookie));
+                    //ddl_gateEdit.SelectedItem.Text = gateCookie;
                     ddl_gateEdit.Dispose();
                 }
                 if (e.Row.RowType == DataControlRowType.Footer)
@@ -308,7 +264,7 @@ namespace Bus_Management_System
             }
             catch
             {
-                Response.Write("<script> alert('Błąd ładowania listy gate') </script>");
+                Response.Write("<script> alert('Linia 314 - Błąd ładowania listy gate') </script>");
             }
 
 
@@ -318,34 +274,48 @@ namespace Bus_Management_System
                 SqlCommand cmd = new SqlCommand("SELECT Id, VehicleNb FROM Vehicles WHERE Status = '" + 2 + "' AND Work_Status = '" + 0 + "'");
                 DataSet ds = dal.GetDataSet(cmd);
                 DropDownList ddl_busEdit = (DropDownList)e.Row.FindControl("ddl_busEdit");
-                if (ddl_busEdit != null)
+                Label lb_busEdit = (Label)e.Row.FindControl("lb_busEdit");
+                //ddl_busEdit.Visible = true;
+                //lb_busEdit.Visible = false;
+                if (ddl_busEdit != null && ds.Tables[0].Rows.Count == 0)
                 {
-                    if (ds.Tables[0].Rows.Count > 0)
+                    ddl_busEdit.Visible = false;
+                    lb_busEdit.Text = busCookie;
+                    lb_busEdit.BackColor = Color.White;
+                    lb_busEdit.Visible = true;
+                }
+                else
+                {
+                    if (ddl_busEdit != null)
                     {
-                        ddl_busEdit.DataSource = ds;
-                        ddl_busEdit.DataValueField = "Id";
-                        ddl_busEdit.DataTextField = "VehicleNb";
-                        ddl_busEdit.DataBind();
+                        if (ds.Tables[0].Rows.Count > 0)
+                        {
+                            ddl_busEdit.DataSource = ds;
+                            ddl_busEdit.DataValueField = "Id";
+                            ddl_busEdit.DataTextField = "VehicleNb";
+                            ddl_busEdit.DataBind();
 
-                        // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
-                        ddl_busEdit.SelectedItem.Text = busCookie;
-                        ddl_busEdit.Dispose();
+                            // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
+                            ddl_busEdit.SelectedIndex = ddl_busEdit.Items.IndexOf(ddl_busEdit.Items.FindByText(busCookie));
+                            //ddl_busEdit.SelectedItem.Text = busCookie;
+                            ddl_busEdit.Dispose();
+                        }
                     }
+                    if (e.Row.RowType == DataControlRowType.Footer)
+                    {
+                        DropDownList ddl_busAdd = (DropDownList)e.Row.FindControl("ddl_busAdd");
+                        ddl_busAdd.DataSource = ds;
+                        ddl_busAdd.DataValueField = "Id";
+                        ddl_busAdd.DataTextField = "VehicleNb";
+                        ddl_busAdd.DataBind();
+                        ddl_busAdd.Dispose();
+                    }
+                    ds.Dispose();
                 }
-                if (e.Row.RowType == DataControlRowType.Footer)
-                {
-                    DropDownList ddl_busAdd = (DropDownList)e.Row.FindControl("ddl_busAdd");
-                    ddl_busAdd.DataSource = ds;
-                    ddl_busAdd.DataValueField = "Id";
-                    ddl_busAdd.DataTextField = "VehicleNb";
-                    ddl_busAdd.DataBind();
-                    ddl_busAdd.Dispose();
-                }
-                ds.Dispose();
             }
             catch
             {
-                Response.Write("<script> alert('Błąd ładowania listy Autobusów') </script>");
+                Response.Write("<script> alert('Linia 352 - Błąd ładowania listy Autobusów') </script>");
             }
         }
 
@@ -411,38 +381,12 @@ namespace Bus_Management_System
 
             try
             {
-                //SqlCommand cmd = new SqlCommand("SELECT a.Id, a.RadioGate, a.Created, a.FlightNb, a.Pax, a.RadioNeon, " +
-                //                                "a.Accepted, a.StartLoad, a.StartDrive, a.StartUnload, a.EndOp, " +
-                //                                "b.Operation, c.StationNb, d.IATA_Name, e.GateNb, f.VehicleNb, g.Shengen " +
-                //                                "FROM Operations AS a " +
-                //                                "INNER JOIN OperationType AS b ON a.Operation=b.Id " +
-                //                                "INNER JOIN Stations AS c ON a.PPS = c.Id " +
-                //                                "INNER JOIN AirPorts AS d ON a.AirPort = d.Id " +
-                //                                "INNER JOIN Gates AS e ON a.Gate = e.Id " +
-                //                                "INNER JOIN Vehicles AS f ON a.Bus = f.Id " +
-                //                                "INNER JOIN Countries AS g ON a.AirPort = d.Id  AND d.Country_Id = g.Id");
-
-                //DataSet ds = dal.GetDataSet(cmd);
-                //GridViewRow gvr = gv_Alocator.Rows[index: e.NewEditIndex];
-
-                // sprawdzenie, czy takie ciasteczko w tej chwili istnieje, jeśli tak, skasowanie go
-                // a następnie dodanie nowego ciasteczka na okres z czasem "życia" 10s
                 if (Request.Cookies["Alocator"] != null)
                     Response.Cookies["Alocator"].Expires = DateTime.Now.AddDays(-1);
                 else
                 {
                     //String value = gv_Alocator.Rows[e.NewEditIndex].Cells[5].Text;
                     HttpCookie EditOperationValues = new HttpCookie("Alocator");
-                    //string value = gvr.Cells[5].Text;
-                    //string value1 = gvr.Cells[6].Text;
-                    //string value2 = gvr.Cells[7].Text;
-                    //string value3 = gvr.Cells[8].Text;
-                    //string value4 = gvr.Cells[9].Text;
-                    //EditOperationValues.Values["operation"] = (string)gvr.ItemArray.GetValue(11);
-                    //EditOperationValues.Values["pps"] = (string)dr.ItemArray.GetValue(12);
-                    //EditOperationValues.Values["airPort"] = (string)dr.ItemArray.GetValue(13);
-                    //EditOperationValues.Values["gate"] = (string)dr.ItemArray.GetValue(14);
-                    //EditOperationValues.Values["bus"] = (string)dr.ItemArray.GetValue(15);
 
                     //pobranie danych dla edycji list ddl i ciasteczka Alocator
                     GridViewRow row = gv_Alocator.Rows[e.NewEditIndex];
@@ -465,23 +409,14 @@ namespace Bus_Management_System
                     EditOperationValues.Values["bus"] = bus;
 
                     EditOperationValues.Expires = DateTime.Now.AddMilliseconds(6000);
-
-
-
                     Response.Cookies.Add(EditOperationValues);
                 }
-
-                //gv_Alocator.DataSource = ds;
-                //SetBusStatus();
-                //gv_Alocator.DataBind();
                 BindGrid();
-
             }
             catch // powstaje gdzieś błąd odwołania do obiektu podczazs przeładowania przy pomocy funkcji Edytuj
             {
-                Response.Write("<script> alert('Błąd pobierania listy operacji') </script>");
+                Response.Write("<script> alert('Linia 486 - Błąd pobierania listy operacji') </script>");
             }
-            //EditGrid(e.NewEditIndex);
         }
 
 
@@ -543,24 +478,66 @@ namespace Bus_Management_System
             string pax = (((TextBox)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_paxEdit"))).Text);
             int gate = int.Parse(((DropDownList)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_gateEdit"))).SelectedValue);
             int pps = int.Parse(((DropDownList)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_ppsEdit"))).SelectedValue);
-            int bus = int.Parse(((DropDownList)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_busEdit"))).SelectedValue);
+            DropDownList ddl_BusEdit = (DropDownList)gv_Alocator.FooterRow.FindControl("ddl_busEdit");
+
             string radioGate = ((TextBox)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_radioGateEdit"))).Text;
             string radioNeon = ((TextBox)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_radioNeonEdit"))).Text;
 
-            try
+            DateTime editDate = DateTime.Now;
+
+            SqlCommand cmd;
+
+            int bus = 0;
+
+            if (ddl_BusEdit.Items.Count < 1)
             {
-                DateTime editDate = DateTime.Now;
-                SqlCommand cmd = new SqlCommand("UPDATE Operations SET Operation = @operation, " +
-                                                "FlightNb = @flightNb, " +
-                                                "AirPort = @airPort, " +
-                                                "Pax = @pax, " +
-                                                "Gate = @gate, " +
-                                                "PPS = @pps, " +
-                                                "Bus = @bus, " +
-                                                "RadioGate = @radioGate, " +
-                                                "RadioNeon = @radioNeon, " +
-                                                "Created = @editDate " +
-                                                "WHERE Id=@id ");
+                cmd = new SqlCommand("UPDATE Operations SET Operation = @operation, " +
+                                    "FlightNb = @flightNb, " +
+                                    "AirPort = @airPort, " +
+                                    "Pax = @pax, " +
+                                    "Gate = @gate, " +
+                                    "PPS = @pps, " +
+                                    "RadioGate = @radioGate, " +
+                                    "RadioNeon = @radioNeon, " +
+                                    "Created = @editDate " +
+                                    "WHERE Id=@id ");
+                cmd.Parameters.AddWithValue("@operation", operation);
+                cmd.Parameters.AddWithValue("@flightNb", flightNb);
+                cmd.Parameters.AddWithValue("@airPort", airPort);
+                cmd.Parameters.AddWithValue("@pax", pax);
+                cmd.Parameters.AddWithValue("@gate", gate);
+                cmd.Parameters.AddWithValue("@pps", pps);
+                cmd.Parameters.AddWithValue("@radioGate", radioGate);
+                cmd.Parameters.AddWithValue("@radioNeon", radioNeon);
+                cmd.Parameters.AddWithValue("@editDate", editDate);
+                cmd.Parameters.AddWithValue("@id", id);
+
+                try
+                {
+                    dal.QueryExecution(cmd);
+                    gv_Alocator.EditIndex = -1;
+                    BindGrid();
+                }
+                catch
+                {
+                    Response.Write("<script> alert('Błąd - nie udało się poprawić istniejącej operacji') </script>");
+                }
+            }
+            else
+            {
+                bus = int.Parse(((DropDownList)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_busEdit"))).SelectedValue);
+
+                cmd = new SqlCommand("UPDATE Operations SET Operation = @operation, " +
+                                "FlightNb = @flightNb, " +
+                                "AirPort = @airPort, " +
+                                "Pax = @pax, " +
+                                "Gate = @gate, " +
+                                "PPS = @pps, " +
+                                "Bus = @bus, " +
+                                "RadioGate = @radioGate, " +
+                                "RadioNeon = @radioNeon, " +
+                                "Created = @editDate " +
+                                "WHERE Id=@id ");
                 cmd.Parameters.AddWithValue("@operation", operation);
                 cmd.Parameters.AddWithValue("@flightNb", flightNb);
                 cmd.Parameters.AddWithValue("@airPort", airPort);
@@ -573,17 +550,20 @@ namespace Bus_Management_System
                 cmd.Parameters.AddWithValue("@editDate", editDate);
                 cmd.Parameters.AddWithValue("@id", id);
 
-                dal.QueryExecution(cmd);
+                try
+                {
+                    dal.QueryExecution(cmd);
 
-                SqlCommand cmd1 = new SqlCommand("UPDATE Vehicles SET Work_Status = 1 WHERE Id = '" + bus + "' ");
-                dal.QueryExecution(cmd1);
+                    SqlCommand cmd1 = new SqlCommand("UPDATE Vehicles SET Work_Status = 1 WHERE Id = '" + bus + "' ");
+                    dal.QueryExecution(cmd1);
 
-                gv_Alocator.EditIndex = -1;
-                BindGrid();
-            }
-            catch (Exception ex)
-            {
-                Response.Write("<script> alert('Błąd - nie udało się poprawić istniejącej operacji') </script>");
+                    gv_Alocator.EditIndex = -1;
+                    BindGrid();
+                }
+                catch
+                {
+                    Response.Write("<script> alert('Błąd - nie udało się poprawić istniejącej operacji') </script>");
+                }
             }
         }
 
