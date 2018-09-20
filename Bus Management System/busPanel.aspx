@@ -9,6 +9,11 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="SysBus_Management" content:"" />
 	<link rel="stylesheet" href="css/style.css" />
+    <style type="text/css">
+        .auto-style1 {
+            height: 4px;
+        }
+    </style>
 </head>
 <body runat="server" id="BodyTag">
     <script type="text/javascript">

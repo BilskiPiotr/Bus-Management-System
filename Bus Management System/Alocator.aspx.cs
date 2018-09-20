@@ -84,8 +84,19 @@ namespace Bus_Management_System
                                                 "INNER JOIN Countries AS g ON a.AirPort = d.Id  AND d.Country_Id = g.Id");
 
                 DataSet ds = dal.GetDataSet(cmd);
-                gv_Alocator.DataSource = ds;
-                gv_Alocator.DataBind();
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    gv_Alocator.DataSource = ds;
+                    gv_Alocator.DataBind();
+                }
+                else
+                {
+                    DataTable dt = GridViewStructCreate();
+                    gv_Alocator.DataSource = dt;
+                    gv_Alocator.DataBind();
+                }
+
                 SetBusStatus();
             }
             catch  // powstaje gdzieś błąd odwołania do obiektu podczazs przeładowania przy pomocy funkcji Edytuj
@@ -274,15 +285,15 @@ namespace Bus_Management_System
                 SqlCommand cmd = new SqlCommand("SELECT Id, VehicleNb FROM Vehicles WHERE Status = '" + 2 + "' AND Work_Status = '" + 0 + "'");
                 DataSet ds = dal.GetDataSet(cmd);
                 DropDownList ddl_busEdit = (DropDownList)e.Row.FindControl("ddl_busEdit");
-                Label lb_busEdit = (Label)e.Row.FindControl("lb_busEdit");
-                //ddl_busEdit.Visible = true;
-                //lb_busEdit.Visible = false;
                 if (ddl_busEdit != null && ds.Tables[0].Rows.Count == 0)
                 {
-                    ddl_busEdit.Visible = false;
-                    lb_busEdit.Text = busCookie;
-                    lb_busEdit.BackColor = Color.White;
-                    lb_busEdit.Visible = true;
+                    cmd = new SqlCommand("SELECT Id, VehicleNb FROM Vehicles WHERE VehicleNb = '" + busCookie + "'");
+                    ds.Clear();
+                    ds = dal.GetDataSet(cmd);
+                    ddl_busEdit.DataSource = ds;
+                    ddl_busEdit.DataValueField = "Id";
+                    ddl_busEdit.DataTextField = "VehicleNb";
+                    ddl_busEdit.DataBind();
                 }
                 else
                 {
@@ -478,56 +489,15 @@ namespace Bus_Management_System
             string pax = (((TextBox)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_paxEdit"))).Text);
             int gate = int.Parse(((DropDownList)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_gateEdit"))).SelectedValue);
             int pps = int.Parse(((DropDownList)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_ppsEdit"))).SelectedValue);
-            DropDownList ddl_BusEdit = (DropDownList)gv_Alocator.FooterRow.FindControl("ddl_busEdit");
+            int bus = int.Parse(((DropDownList)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_busEdit"))).SelectedValue);
+            //DropDownList ddl_BusEdit = (DropDownList)gv_Alocator.FooterRow.FindControl("ddl_busEdit");
 
             string radioGate = ((TextBox)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_radioGateEdit"))).Text;
             string radioNeon = ((TextBox)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_radioNeonEdit"))).Text;
 
             DateTime editDate = DateTime.Now;
 
-            SqlCommand cmd;
-
-            int bus = 0;
-
-            if (ddl_BusEdit.Items.Count < 1)
-            {
-                cmd = new SqlCommand("UPDATE Operations SET Operation = @operation, " +
-                                    "FlightNb = @flightNb, " +
-                                    "AirPort = @airPort, " +
-                                    "Pax = @pax, " +
-                                    "Gate = @gate, " +
-                                    "PPS = @pps, " +
-                                    "RadioGate = @radioGate, " +
-                                    "RadioNeon = @radioNeon, " +
-                                    "Created = @editDate " +
-                                    "WHERE Id=@id ");
-                cmd.Parameters.AddWithValue("@operation", operation);
-                cmd.Parameters.AddWithValue("@flightNb", flightNb);
-                cmd.Parameters.AddWithValue("@airPort", airPort);
-                cmd.Parameters.AddWithValue("@pax", pax);
-                cmd.Parameters.AddWithValue("@gate", gate);
-                cmd.Parameters.AddWithValue("@pps", pps);
-                cmd.Parameters.AddWithValue("@radioGate", radioGate);
-                cmd.Parameters.AddWithValue("@radioNeon", radioNeon);
-                cmd.Parameters.AddWithValue("@editDate", editDate);
-                cmd.Parameters.AddWithValue("@id", id);
-
-                try
-                {
-                    dal.QueryExecution(cmd);
-                    gv_Alocator.EditIndex = -1;
-                    BindGrid();
-                }
-                catch
-                {
-                    Response.Write("<script> alert('Błąd - nie udało się poprawić istniejącej operacji') </script>");
-                }
-            }
-            else
-            {
-                bus = int.Parse(((DropDownList)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_busEdit"))).SelectedValue);
-
-                cmd = new SqlCommand("UPDATE Operations SET Operation = @operation, " +
+                SqlCommand cmd = new SqlCommand("UPDATE Operations SET Operation = @operation, " +
                                 "FlightNb = @flightNb, " +
                                 "AirPort = @airPort, " +
                                 "Pax = @pax, " +
@@ -550,20 +520,30 @@ namespace Bus_Management_System
                 cmd.Parameters.AddWithValue("@editDate", editDate);
                 cmd.Parameters.AddWithValue("@id", id);
 
-                try
-                {
-                    dal.QueryExecution(cmd);
+            try
+            {
+                dal.QueryExecution(cmd);
+                gv_Alocator.EditIndex = -1;
+                BindGrid();
+            }
+            catch
+            {
+                Response.Write("<script> alert('Błąd - nie udało się poprawić istniejącej operacji') </script>");
+            }
 
-                    SqlCommand cmd1 = new SqlCommand("UPDATE Vehicles SET Work_Status = 1 WHERE Id = '" + bus + "' ");
-                    dal.QueryExecution(cmd1);
+            try
+            {
+                dal.QueryExecution(cmd);
 
-                    gv_Alocator.EditIndex = -1;
-                    BindGrid();
-                }
-                catch
-                {
-                    Response.Write("<script> alert('Błąd - nie udało się poprawić istniejącej operacji') </script>");
-                }
+                SqlCommand cmd1 = new SqlCommand("UPDATE Vehicles SET Work_Status = 1 WHERE Id = '" + bus + "' ");
+                dal.QueryExecution(cmd1);
+
+                gv_Alocator.EditIndex = -1;
+                BindGrid();
+            }
+            catch
+            {
+                Response.Write("<script> alert('Błąd - nie udało się poprawić istniejącej operacji') </script>");
             }
         }
 
@@ -661,6 +641,37 @@ namespace Bus_Management_System
 
             }
             buses.Dispose();
+        }
+
+
+        private DataTable GridViewStructCreate()
+        {
+            DataTable dt = new DataTable();
+
+            // konstruktor kolumn zawierający wszystkie informacje 
+            // jak w poprawnie pobranym DataSource, ponieważ jakieś operacje już istniały
+            dt.Columns.Add("Created");
+            dt.Columns.Add("Operation");
+            dt.Columns.Add("FlightNb");
+            dt.Columns.Add("IATA_Name");
+            dt.Columns.Add("Shengen");
+            dt.Columns.Add("Pax");
+            dt.Columns.Add("GateNb");
+            dt.Columns.Add("id");
+            dt.Columns.Add("StationNb");
+            dt.Columns.Add("VehicleNb");
+            dt.Columns.Add("RadioGate");
+            dt.Columns.Add("RadioNeon");
+            dt.Columns.Add("Accepted");
+            dt.Columns.Add("StartLoad");
+            dt.Columns.Add("StartDrive");
+            dt.Columns.Add("StartUnload");
+            dt.Columns.Add("EndOp");
+
+            DataRow dr = dt.NewRow();
+            dt.Rows.Add(dr);
+
+            return dt;
         }
     }
 }
