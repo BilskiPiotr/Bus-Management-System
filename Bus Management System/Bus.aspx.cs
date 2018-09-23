@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Device.Location;
 using System.Globalization;
 using System.Linq;
@@ -16,6 +18,12 @@ namespace Bus_Management_System
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["BrowserWidth"] != null)
+            {
+                // Do all code here to avoid double execution first time
+                // ....
+                lblDim.Text = "Width: " + Session["BrowserWidth"] + " Height: " + Session["BrowserHeight"];
+            }
             if (!IsPostBack)
             {
                 string userId = "";
@@ -38,7 +46,7 @@ namespace Bus_Management_System
                     lb_loggedUser.Text += (string)loggedUser.FirstName + " " + (string)loggedUser.LastName + "       ID: " + ((int)loggedUser.CompanyId).ToString();
 
                     // załadowanie danych do psnelu Operatora
-                    BindData();
+                    BindDdlData();
                 }
             }
         }
@@ -116,9 +124,40 @@ namespace Bus_Management_System
         }
 
 
-        private void BindData()
+        private void BindDdlData()
         {
+            if (Request.Cookies["BusManagement"] != null)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT Id, VehicleNb FROM Vehicles");
+                DataSet ds = dal.GetDataSet(cmd);
+                if (ddl_busSelect != null)
+                {
+                    ddl_busSelect.DataSource = ds;
+                    ddl_busSelect.DataValueField = "Id";
+                    ddl_busSelect.DataTextField = "VehicleNb";
+                    ddl_busSelect.DataBind();
+
+                    ddl_busSelect.Items.Insert(0, new ListItem("-----", String.Empty));
+                    ddl_busSelect.SelectedIndex = 0;
+                }
+                ds.Dispose();
+            }
+            BusManagement.SetActiveView(BusSelection);
+        }
+
+        protected void Bt_busSelect_Click(object sender, EventArgs e)
+        {
+            this.busMenu.Items[0].Selectable = true;
+            this.busMenu.Items[1].Selectable = true;
             BusManagement.SetActiveView(Home);
+        }
+
+        protected void Ddl_busSelect_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (ddl_busSelect.SelectedIndex != 0)
+                bt_busSelect.Enabled = true;
+            else
+                bt_busSelect.Enabled = false;
         }
     }
 }

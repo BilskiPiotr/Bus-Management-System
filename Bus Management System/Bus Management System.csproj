@@ -82,6 +82,7 @@
     <Content Include="Bus.aspx" />
     <Content Include="BusPanel.aspx" />
     <Content Include="css\alocator.css" />
+    <Content Include="css\bus-baza.css" />
     <Content Include="css\bus.css" />
     <Content Include="css\style-old.css" />
     <Content Include="css\style.css" />

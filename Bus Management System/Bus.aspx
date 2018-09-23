@@ -11,6 +11,8 @@
 	<link rel="stylesheet" href="css/bus.css" />
 </head>
 <body runat="server" id="BodyTag">
+    
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js""></script>
     <script type="text/javascript">
 
         var wartosc1 = "";
@@ -51,47 +53,97 @@
             wartosc1 = "";
             wartosc2 = "";
             wartosc3 = "";
-        }
-</script>
-    <form id="form1" runat="server">
-        <div class="header">
-            <div class="topnav">
-                <asp:Menu   ID="busMenu"
-                            StaticMenuStyle-CssClass="sms"
-                            StaticMenuItemStyle-CssClass="smis"
-                            Orientation="Horizontal" 
-                            MaximumDynamicDisplayLevels="1" 
-                            runat="server" 
-                            OnMenuItemClick="MineMenu_MenuItemClick" 
-                            StaticEnableDefaultPopOutImage="false">
-                    <StaticMenuItemStyle />
-                        <Items>
-                            <asp:MenuItem Text="Home" Value="1"></asp:MenuItem>
-                            <asp:MenuItem Text="Details" Value ="2"></asp:MenuItem>
-                            <asp:MenuItem Text="Logout" Value="3"></asp:MenuItem>
-                        </Items>
 
-                    <StaticMenuItemStyle CssClass="smis" HorizontalPadding="15px" />
-                    <StaticMenuStyle CssClass="sms" />
-                </asp:Menu>
+            var txt = "";
+                txt += "<p>Total width/height: " + screen.width + "*" + screen.height + "</p>";
+                txt += "<p>Available width/height: " + screen.availWidth + "*" + screen.availHeight + "</p>";
+                txt += "<p>Color depth: " + screen.colorDepth + "</p>";
+                txt += "<p>Color resolution: " + screen.pixelDepth + "</p>";
+                document.getElementById("<%=lblDim.ClientID %>").innerHTML = txt;
+        }
+
+</script>
+
+
+    <form id="form1" runat="server">
+
+        <div class="bus-row bus-header">
+            <asp:Menu ID="Menu1"
+                      StaticMenuStyle-CssClass="sms"
+                      StaticMenuItemStyle-CssClass="smis"
+                      Orientation="Horizontal" 
+                      MaximumDynamicDisplayLevels="1" 
+                      runat="server" 
+                      OnMenuItemClick="MineMenu_MenuItemClick" 
+                      StaticEnableDefaultPopOutImage="false">
+                <Items>
+                    <asp:MenuItem Text="Home" Value="1" Selectable="false"></asp:MenuItem>
+                    <asp:MenuItem Text="Details" Value ="2" Selectable="false"></asp:MenuItem>
+                    <asp:MenuItem Text="Logout" Value="3"></asp:MenuItem>
+                </Items>
+                <StaticMenuItemStyle CssClass="smis" HorizontalPadding="15px" />
+                <StaticMenuStyle CssClass="sms" />
+            </asp:Menu>
+        </div>
+
+
+        <div class="bus-row">
+            <div class="bus-left">
+                
             </div>
-            <div class="siteInfo">
-                <a class="right-lbl"><asp:Label ID="lb_loggedUser" runat="server"></asp:Label></a>
-                <a class="right-lbl"><asp:Label ID="lb_loggedUserDesc" runat="server" Text="Zalogowano jako:  "></asp:Label></a>
+            <div class="bus-right">
+                <div class="bus-1stLine">
+                    <div class="cmd-button">
+                        <asp:Button CssClass="bus-Buttons" runat="server"/>
+                    </div>
+                    <div class="cmd-button">
+                        <asp:Button CssClass="bus-Buttons" runat="server"/>
+                    </div>
+                    <div class="cmd-button">
+                        <asp:Button CssClass="bus-Buttons" runat="server"/>
+                    </div>
+                </div>
+                <div class="bus-2ndLine">
+                    <div class="cmd-button">
+                        <asp:Button CssClass="bus-Buttons" runat="server"/>
+                    </div>
+                    <div class="cmd-button">
+                        <asp:Button CssClass="bus-Buttons" runat="server"/>
+                    </div>
+                    <div class="cmd-button">
+                        <asp:Button CssClass="bus-Buttons" runat="server"/>
+                    </div>
+                </div>
             </div>
         </div>
+                
+        <div class="bus-row bus-footer">
+
+        </div>
+
         <div id="bus">
             <asp:MultiView ID="BusManagement" runat="server">
 
 
+<%-- Panel wyboru pojazdu --%>
+                <asp:View ID="BusSelection" runat="server">
+                    <div class="bus-Panel">
+                        <asp:DropDownList ID="ddl_busSelect" runat="server" CssClass="bus-DdlSelect" OnSelectedIndexChanged="Ddl_busSelect_SelectedIndexChanged" AutoPostBack="True"></asp:DropDownList>
+                        <asp:Button ID="bt_busSelect" runat="server" CssClass="bus-SingleBt" OnClick="Bt_busSelect_Click" Text="OK" Enabled="false"/>
+                    </div>
+                </asp:View>
+
+
+<%-- Panel podstawowy operatora --%>
                 <asp:View ID="Home" runat="server">
 
+
+
                     <div class="bus-Panel">
-	                    <div class="busHeader">
-                            <p> nagłówek </p>
-	                    </div>
+          
 	                    <div class="busLeft">
                             <p>lewa część ekranu </p>
+                            <asp:Label ID="lblDim" runat="server" Text=""></asp:Label>
 	                    </div>
 	                    <div class="busRight">
 		                    <div class="busRightTop">
@@ -140,15 +192,18 @@
                 </asp:View>
 
 
+<%-- Panel z informacjami dodatkowymi --%>
                 <asp:View ID="Detail" runat="server">
 
                     <div class="singleCol">
                         <table id="busDetail-table" style="width: auto; height: auto;">
                             <tr>
                                 <td>Panel Detali Kierowcy</td>
+
                             </tr>
                         </table>
                     </div>
+                                                    <div id="demo"></div>
 
                     <h2>Szablon 4-ro kolumnowy responsive</h2>
                     <p><strong>Zmiany zależna od szerokości okna przeglądarki.</strong> Dla rozdzielczości (szerokośc) 992px lub mniej, liczba kolumn zmniejszy się z 4 do 2. Dla rozdzielczości (szerokości ekranu) 600px lub mniej, wszystkie kolumny ułożą sie jedna nad drugą (powstanie 1 kolumna!.</p>
@@ -232,7 +287,8 @@
 
         </div>
         <div class= "footer">
-		    <p>Projekt Inżynierski - Piotr Bilski - index 43335</p>
+		    <a class="right-lbl"><asp:Label ID="lb_loggedUser" runat="server"></asp:Label></a>
+            <a class="right-lbl"><asp:Label ID="Label2" runat="server" Text="Zalogowano jako:  "></asp:Label></a>
         </div>
     </form>
 </body>
