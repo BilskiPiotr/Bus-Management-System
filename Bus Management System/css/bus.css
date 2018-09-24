@@ -1,12 +1,15 @@
 ﻿body 
 {
     margin: 0;
+    overflow: hidden;
     font-family: Arial, Helvetica, sans-serif;
 }
 
 .bus-header 
 {
     width: 100%;
+    margin-left: 0;
+    margin-right: 0;
     height: 35px;
     overflow: hidden;
     display: flex;
@@ -45,33 +48,135 @@
 {
     margin-left: 0;
     margin-right: 0;
-    display: inline;
 }
 
-.bus-left
+
+
+
+@media (max-width: 365px)
 {
-    clear: both;
+    body
+    {
+        width: 350px;
+        height: 590px;
+    }
+
+    .bus-row
+    {
+        display: block;
+    }
+
+    .bus-left 
+    {
+        clear: both;
+    }
+
+    .bus-right 
+    {
+        clear: both;
+        display: block;
+    }
+
+    .bus-1stLine,
+    .bus-2ndLine 
+    {
+        clear: both;
+    }
+
+    .cmd-button
+    {
+        width: 33.33333%
+    }
+
+    .bus-Buttons 
+    {
+        width: 100%;
+        height: 35px;
+        background-color: burlywood;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+    }
 }
 
-.bus-right
+@media (max-width: 450px) and (min-width: 365px)
 {
-    clear: both;
-    display: block;
+    body 
+    {
+        width: 440px;
+        height: 350px;
+    }
+
+    .bus-row 
+    {
+        display: inline;
+    }
+
+    .bus-left 
+    {
+        clear: both;
+    }
+
+    .bus-right 
+    {
+        clear: both;
+        display: block;
+    }
+
+    .bus-1stLine,
+    .bus-2ndLine 
+    {
+        clear: both;
+        display: block;
+    }
+
+    .cmd-button 
+    {
+        width: 28%
+    }
+
+    .bus-Buttons 
+    {
+        width: 100%;
+        height: 35px;
+        background-color: burlywood;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+    }
 }
 
-.bus-1stLine,
-.bus-2ndLine
-{
-    clear: both;
-    display: block;
-}
 
-.bus-Buttons
+@media (min-width: 1300px) 
 {
-    width: 100%;
-    height: 35px;
-    background-color: burlywood;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
+    .bus-row {
+        display: inline;
+    }
+
+    .bus-left {
+        clear: both;
+        width: 80%;
+        float: left;
+    }
+
+    .bus-right {
+        clear: both;
+        float: right;
+        display: block;
+    }
+
+
+
+    .cmd-button {
+        width: 18%
+    }
+
+    .bus-Buttons {
+        width: 100%;
+        height: 35px;
+        background-color: burlywood;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+    }
 }

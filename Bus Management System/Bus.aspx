@@ -67,8 +67,8 @@
 
     <form id="form1" runat="server">
 
-        <div class="bus-row bus-header">
-            <asp:Menu ID="Menu1"
+        <div class="bus-header">
+            <asp:Menu ID="busMenu"
                       StaticMenuStyle-CssClass="sms"
                       StaticMenuItemStyle-CssClass="smis"
                       Orientation="Horizontal" 
@@ -87,42 +87,7 @@
         </div>
 
 
-        <div class="bus-row">
-            <div class="bus-left">
-                
-            </div>
-            <div class="bus-right">
-                <div class="bus-1stLine">
-                    <div class="cmd-button">
-                        <asp:Button CssClass="bus-Buttons" runat="server"/>
-                    </div>
-                    <div class="cmd-button">
-                        <asp:Button CssClass="bus-Buttons" runat="server"/>
-                    </div>
-                    <div class="cmd-button">
-                        <asp:Button CssClass="bus-Buttons" runat="server"/>
-                    </div>
-                </div>
-                <div class="bus-2ndLine">
-                    <div class="cmd-button">
-                        <asp:Button CssClass="bus-Buttons" runat="server"/>
-                    </div>
-                    <div class="cmd-button">
-                        <asp:Button CssClass="bus-Buttons" runat="server"/>
-                    </div>
-                    <div class="cmd-button">
-                        <asp:Button CssClass="bus-Buttons" runat="server"/>
-                    </div>
-                </div>
-            </div>
-        </div>
-                
-        <div class="bus-row bus-footer">
-
-        </div>
-
-        <div id="bus">
-            <asp:MultiView ID="BusManagement" runat="server">
+        <asp:MultiView ID="BusManagement" runat="server">
 
 
 <%-- Panel wyboru pojazdu --%>
@@ -136,17 +101,11 @@
 
 <%-- Panel podstawowy operatora --%>
                 <asp:View ID="Home" runat="server">
-
-
-
-                    <div class="bus-Panel">
-          
-	                    <div class="busLeft">
+                    <div class="bus-row">
+                        <div class="bus-left">
                             <p>lewa część ekranu </p>
                             <asp:Label ID="lblDim" runat="server" Text=""></asp:Label>
-	                    </div>
-	                    <div class="busRight">
-		                    <div class="busRightTop">
+
                                 <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
                                 <asp:HiddenField ID="HiddenField1" runat="server" />
                                 <asp:HiddenField ID="HiddenField2" runat="server" />
@@ -179,16 +138,32 @@
                                         <td class="dane-C2"><asp:Label ID="lb_BusAccuracy" runat="server" Text="" Width="100px"></asp:Label></td>
                                     </tr>
                                 </table>
-		                    </div>		                      
-                            <div class="busRightMiddle">
-                                <p>prawa middle</p>
-		                    </div>
-		                    <div class="busRightBottom">
-                                <p>prawa bottom</p>
+                        </div>
+                        <div class="bus-right">
+                            <div class="bus-1stLine">
+                                <div class="cmd-button">
+                                    <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L1-B1"/>
+                                </div>
+                                <div class="cmd-button">
+                                    <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L1-B2"/>
+                                </div>
+                                <div class="cmd-button">
+                                    <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L1-B3"/>
+                                </div>
                             </div>
-	                    </div>
+                            <div class="bus-2ndLine">
+                                <div class="cmd-button">
+                                    <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L2-B1"/>
+                                </div>
+                                <div class="cmd-button">
+                                    <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L2-B2"/>
+                                </div>
+                                <div class="cmd-button">
+                                    <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L2-B3"/>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
                 </asp:View>
 
 
@@ -203,90 +178,12 @@
                             </tr>
                         </table>
                     </div>
-                                                    <div id="demo"></div>
-
-                    <h2>Szablon 4-ro kolumnowy responsive</h2>
-                    <p><strong>Zmiany zależna od szerokości okna przeglądarki.</strong> Dla rozdzielczości (szerokośc) 992px lub mniej, liczba kolumn zmniejszy się z 4 do 2. Dla rozdzielczości (szerokości ekranu) 600px lub mniej, wszystkie kolumny ułożą sie jedna nad drugą (powstanie 1 kolumna!.</p>
-
-                    <div class="row">
-                        <div class="column" style="background-color:#aaa;">
-                            <h2>Column 1</h2>
-                            <p>..........</p>
-                            <table id="c1-table" style="width: auto; height: auto;">
-                                <tr>
-  					                <th colspan="2">Współrzędne</th>
-  				                </tr>
-                                <tr>
-                                    <td class="odstep" colspan="2"></td>
-                                </tr>
-                                <tr>
-                                    <td class="dane-C1"><asp:Label ID="lb_OpisLatitude" runat="server" Text="Latitude :"></asp:Label></td>
-                                    <td class="dane-C2"><asp:Label ID="lb_Latitude" runat="server" Text=" 00000000 " Width="150px"></asp:Label></td>
-                                </tr>
-                                <tr>
-                                    <td class="odstep" colspan="2"></td>
-                                </tr>
-                                <tr>
-                                    <td class="dane-C1"><asp:Label ID="lb_OpisLongitude" runat="server" Text="Longitude :"></asp:Label></td>
-                                    <td class="dane-C2"><asp:Label ID="lb_Longitude" runat="server" Text=" 00000000 " Width="150px"></asp:Label></td>
-                                </tr>
-                                <tr>
-                                    <td class="odstep" colspan="2"></td>
-                                </tr>
-                                <tr>
-                                    <td class="dane-C1"><asp:Label ID="lb_OpisAccuracy" runat="server" Text="Akuracy :"></asp:Label></td>
-                                    <td class="dane-C2"><asp:Label ID="lb_Accuracy" runat="server" Text=" 00000000 " Width="150px"></asp:Label></td>
-                                </tr>
-                                <tr>
-                                    <td class="odstep" colspan="2"></td>
-                                </tr>
-                                <tr>
-                                    <td class="dane-C1"><asp:Label ID="lb_PodajImie" runat="server" Text="Podaj Imie :"></asp:Label></td>
-                                    <td class="dane-C2"><asp:TextBox ID="tb_JakiesDane" runat="server" Width="150px"></asp:TextBox></td>
-                                </tr>
-                                <tr>
-                                    <td class="odstep" colspan="2"></td>
-                                </tr>
-                                <tr>
-                                    <td class="dane-C1"><asp:Label ID="lb_PobranyCzas" runat="server" Text="Czas Serwera :"></asp:Label></td>
-                                    <td class="dane-C2"><asp:Label ID="lb_ActualTime" runat="server" Width="150px"></asp:Label></td>
-                                </tr>
-                                <tr>
-                                    <td class="odstep" colspan="2"></td>
-                                </tr>
-                                <tr>
-                                    <asp:UpdatePanel runat="server" id="UpdatePanel2">
-                                        <ContentTemplate>
-
-                                            <asp:Label runat="server" Text="Długość Geograficzna" id="Label6"></asp:Label>
-                                        </ContentTemplate>
-                                    </asp:UpdatePanel>
-                                </tr>
-                                <tr>
-                                    <td class="odstep" colspan="2"></td>
-                                </tr>
-                            </table>
-                        </div>
-                    <div class="column" style="background-color:#bbb;">
-                        <h2>Column 2</h2>
-                        <p>................</p>
-                    </div>
-                    <div class="column" style="background-color:#ccc;">
-                        <h2>Column 3</h2>
-                        <p>................</p>
-                    </div>
-                    <div class="column" style="background-color:#ddd;">
-                        <h2>Column 4</h2>
-                        <p>................</p>
-                    </div>
-                    </div>
-
                 </asp:View>
 
             </asp:MultiView>
 
-        </div>
-        <div class= "footer">
+
+        <div class= "bus-row bus-footer">
 		    <a class="right-lbl"><asp:Label ID="lb_loggedUser" runat="server"></asp:Label></a>
             <a class="right-lbl"><asp:Label ID="Label2" runat="server" Text="Zalogowano jako:  "></asp:Label></a>
         </div>
