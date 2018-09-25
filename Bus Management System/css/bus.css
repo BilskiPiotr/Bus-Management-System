@@ -186,12 +186,12 @@
 
     .bus-Buttons {
         width: 100%;
-        height: 35px;
+        height: 29px;
         background-color: burlywood;
         color: white;
         font-size: 14px;
         font-weight: bold;
-        margin: 8px 2px 0 2px;
+        margin: 6px 2px 0 2px;
     }
 
     .bus-1stLine {
