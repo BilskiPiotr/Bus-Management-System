@@ -211,15 +211,6 @@ namespace Bus_Management_System {
         protected global::System.Web.UI.WebControls.View Detail;
         
         /// <summary>
-        /// Kontrolka lb_loggedUser.
-        /// </summary>
-        /// <remarks>
-        /// Pole generowane automatycznie.
-        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lb_loggedUser;
-        
-        /// <summary>
         /// Kontrolka Label2.
         /// </summary>
         /// <remarks>
@@ -227,5 +218,14 @@ namespace Bus_Management_System {
         /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label2;
+        
+        /// <summary>
+        /// Kontrolka lb_loggedUser.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lb_loggedUser;
     }
 }

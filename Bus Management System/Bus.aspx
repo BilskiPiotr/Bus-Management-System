@@ -86,7 +86,7 @@
             </asp:Menu>
         </div>
 
-
+                            <div class="content">
         <asp:MultiView ID="BusManagement" runat="server">
 
 
@@ -101,6 +101,7 @@
 
 <%-- Panel podstawowy operatora --%>
                 <asp:View ID="Home" runat="server">
+
                     <div class="bus-row">
                         <div class="bus-left">
                             <p>lewa część ekranu </p>
@@ -141,29 +142,18 @@
                         </div>
                         <div class="bus-right">
                             <div class="bus-1stLine">
-                                <div class="cmd-button">
                                     <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L1-B1"/>
-                                </div>
-                                <div class="cmd-button">
                                     <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L1-B2"/>
-                                </div>
-                                <div class="cmd-button">
                                     <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L1-B3"/>
-                                </div>
                             </div>
                             <div class="bus-2ndLine">
-                                <div class="cmd-button">
                                     <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L2-B1"/>
-                                </div>
-                                <div class="cmd-button">
                                     <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L2-B2"/>
-                                </div>
-                                <div class="cmd-button">
                                     <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L2-B3"/>
-                                </div>
                             </div>
                         </div>
                     </div>
+
                 </asp:View>
 
 
@@ -183,10 +173,12 @@
             </asp:MultiView>
 
 
-        <div class= "bus-row bus-footer">
-		    <a class="right-lbl"><asp:Label ID="lb_loggedUser" runat="server"></asp:Label></a>
+        <div class= "bus-footer">
+
             <a class="right-lbl"><asp:Label ID="Label2" runat="server" Text="Zalogowano jako:  "></asp:Label></a>
+            		    <a class="right-lbl"><asp:Label ID="lb_loggedUser" runat="server"></asp:Label></a>
         </div>
+                                                        </div>
     </form>
 </body>
 </html>

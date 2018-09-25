@@ -1,6 +1,6 @@
 ﻿body 
 {
-    margin: 0;
+    margin: 0 auto;
     overflow: hidden;
     font-family: Arial, Helvetica, sans-serif;
 }
@@ -32,17 +32,7 @@
     color: #fff;
 }
 
-.bus-footer 
-{
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    height: 35px;
-    background-color: #a63d40;
-    color: white;
-    font-size: 14px;
-    text-align: center;
-}
+
 
 .bus-row 
 {
@@ -53,122 +43,26 @@
 
 
 
-@media (max-width: 365px)
-{
-    body
-    {
-        width: 350px;
-        height: 590px;
-    }
-
-    .bus-row
-    {
-        display: block;
-    }
-
-    .bus-left 
-    {
-        clear: both;
-    }
-
-    .bus-right 
-    {
-        clear: both;
-        display: block;
-    }
-
-    .bus-1stLine,
-    .bus-2ndLine 
-    {
-        clear: both;
-    }
-
-    .cmd-button
-    {
-        width: 33.33333%
-    }
-
-    .bus-Buttons 
-    {
-        width: 100%;
-        height: 35px;
-        background-color: burlywood;
-        color: white;
-        font-size: 16px;
-        font-weight: bold;
-    }
-}
-
-@media (max-width: 450px) and (min-width: 365px)
-{
-    body 
-    {
-        width: 440px;
-        height: 350px;
-    }
-
-    .bus-row 
-    {
-        display: inline;
-    }
-
-    .bus-left 
-    {
-        clear: both;
-    }
-
-    .bus-right 
-    {
-        clear: both;
-        display: block;
-    }
-
-    .bus-1stLine,
-    .bus-2ndLine 
-    {
-        clear: both;
-        display: block;
-    }
-
-    .cmd-button 
-    {
-        width: 28%
-    }
-
-    .bus-Buttons 
-    {
-        width: 100%;
-        height: 35px;
-        background-color: burlywood;
-        color: white;
-        font-size: 16px;
-        font-weight: bold;
-    }
-}
-
 
 @media (min-width: 1300px) 
 {
+    body
+    {
+        width: 550px;
+    }
+
     .bus-row {
         display: inline;
     }
 
     .bus-left {
-        clear: both;
-        width: 80%;
+        width: 440px;
         float: left;
     }
 
     .bus-right {
-        clear: both;
+        width: 110px;
         float: right;
-        display: block;
-    }
-
-
-
-    .cmd-button {
-        width: 18%
     }
 
     .bus-Buttons {
@@ -176,7 +70,150 @@
         height: 35px;
         background-color: burlywood;
         color: white;
-        font-size: 16px;
+        font-size: 14px;
         font-weight: bold;
+        margin: 8px 2px 0 2px;
+    }
+
+    .bus-1stLine 
+    {
+        clear: both;
+        display: block;
+    }
+
+    .bus-2ndLine
+    {
+        clear: both;
+        display: block;
+    }
+
+    .bus-footer 
+    {
+        position: fixed;
+        bottom: 0;
+        width: 550px;
+        height: 23px;
+        margin: 0 auto;
+        background-color: #a63d40;
+        color: white;
+        font-size: 16px;
+        text-align: center;
+        padding: 4px 0 0 0;
+    }
+}
+
+
+@media (max-width: 450px) and (min-width: 350px) {
+    body {
+        width: 350px;
+    }
+
+    .bus-row {
+        display: block;
+    }
+
+    .bus-left {
+        width: 100%;
+        height: 40%;
+        float: left;
+    }
+
+    .bus-right {
+        position: fixed;
+        bottom: 28px;
+        width: 355px;
+        float: left;
+    }
+
+    .bus-Buttons {
+        width: 100%;
+        height: 35px;
+        background-color: burlywood;
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+        margin: 2px;
+    }
+
+    .bus-1stLine,
+    .bus-2ndLine {
+    }
+
+    .bus-1stLine {
+        clear: both;
+        display: flex;
+    }
+
+    .bus-2ndLine {
+        clear: both;
+        display: flex;
+    }
+
+    .bus-footer {
+        position: fixed;
+        bottom: 0;
+        width: 359px;
+        height: 21px;
+        margin: 0 auto;
+        background-color: #a63d40;
+        color: white;
+        font-size: 14px;
+        text-align: center;
+        padding: 4px 0 0 0;
+    }
+}
+
+
+
+@media (max-width: 600px) and (min-width: 450px) {
+    body {
+        width: 550px;
+    }
+
+    .bus-row {
+        display: inline;
+    }
+
+    .bus-left {
+        width: 440px;
+        float: left;
+    }
+
+    .bus-right {
+        width: 110px;
+        float: right;
+    }
+
+    .bus-Buttons {
+        width: 100%;
+        height: 35px;
+        background-color: burlywood;
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+        margin: 8px 2px 0 2px;
+    }
+
+    .bus-1stLine {
+        clear: both;
+        display: block;
+    }
+
+    .bus-2ndLine {
+        clear: both;
+        display: block;
+    }
+
+    .bus-footer {
+        position: fixed;
+        bottom: 0;
+        width: 550px;
+        height: 23px;
+        margin: 0 auto;
+        background-color: #a63d40;
+        color: white;
+        font-size: 16px;
+        text-align: center;
+        padding: 4px 0 0 0;
     }
 }
