@@ -111,26 +111,41 @@
 
                     <div class="bus-row">
                         <div class="bus-left">
-                            <asp:Table ID="busMINEtable" runat="server" CssClass="busTable">
+                            <asp:Table ID="busMINEtable" runat="server" CssClass="busTable" 
+                                                                        BorderColor="#FF0066" 
+                                                                        BorderStyle="Solid" 
+                                                                        BorderWidth="10px" 
+                                                                        CellPadding="5" 
+                                                                        CellSpacing="5" 
+                                                                        EnableTheming="False" 
+                                                                        ForeColor="#FFCC66" 
+                                                                        GridLines="Horizontal">
 
                                 <asp:TableRow runat="server">
+                                    <asp:TableCell runat="server" RowSpan="5" Width="50px" BackColor="SkyBlue"></asp:TableCell>
                                     <asp:TableCell runat="server"></asp:TableCell>
+                                    <asp:TableCell runat="server">Rząd 1</asp:TableCell>
                                     <asp:TableCell runat="server"></asp:TableCell>
+                                    <asp:TableCell runat="server" RowSpan="5" Width="50px" BackColor="SkyBlue"></asp:TableCell>
+                                </asp:TableRow>
+                                <asp:TableRow runat="server">
+                                    <asp:TableCell runat="server"></asp:TableCell>
+                                    <asp:TableCell runat="server">Rząd 2</asp:TableCell>
                                     <asp:TableCell runat="server"></asp:TableCell>
                                 </asp:TableRow>
                                 <asp:TableRow runat="server">
                                     <asp:TableCell runat="server"></asp:TableCell>
-                                    <asp:TableCell runat="server"></asp:TableCell>
-                                    <asp:TableCell runat="server"></asp:TableCell>
-                                </asp:TableRow>
-                                <asp:TableRow runat="server">
-                                    <asp:TableCell runat="server"></asp:TableCell>
-                                    <asp:TableCell runat="server"></asp:TableCell>
+                                    <asp:TableCell runat="server">Rząd 3</asp:TableCell>
                                     <asp:TableCell runat="server"></asp:TableCell>
                                 </asp:TableRow>
                                 <asp:TableRow runat="server">
                                     <asp:TableCell runat="server"></asp:TableCell>
+                                    <asp:TableCell runat="server">Rząd 4</asp:TableCell>
                                     <asp:TableCell runat="server"></asp:TableCell>
+                                </asp:TableRow>
+                                <asp:TableRow runat="server">
+                                    <asp:TableCell runat="server"></asp:TableCell>
+                                    <asp:TableCell runat="server">Rząd 5</asp:TableCell>
                                     <asp:TableCell runat="server"></asp:TableCell>
                                 </asp:TableRow>
 
