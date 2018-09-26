@@ -20,8 +20,6 @@ namespace Bus_Management_System
         {
             if (Session["BrowserWidth"] != null)
             {
-                // Do all code here to avoid double execution first time
-                // ....
                 lblDim.Text = "Width: " + Session["BrowserWidth"] + " Height: " + Session["BrowserHeight"];
             }
             if (!IsPostBack)

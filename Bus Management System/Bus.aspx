@@ -86,13 +86,20 @@
             </asp:Menu>
         </div>
 
-                            <div class="content">
-        <asp:MultiView ID="BusManagement" runat="server">
-
+        <div class="content">
+            <asp:MultiView ID="BusManagement" runat="server">
 
 <%-- Panel wyboru pojazdu --%>
                 <asp:View ID="BusSelection" runat="server">
-                    <div class="bus-Panel">
+                    <div class="bus-Panel" style="  position: absolute;
+                                                    margin: auto;
+                                                    top: 0;
+                                                    right: 0;
+                                                    bottom: 0;
+                                                    left: 0;
+                                                    width: 250px;
+                                                    height: 50px;
+                                                    text-align: center">
                         <asp:DropDownList ID="ddl_busSelect" runat="server" CssClass="bus-DdlSelect" OnSelectedIndexChanged="Ddl_busSelect_SelectedIndexChanged" AutoPostBack="True"></asp:DropDownList>
                         <asp:Button ID="bt_busSelect" runat="server" CssClass="bus-SingleBt" OnClick="Bt_busSelect_Click" Text="OK" Enabled="false"/>
                     </div>
@@ -104,41 +111,31 @@
 
                     <div class="bus-row">
                         <div class="bus-left">
-                            <p>lewa część ekranu </p>
-                            <asp:Label ID="lblDim" runat="server" Text=""></asp:Label>
+                            <asp:Table ID="busMINEtable" runat="server" CssClass="busTable">
 
-                                <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
-                                <asp:HiddenField ID="HiddenField1" runat="server" />
-                                <asp:HiddenField ID="HiddenField2" runat="server" />
-                                <asp:HiddenField ID="HiddenField3" runat="server" />
+                                <asp:TableRow runat="server">
+                                    <asp:TableCell runat="server"></asp:TableCell>
+                                    <asp:TableCell runat="server"></asp:TableCell>
+                                    <asp:TableCell runat="server"></asp:TableCell>
+                                </asp:TableRow>
+                                <asp:TableRow runat="server">
+                                    <asp:TableCell runat="server"></asp:TableCell>
+                                    <asp:TableCell runat="server"></asp:TableCell>
+                                    <asp:TableCell runat="server"></asp:TableCell>
+                                </asp:TableRow>
+                                <asp:TableRow runat="server">
+                                    <asp:TableCell runat="server"></asp:TableCell>
+                                    <asp:TableCell runat="server"></asp:TableCell>
+                                    <asp:TableCell runat="server"></asp:TableCell>
+                                </asp:TableRow>
+                                <asp:TableRow runat="server">
+                                    <asp:TableCell runat="server"></asp:TableCell>
+                                    <asp:TableCell runat="server"></asp:TableCell>
+                                    <asp:TableCell runat="server"></asp:TableCell>
+                                </asp:TableRow>
 
-                                <table id="currentLoc-table" style="width: auto; height: auto;">
-                                    <tr>
-                                        <td class="dane-C1"><asp:Label ID="lb_LatOpis" runat="server" Text="Lat :"></asp:Label></td>
-                                        <td class="dane-C2"><asp:Label ID="lb_BusLatitude" runat="server" Text="" Width="100px"></asp:Label></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="odstep" colspan="2"></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="dane-C1"><asp:Label ID="lb_LonOpis" runat="server" Text="Lon :"></asp:Label></td>
-                                        <td class="dane-C2"><asp:Label ID="lb_BusLongitude" runat="server" Text="" Width="100px"></asp:Label></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="odstep" colspan="2"></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="dane-C1"><asp:Label ID="lb_DisOpis" runat="server" Text="Dis :"></asp:Label></td>
-                                        <td class="dane-C2"><asp:Label ID="lb_BusDistance" runat="server" Text="" Width="100px"></asp:Label></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="odstep" colspan="2"></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="dane-C1"><asp:Label ID="lb_AccOpis" runat="server" Text="Acc :"></asp:Label></td>
-                                        <td class="dane-C2"><asp:Label ID="lb_BusAccuracy" runat="server" Text="" Width="100px"></asp:Label></td>
-                                    </tr>
-                                </table>
+                            </asp:Table>
+                            
                         </div>
                         <div class="bus-right">
                             <div class="bus-1stLine">
@@ -161,10 +158,39 @@
                 <asp:View ID="Detail" runat="server">
 
                     <div class="singleCol">
+
+                        <asp:Label ID="lblDim" runat="server" Text=""></asp:Label>
+
+                        <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
+                        <asp:HiddenField ID="HiddenField1" runat="server" />
+                        <asp:HiddenField ID="HiddenField2" runat="server" />
+                        <asp:HiddenField ID="HiddenField3" runat="server" />
+
                         <table id="busDetail-table" style="width: auto; height: auto;">
                             <tr>
-                                <td>Panel Detali Kierowcy</td>
-
+                                <td class="dane-C1"><asp:Label ID="lb_LatOpis" runat="server" Text="Lat :"></asp:Label></td>
+                                <td class="dane-C2"><asp:Label ID="lb_BusLatitude" runat="server" Text="" Width="100px"></asp:Label></td>
+                            </tr>
+                            <tr>
+                                <td class="odstep" colspan="2"></td>
+                            </tr>
+                            <tr>
+                                <td class="dane-C1"><asp:Label ID="lb_LonOpis" runat="server" Text="Lon :"></asp:Label></td>
+                                <td class="dane-C2"><asp:Label ID="lb_BusLongitude" runat="server" Text="" Width="100px"></asp:Label></td>
+                            </tr>
+                            <tr>
+                                <td class="odstep" colspan="2"></td>
+                            </tr>
+                            <tr>
+                                <td class="dane-C1"><asp:Label ID="lb_DisOpis" runat="server" Text="Dis :"></asp:Label></td>
+                                <td class="dane-C2"><asp:Label ID="lb_BusDistance" runat="server" Text="" Width="100px"></asp:Label></td>
+                            </tr>
+                            <tr>
+                                <td class="odstep" colspan="2"></td>
+                            </tr>
+                            <tr>
+                                <td class="dane-C1"><asp:Label ID="lb_AccOpis" runat="server" Text="Acc :"></asp:Label></td>
+                                <td class="dane-C2"><asp:Label ID="lb_BusAccuracy" runat="server" Text="" Width="100px"></asp:Label></td>
                             </tr>
                         </table>
                     </div>
@@ -173,12 +199,11 @@
             </asp:MultiView>
 
 
-        <div class= "bus-footer">
-
-            <a class="right-lbl"><asp:Label ID="Label2" runat="server" Text="Zalogowano jako:  "></asp:Label></a>
-            		    <a class="right-lbl"><asp:Label ID="lb_loggedUser" runat="server"></asp:Label></a>
+            <div class= "bus-footer">
+                <a class="right-lbl"><asp:Label ID="Label2" runat="server" Text="Zalogowano jako:  "></asp:Label></a>
+            	<a class="right-lbl"><asp:Label ID="lb_loggedUser" runat="server"></asp:Label></a>
+            </div>
         </div>
-                                                        </div>
     </form>
 </body>
 </html>

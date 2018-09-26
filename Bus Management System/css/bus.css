@@ -32,8 +32,6 @@
     color: #fff;
 }
 
-
-
 .bus-row 
 {
     margin-left: 0;
@@ -44,6 +42,8 @@
 
 
 
+
+/* dla komputerów stacjonarnych */
 @media (min-width: 1300px) 
 {
     body
@@ -51,24 +51,28 @@
         width: 550px;
     }
 
-    .bus-row {
+    .bus-row 
+    {
         display: inline;
     }
 
-    .bus-left {
+    .bus-left 
+    {
         width: 440px;
         float: left;
     }
 
-    .bus-right {
+    .bus-right 
+    {
         width: 110px;
         float: right;
     }
 
-    .bus-Buttons {
+    .bus-Buttons 
+    {
         width: 100%;
         height: 35px;
-        background-color: burlywood;
+        background-color: #a63d40;
         color: white;
         font-size: 14px;
         font-weight: bold;
@@ -95,125 +99,178 @@
         height: 23px;
         margin: 0 auto;
         background-color: #a63d40;
-        color: white;
-        font-size: 16px;
+        color: #ebe54d;
+        font-size: 12px;
         text-align: center;
-        padding: 4px 0 0 0;
+        padding: 10px 0 0 0;
+    }
+
+    #ddl_busSelect
+    {
+        margin: 4px auto;
+        width: 100px;
+        height: 40px;
+        font-size: 24px;
+        font-weight: bold;
+        color: darkblue;
+    }
+
+    #bt_busSelect {
+        margin: 4px auto;
+        width: 50px;
+        height: 40px;
+        font-size: 24px;
+        font-weight: bold;
+        background-color: #a63d40;
+        color: #ebe54d;
     }
 }
 
-
-@media (max-width: 450px) and (min-width: 350px) {
-    body {
+/* dla telefonów o niskich rozdzielczościach - układ pionowy */
+@media (max-width: 450px) and (min-width: 350px) 
+{
+    body 
+    {
         width: 350px;
     }
 
-    .bus-row {
+    .bus-row 
+    {
         display: block;
     }
 
-    .bus-left {
+    .bus-left 
+    {
         width: 100%;
         height: 40%;
         float: left;
     }
 
-    .bus-right {
+    .bus-right 
+    {
         position: fixed;
         bottom: 28px;
         width: 355px;
         float: left;
     }
 
-    .bus-Buttons {
+    .bus-Buttons 
+    {
         width: 100%;
         height: 35px;
-        background-color: burlywood;
+        background-color: #a63d40;
         color: white;
         font-size: 14px;
         font-weight: bold;
         margin: 2px;
     }
 
-    .bus-1stLine,
-    .bus-2ndLine {
-    }
-
-    .bus-1stLine {
+    .bus-1stLine 
+    {
         clear: both;
         display: flex;
     }
 
-    .bus-2ndLine {
+    .bus-2ndLine 
+    {
         clear: both;
         display: flex;
     }
 
-    .bus-footer {
+    .bus-footer 
+    {
         position: fixed;
         bottom: 0;
         width: 359px;
         height: 21px;
         margin: 0 auto;
         background-color: #a63d40;
-        color: white;
+        color: #ebe54d;
         font-size: 14px;
         text-align: center;
         padding: 4px 0 0 0;
     }
+
+    .busTable 
+    {
+        background-color: #FFFFCC;
+        border-color: Fuchsia;
+        border-style: solid;
+        margin: 0 auto;
+        width: 340px;
+        height: 200px;
+    }
 }
 
-
-
-@media (max-width: 600px) and (min-width: 450px) {
-    body {
+/* dla telefonów komórkowych o niskiej rozdzielczości - układ poziomy */
+@media (max-width: 600px) and (min-width: 550px) 
+{
+    body 
+    {
         width: 550px;
     }
 
-    .bus-row {
+    .bus-row 
+    {
         display: inline;
     }
 
-    .bus-left {
+    .bus-left 
+    {
         width: 440px;
         float: left;
     }
 
-    .bus-right {
+    .bus-right 
+    {
         width: 110px;
         float: right;
     }
 
-    .bus-Buttons {
+    .bus-Buttons 
+    {
         width: 100%;
         height: 29px;
-        background-color: burlywood;
+        background-color: #a63d40;
         color: white;
         font-size: 14px;
         font-weight: bold;
         margin: 6px 2px 0 2px;
     }
 
-    .bus-1stLine {
+    .bus-1stLine 
+    {
         clear: both;
         display: block;
     }
 
-    .bus-2ndLine {
+    .bus-2ndLine 
+    {
         clear: both;
         display: block;
     }
 
-    .bus-footer {
+    .bus-footer 
+    {
         position: fixed;
         bottom: 0;
         width: 550px;
         height: 23px;
         margin: 0 auto;
         background-color: #a63d40;
-        color: white;
+        color: #ebe54d;
         font-size: 16px;
         text-align: center;
         padding: 4px 0 0 0;
+    }
+
+    .busTable 
+    {
+        background-color: #FFFFCC;
+        border-color: Fuchsia;
+        border-style: solid;
+        margin: 0 auto;
+        width: 435px;
+        height: 200px;
     }
 }
