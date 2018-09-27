@@ -57,8 +57,6 @@
             var txt = "";
                 txt += "<p>Total width/height: " + screen.width + "*" + screen.height + "</p>";
                 txt += "<p>Available width/height: " + screen.availWidth + "*" + screen.availHeight + "</p>";
-                txt += "<p>Color depth: " + screen.colorDepth + "</p>";
-                txt += "<p>Color resolution: " + screen.pixelDepth + "</p>";
                 document.getElementById("<%=lblDim.ClientID %>").innerHTML = txt;
         }
 
@@ -66,7 +64,7 @@
 
 
     <form id="form1" runat="server">
-
+        <asp:ScriptManager ID="BusRefresh" runat="server" EnablePageMethods="true"></asp:ScriptManager>
         <div class="bus-header">
             <asp:Menu ID="busMenu"
                       StaticMenuStyle-CssClass="sms"
@@ -108,10 +106,12 @@
 
 <%-- Panel podstawowy operatora --%>
                 <asp:View ID="Home" runat="server">
-
-                    <div class="bus-row">
-                        <div class="bus-left">
-                            <asp:Table ID="busMINEtable" runat="server" CssClass="busTable" 
+                    <asp:UpdatePanel runat="server" Id="BusHomeUP">
+                        <ContentTemplate>
+                            <asp:Timer runat="server" Id="BusHomeTimer" Interval="5000" OnTick="BusHomeTimer_Tick"></asp:Timer>
+                                <div class="bus-row">
+                                    <div class="bus-left">
+                                        <asp:Table ID="busMINEtable" runat="server" CssClass="busTable" 
                                                                         BorderColor="#FF0066" 
                                                                         BorderStyle="Solid" 
                                                                         BorderWidth="10px" 
@@ -121,50 +121,49 @@
                                                                         ForeColor="#FFCC66" 
                                                                         GridLines="Horizontal">
 
-                                <asp:TableRow runat="server">
-                                    <asp:TableCell runat="server" RowSpan="5" Width="50px" BackColor="SkyBlue"></asp:TableCell>
-                                    <asp:TableCell runat="server"></asp:TableCell>
-                                    <asp:TableCell runat="server">Rząd 1</asp:TableCell>
-                                    <asp:TableCell runat="server"></asp:TableCell>
-                                    <asp:TableCell runat="server" RowSpan="5" Width="50px" BackColor="SkyBlue"></asp:TableCell>
-                                </asp:TableRow>
-                                <asp:TableRow runat="server">
-                                    <asp:TableCell runat="server"></asp:TableCell>
-                                    <asp:TableCell runat="server">Rząd 2</asp:TableCell>
-                                    <asp:TableCell runat="server"></asp:TableCell>
-                                </asp:TableRow>
-                                <asp:TableRow runat="server">
-                                    <asp:TableCell runat="server"></asp:TableCell>
-                                    <asp:TableCell runat="server">Rząd 3</asp:TableCell>
-                                    <asp:TableCell runat="server"></asp:TableCell>
-                                </asp:TableRow>
-                                <asp:TableRow runat="server">
-                                    <asp:TableCell runat="server"></asp:TableCell>
-                                    <asp:TableCell runat="server">Rząd 4</asp:TableCell>
-                                    <asp:TableCell runat="server"></asp:TableCell>
-                                </asp:TableRow>
-                                <asp:TableRow runat="server">
-                                    <asp:TableCell runat="server"></asp:TableCell>
-                                    <asp:TableCell runat="server">Rząd 5</asp:TableCell>
-                                    <asp:TableCell runat="server"></asp:TableCell>
-                                </asp:TableRow>
-
-                            </asp:Table>
+                                        <asp:TableRow runat="server">
+                                            <asp:TableCell runat="server" RowSpan="5" Width="50px" BackColor="SkyBlue"></asp:TableCell>
+                                            <asp:TableCell Id="R1C3" runat="server" ColSpan="3" ForeColor="DarkBlue" Font-Size="36px" Font-Bold="true" HorizontalAlign="Center">00:00:00</asp:TableCell>
+                                            <asp:TableCell runat="server" RowSpan="5" Width="50px" BackColor="SkyBlue"></asp:TableCell>
+                                        </asp:TableRow>
+                                        <asp:TableRow runat="server">
+                                            <asp:TableCell ID="R2C2" runat="server" ForeColor="Black" Font-Size="12px" Width="">Nr Rejsu</asp:TableCell>
+                                            <asp:TableCell Id="R2C3" runat="server" ForeColor="Black" Font-Size="12px">Godzina</asp:TableCell>
+                                            <asp:TableCell Id="R2C4" runat="server" ForeColor="Black" Font-Size="12px">liczba PAX</asp:TableCell>
+                                        </asp:TableRow>
+                                        <asp:TableRow runat="server">
+                                            <asp:TableCell runat="server"></asp:TableCell>
+                                            <asp:TableCell Id="R3C3" runat="server">Rząd 3</asp:TableCell>
+                                            <asp:TableCell runat="server"></asp:TableCell>
+                                        </asp:TableRow>
+                                        <asp:TableRow runat="server">
+                                            <asp:TableCell runat="server"></asp:TableCell>
+                                            <asp:TableCell Id="R4C3" runat="server">Rząd 4</asp:TableCell>
+                                            <asp:TableCell runat="server"></asp:TableCell>
+                                        </asp:TableRow>
+                                        <asp:TableRow runat="server">
+                                            <asp:TableCell runat="server"></asp:TableCell>
+                                            <asp:TableCell Id="R5C3" runat="server">Rząd 5</asp:TableCell>
+                                            <asp:TableCell runat="server"></asp:TableCell>
+                                        </asp:TableRow>
+                                    </asp:Table>
+                                </div>
+                                <div class="bus-right">
+                                    <div class="bus-1stLine">
+                                        <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L1-B1"/>
+                                        <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L1-B2"/>
+                                        <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L1-B3"/>
+                                    </div>
+                                    <div class="bus-2ndLine">
+                                        <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L2-B1"/>
+                                        <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L2-B2"/>
+                                        <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L2-B3"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </ContentTemplate>
+                    </asp:UpdatePanel>
                             
-                        </div>
-                        <div class="bus-right">
-                            <div class="bus-1stLine">
-                                    <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L1-B1"/>
-                                    <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L1-B2"/>
-                                    <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L1-B3"/>
-                            </div>
-                            <div class="bus-2ndLine">
-                                    <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L2-B1"/>
-                                    <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L2-B2"/>
-                                    <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L2-B3"/>
-                            </div>
-                        </div>
-                    </div>
 
                 </asp:View>
 
@@ -175,8 +174,6 @@
                     <div class="singleCol">
 
                         <asp:Label ID="lblDim" runat="server" Text=""></asp:Label>
-
-                        <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
                         <asp:HiddenField ID="HiddenField1" runat="server" />
                         <asp:HiddenField ID="HiddenField2" runat="server" />
                         <asp:HiddenField ID="HiddenField3" runat="server" />

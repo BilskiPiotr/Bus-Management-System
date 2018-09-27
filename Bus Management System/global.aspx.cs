@@ -65,12 +65,15 @@ namespace Bus_Management_System
                     string sessionName = (string)loggedUserData.Rows[0][0];
                     Session[sessionName] = user;
 
-                    HttpCookie BusCookie = new HttpCookie("BusManagement");
-                    BusCookie.Values["userId"] = sessionName;
-                    BusCookie.Values["Id"] = iD.ToString();
-                    BusCookie.Values["lastVisit"] = DateTime.Now.ToString();
-                    BusCookie.Expires = DateTime.Now.AddHours(8);
-                    Response.Cookies.Add(BusCookie);
+                    if (Request.Cookies["Bus"] != null)
+                    {
+                        Response.Cookies["Bus"].Expires = DateTime.Now.AddDays(-1);
+                        CreateNewBusCookie(sessionName, iD);
+                    }
+                    else
+                    {
+                        CreateNewBusCookie(sessionName, iD);
+                    }
 
                     Response.Redirect("busPanel.aspx");
                 }
@@ -89,6 +92,19 @@ namespace Bus_Management_System
             inp_name.Text = "";
             inp_2ndName.Text = "";
             inp_pesel.Text = "";
+        }
+
+
+        private void CreateNewBusCookie(string sessionName, int iD)
+        {
+            HttpCookie BusCookie = new HttpCookie("Bus");
+            BusCookie.Values["userId"] = sessionName;
+            BusCookie.Values["Id"] = iD.ToString();
+            // dodać gdzieś sprawdzanie ile czasu już upłyneło
+            BusCookie.Values["lastVisit"] = DateTime.Now.ToString();
+            BusCookie.Values["busNb"] = "";
+            BusCookie.Expires = DateTime.Now.AddHours(8);
+            Response.Cookies.Add(BusCookie);
         }
     }
 }

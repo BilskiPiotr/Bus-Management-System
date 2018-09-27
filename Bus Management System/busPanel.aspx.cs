@@ -23,9 +23,9 @@ namespace Bus_Management_System
             {
                 string userId = "";
 
-                if (Request.Cookies["BusManagement"] != null)
+                if (Request.Cookies["Bus"] != null)
                 {
-                    userId = Convert.ToString(Request.Cookies["BusManagement"].Values["userId"]);
+                    userId = Convert.ToString(Request.Cookies["Bus"].Values["userId"]);
                 }
 
                 // dodać sprawdzenie, czy taka sesja już istnieje, a jeśli nie - to dodać
@@ -502,9 +502,9 @@ namespace Bus_Management_System
 
             int id = 0;
 
-            if (Request.Cookies["BusManagement"] != null)
+            if (Request.Cookies["Bus"] != null)
             {
-                id = Convert.ToInt32(Request.Cookies["BusManagement"].Values["Id"]);
+                id = Convert.ToInt32(Request.Cookies["Bus"].Values["Id"]);
             }
 
             bool result = bl.AddNewOperation(newOp, id);

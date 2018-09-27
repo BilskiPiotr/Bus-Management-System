@@ -31,6 +31,15 @@ namespace Bus_Management_System {
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         
         /// <summary>
+        /// Kontrolka BusRefresh.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.ScriptManager BusRefresh;
+        
+        /// <summary>
         /// Kontrolka busMenu.
         /// </summary>
         /// <remarks>
@@ -85,6 +94,24 @@ namespace Bus_Management_System {
         protected global::System.Web.UI.WebControls.View Home;
         
         /// <summary>
+        /// Kontrolka BusHomeUP.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel BusHomeUP;
+        
+        /// <summary>
+        /// Kontrolka BusHomeTimer.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.Timer BusHomeTimer;
+        
+        /// <summary>
         /// Kontrolka busMINEtable.
         /// </summary>
         /// <remarks>
@@ -92,6 +119,15 @@ namespace Bus_Management_System {
         /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Table busMINEtable;
+        
+        /// <summary>
+        /// Kontrolka R1C3.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TableCell R1C3;
         
         /// <summary>
         /// Kontrolka Detail.
@@ -110,15 +146,6 @@ namespace Bus_Management_System {
         /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblDim;
-        
-        /// <summary>
-        /// Kontrolka ScriptManager1.
-        /// </summary>
-        /// <remarks>
-        /// Pole generowane automatycznie.
-        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
-        /// </remarks>
-        protected global::System.Web.UI.ScriptManager ScriptManager1;
         
         /// <summary>
         /// Kontrolka HiddenField1.

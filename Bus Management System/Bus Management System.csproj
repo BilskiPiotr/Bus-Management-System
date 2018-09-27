@@ -89,9 +89,14 @@
     <Content Include="global.aspx" />
     <Content Include="js\get_location.js" />
     <Content Include="kontakt.aspx" />
+    <Content Include="pictures\sc.png" />
+    <Content Include="pictures\scr.png" />
+    <Content Include="pictures\sn.png" />
+    <Content Include="pictures\sz.png" />
+    <Content Include="pictures\szr.png" />
     <Content Include="testmenu.aspx" />
     <Content Include="Web.config" />
-    <Content Include="Wzorce\Konstruktor SQL.sql" />
+    <Content Include="sources\Konstruktor SQL.sql" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="about.aspx.cs">

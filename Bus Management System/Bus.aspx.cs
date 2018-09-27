@@ -18,34 +18,32 @@ namespace Bus_Management_System
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["BrowserWidth"] != null)
-            {
-                lblDim.Text = "Width: " + Session["BrowserWidth"] + " Height: " + Session["BrowserHeight"];
-            }
             if (!IsPostBack)
             {
                 string userId = "";
 
-                if (Request.Cookies["BusManagement"] != null)
+                if (Request.Cookies["Bus"] != null)
                 {
-                    userId = Convert.ToString(Request.Cookies["BusManagement"].Values["userId"]);
+                    userId = Convert.ToString(Request.Cookies["Bus"].Values["userId"]);
+
+                    // dodać sprawdzenie, czy taka sesja już istnieje, a jeśli nie - to dodać
+                    User loggedUser = (User)Session[userId];
+
+                    ScriptManager.RegisterClientScriptBlock(this, GetType(), "przeliczOdleglosc", "getLocation();", true);
+
+                    MenuItemCollection menuItems = busMenu.Items;
+
+                    if (loggedUser != null)
+                    {
+                        lb_loggedUser.Text = "";
+                        lb_loggedUser.Text += (string)loggedUser.FirstName + " " + (string)loggedUser.LastName + "       ID: " + ((int)loggedUser.CompanyId).ToString();
+
+                        // załadowanie danych do psnelu Operatora
+                        BindDdlData();
+                    }
                 }
-
-                // dodać sprawdzenie, czy taka sesja już istnieje, a jeśli nie - to dodać
-                User loggedUser = (User)Session[userId];
-
-                ScriptManager.RegisterClientScriptBlock(this, GetType(), "przeliczOdleglosc", "getLocation();", true);
-
-                MenuItemCollection menuItems = busMenu.Items;
-
-                if (loggedUser != null)
-                {
-                    lb_loggedUser.Text = "";
-                    lb_loggedUser.Text += (string)loggedUser.FirstName + " " + (string)loggedUser.LastName + "       ID: " + ((int)loggedUser.CompanyId).ToString();
-
-                    // załadowanie danych do psnelu Operatora
-                    BindDdlData();
-                }
+                else
+                    Response.Redirect("global.aspx");
             }
         }
 
@@ -124,7 +122,7 @@ namespace Bus_Management_System
 
         private void BindDdlData()
         {
-            if (Request.Cookies["BusManagement"] != null)
+            if (Request.Cookies["Bus"] != null)
             {
                 SqlCommand cmd = new SqlCommand("SELECT Id, VehicleNb FROM Vehicles");
                 DataSet ds = dal.GetDataSet(cmd);
@@ -147,6 +145,23 @@ namespace Bus_Management_System
         {
             this.busMenu.Items[0].Selectable = true;
             this.busMenu.Items[1].Selectable = true;
+
+            HttpCookie cookie = Request.Cookies["Bus"];
+            if (cookie != null)
+            {
+                // dodanie wybranewgo autobusu do ciasteczka z operatorem
+                string bus = ddl_busSelect.SelectedItem.ToString();
+                cookie.Values["busNb"] = bus;
+                // i nadpisujemy ciasteczko
+                Response.Cookies.Add(cookie);
+            }
+            else
+            {
+                // użytkownik nie jest zalogowany, albo ciasteczko z jakiegos powodu znikło
+                // dopisać zamykanie sesji
+                Response.Redirect("global.aspx");
+            }
+            // dodać do zalogowanego usera wybrany autobus
             BusManagement.SetActiveView(Home);
         }
 
@@ -156,6 +171,23 @@ namespace Bus_Management_System
                 bt_busSelect.Enabled = true;
             else
                 bt_busSelect.Enabled = false;
+        }
+
+        protected void BusHomeTimer_Tick(object sender, EventArgs e)
+        {
+            R1C3.Text = DateTime.Now.ToLongTimeString();
+            //DataSet workStatus = new DataSet();
+            //string bus = "";
+            //Boolean hasJoob = WorkStatus(ref workStatus, bus);
+            //if (hasJoob)
+
+        }
+
+        private bool WorkStatus(ref DataSet workStatus, string bus)
+        {
+            Boolean hasJoob = false;
+
+            return hasJoob;
         }
     }
 }
