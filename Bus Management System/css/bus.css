@@ -5,18 +5,35 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
-.bus-header 
-{
+.bus-header {
     width: 100%;
-    margin-left: 0;
-    margin-right: 0;
     height: 35px;
-    overflow: hidden;
     display: flex;
+    overflow: hidden;
     background-color: #a63d40;
+    margin-bottom: 8px;
 }
 
-.bus-header a
+.bus-Menu 
+{
+    width: 100%;
+    overflow: hidden;
+}
+
+.bus-clock 
+{
+    width: 25%;
+    overflow: hidden;
+    text-align: right;
+}
+
+.busClockLabel 
+{
+    color: white;
+    font-weight: bold;
+}
+
+.bus-Menu a 
 {
     float: left;
     color: #ebe54d;
@@ -27,7 +44,7 @@
     margin-top: 6px;
 }
 
-.bus-header a:hover
+.bus-Menu a:hover
 {
     color: #fff;
 }
@@ -40,12 +57,8 @@
 
 
 
-
-
-
 /* dla komputerów stacjonarnych */
-@media (min-width: 1300px) 
-{
+@media (min-width: 1300px) {
     body
     {
         width: 550px;
@@ -76,7 +89,7 @@
         color: white;
         font-size: 14px;
         font-weight: bold;
-        margin: 8px 2px 0 2px;
+        margin: 0 2px 8px 2px;
     }
 
     .bus-1stLine 
@@ -105,7 +118,7 @@
         padding: 10px 0 0 0;
     }
 
-    #ddl_busSelect
+    .ddlBusSelect
     {
         margin: 4px auto;
         width: 100px;
@@ -131,9 +144,18 @@
         background-color: #FFFFCC;
         border-color: Fuchsia;
         border-style: solid;
-        margin: 0 auto;
-        width: 430px;
+        width: 435px;
         height: 200px;
+    }
+
+    .busTableBigRow
+    {
+        height: 73px;
+    }
+
+    .busTableMiddleRow
+    {
+        height: 50px;
     }
 }
 
@@ -207,9 +229,28 @@
         background-color: #FFFFCC;
         border-color: Fuchsia;
         border-style: solid;
-        margin: 0 auto;
-        width: 340px;
+        width: 100%;
         height: 200px;
+    }
+
+    .busTableBigRow 
+    {
+        height: 110px;
+    }
+
+    .busTableMiddleRow 
+    {
+        height: 65px;
+    }
+
+    .busTableSmallRow
+    {
+        height: 40px;
+    }
+
+    .busTableVSmallRow
+    {
+        height: 35px;
     }
 }
 
@@ -246,7 +287,7 @@
         color: white;
         font-size: 14px;
         font-weight: bold;
-        margin: 6px 2px 0 2px;
+        margin: 0 2px 6px 2px;
     }
 
     .bus-1stLine 
@@ -280,8 +321,27 @@
         background-color: #FFFFCC;
         border-color: Fuchsia;
         border-style: solid;
-        margin: 0 auto;
-        width: 430px;
+        width: 100%;
         height: 200px;
+    }
+
+    .busTableBigRow 
+    {
+
+    }
+
+    .busTableMiddleRow 
+    {
+
+    }
+
+    .busTableSmallRow
+    {
+
+    }
+
+    .busTableVSmallRow
+    {
+
     }
 }

@@ -140,7 +140,7 @@ namespace Bus_Management_System
             // pobranie i wypełnienie kontrolek DropDownList listą możliwych operacji
             try
             {
-                SqlCommand cmd = new SqlCommand("SELECT Id, Operation FROM OperationType");
+                SqlCommand cmd = new SqlCommand("SELECT * FROM OperationType");
                 DataSet ds = dal.GetDataSet(cmd);
                 DropDownList ddl_operationEdit = (DropDownList)e.Row.FindControl("ddl_operationEdit");
                 if (ddl_operationEdit != null)
@@ -368,7 +368,6 @@ namespace Bus_Management_System
             int Id = Convert.ToInt32(gv_Alocator.DataKeys[e.RowIndex].Value);
             GridViewRow row = gv_Alocator.Rows[e.RowIndex];
             Label bus = (Label)row.FindControl("lb_bus");
-            string busNb = bus.Text;
 
             SqlCommand cmd1 = new SqlCommand("UPDATE Vehicles SET Work_Status = @work_status WHERE VehicleNb = @vehicleNb");
             cmd1.Parameters.AddWithValue("@work_status", 0);
@@ -447,10 +446,12 @@ namespace Bus_Management_System
                 TextBox tb_RadioNeonAdd = (TextBox)gv_Alocator.FooterRow.FindControl("tb_radioNeonAdd");
 
                 string bus = ddl_BusAdd.SelectedItem.ToString();
+                DateTime zeroDate = new DateTime(1999, 01, 01);
+                
 
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("INSERT INTO Operations (Employee_Id, Operation, FlightNb, AirPort, Pax, Gate, PPS, Bus, RadioGate, RadioNeon, Created) " +
+                    SqlCommand cmd = new SqlCommand("INSERT INTO Operations (Employee_Id, Operation, FlightNb, AirPort, Pax, Gate, PPS, Bus, RadioGate, RadioNeon, Created, Accepted, StartLoad, StartDrive, StartUnload, EndOp) " +
                                 "VALUES (" + 2 + ", " +
                                 "" + ddl_OperationAdd.SelectedValue + ", " +
                                 "'" + tb_FlightNbAdd.Text + "', " +
@@ -460,7 +461,8 @@ namespace Bus_Management_System
                                 "" + ddl_PpsAdd.SelectedValue + ", " +
                                 "" + ddl_BusAdd.SelectedValue + ", " +
                                 "'" + tb_RadioGateAdd.Text + "', " +
-                                "'" + tb_RadioNeonAdd.Text + "', getdate())");
+                                "'" + tb_RadioNeonAdd.Text + "', getdate()," +
+                                "'" + zeroDate + "', '" + zeroDate + "', '" + zeroDate + "', '" + zeroDate + "', '" + zeroDate + "')");
                     dal.QueryExecution(cmd);
 
                     SqlCommand cmd1 = new SqlCommand("UPDATE Vehicles SET Work_Status = 1 WHERE VehicleNb = '" + bus + "' ");
@@ -470,7 +472,7 @@ namespace Bus_Management_System
                     gv_Alocator.ShowFooter = false;
                     BindGrid();
                 }
-                catch
+                catch (Exception ex)
                 {
                     Response.Write("<script> alert('Błąd - nie udało się dodać nowej operacji' ) </script>");
                 }

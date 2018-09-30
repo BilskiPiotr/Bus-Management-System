@@ -266,5 +266,90 @@ namespace Bus_Management_System
             ddl.DataValueField = "opValue";
             ddl.DataBind();
         }
+
+
+        public string GetPPS(int pps)
+        {
+            SqlCommand cmd = new SqlCommand("SELECT * FROM Stations WHERE Id = @ppsNb");
+            cmd.Parameters.AddWithValue("@ppsNb", pps);
+            try
+            {
+                DataSet ds = dal.GetDataSet(cmd);
+                return ds.Tables[0].Rows[0].Field<string>("StationNb");
+            }
+            catch
+            {
+                return "";
+            }
+        }
+
+
+        public string GetAirPort(int airPort, ref int shengen)
+        {
+            SqlCommand cmd = new SqlCommand("SELECT a.IATA_Name, a.Full_Name, b.Country_name, b.Shengen " +
+                                            "FROM AirPorts AS a " +
+                                            "INNER JOIN Countries AS b ON a.Country_Id=b.Id " +
+                                            "WHERE a.Id = @airPortNb ");
+            cmd.Parameters.AddWithValue("@airPortNb", airPort);
+            try
+            {
+                DataSet ds = dal.GetDataSet(cmd);
+                shengen = Convert.ToInt32(GetCountry(ds.Tables[0].Rows[0].Field<int>("Shengen")));
+                return ds.Tables[0].Rows[0].Field<string>("IATA_Name");
+            }
+            catch
+            {
+                return "";
+            }
+        }
+
+
+        public int GetCountry(int country)
+        {
+            SqlCommand cmd = new SqlCommand("SELECT Shengen FROM Countries WHERE Id = @countryId");
+            cmd.Parameters.AddWithValue("@countryId", country);
+            try
+            {
+                DataSet ds = dal.GetDataSet(cmd);
+                return ds.Tables[0].Rows[0].Field<int>("Shengen");
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
+
+        public int GetGate(int gate)
+        {
+            SqlCommand cmd = new SqlCommand("SELECT * FROM Gates WHERE Id = @gateId");
+            cmd.Parameters.AddWithValue("@gateId", gate);
+            try
+            {
+                DataSet ds = dal.GetDataSet(cmd);
+                return Convert.ToInt32(ds.Tables[0].Rows[0].Field<string>("GateNb"));
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+        }
+
+
+
+        public int GetOperations(int operation)
+        {
+            SqlCommand cmd = new SqlCommand("SELECT * FROM OperationType WHERE Id = @operationId");
+            cmd.Parameters.AddWithValue("@operationId", operation);
+            try
+            {
+                DataSet ds = dal.GetDataSet(cmd);
+                return ds.Tables[0].Rows[0].Field<int>("OpValue");
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+        }
     }
 }
