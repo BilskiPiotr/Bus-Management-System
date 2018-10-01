@@ -97,9 +97,9 @@
 
 <%-- Data i godzina utworzenia zadania --%>
                     <Columns >
-                        <asp:TemplateField HeaderText="Utworzono" ItemStyle-Width="12%">
+                        <asp:TemplateField HeaderText="Utworzono" ItemStyle-Width="8%">
                             <ItemTemplate>
-                                <%# Eval("Created") %>
+                                <%# Eval("Created", "{0:HH:mm:ss}") %>
                             </ItemTemplate>
                             <EditItemTemplate >
                                 <asp:Label ID="lbleid" runat="server" Text='<%#Eval("Created") %>' width ="100%"></asp:Label>
@@ -115,10 +115,23 @@
                                 <asp:Label ID="lb_operation" runat="server" Text='<%#Eval("Operation") %>'></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate >
-                                <asp:DropDownList ID="ddl_operationEdit" runat="server" width ="100%"></asp:DropDownList>
+                                <asp:DropDownList ID="ddl_operationEdit" runat="server" Width ="100%"></asp:DropDownList>
                             </EditItemTemplate>
                             <FooterTemplate >
                                 <asp:DropDownList ID="ddl_operationAdd" runat="server" Width="100%"></asp:DropDownList>
+                            </FooterTemplate>
+                        </asp:TemplateField>
+        
+<%-- Godzina z rozkładu lotów --%>
+                        <asp:TemplateField HeaderText="Godzina" ItemStyle-Width="5%">
+                            <ItemTemplate>
+                                <asp:Label ID="lb_godzinaRozkładowa" runat="server" Text='<%#Eval("GodzinaRozkladowa", "{0:HH:mm:ss}") %>'></asp:Label>
+                            </ItemTemplate>
+                            <EditItemTemplate >
+                                <asp:TextBox ID="tb_godzinaRozkładowa" runat="server" Width ="100%" DataFormatString = "{HH:mm}"></asp:TextBox>
+                            </EditItemTemplate>
+                            <FooterTemplate >
+                                <asp:TextBox ID="tb_godzinaRozkładowaAdd" runat="server" Width="100%" DataFormatString = "{HH:mm}"></asp:TextBox>
                             </FooterTemplate>
                         </asp:TemplateField>
 
@@ -169,7 +182,7 @@
                         </asp:TemplateField>
 
 <%-- Numer Gate dla odlotu lub miejsce wysadzenia pasażerów dla przylotów --%>
-                        <asp:TemplateField HeaderText="Gate" ItemStyle-Width="5%">
+                        <asp:TemplateField HeaderText="Gate" ItemStyle-Width="4%">
                             <ItemTemplate>
                                 <asp:Label ID="lb_gate" runat="server" Text='<%#Eval("GateNb") %>'></asp:Label>
                             </ItemTemplate>
@@ -195,7 +208,7 @@
                         </asp:TemplateField>
 
 <%-- Opreślenie miejsca postoju statku powietrznego --%>
-                        <asp:TemplateField HeaderText="PPS"  ItemStyle-Width="5%">
+                        <asp:TemplateField HeaderText="PPS"  ItemStyle-Width="4%">
                             <ItemTemplate>
                                 <asp:Label ID="lb_pps" runat="server" Text='<%#Eval("StationNb") %>'></asp:Label>
                             </ItemTemplate>

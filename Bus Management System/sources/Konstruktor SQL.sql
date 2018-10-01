@@ -60,10 +60,14 @@ CREATE TABLE [dbo].[Gates]
 /* Vehicles Work_Status: 0 - Free, 1 - In Work */
 CREATE TABLE [dbo].[Vehicles]
 (
-	[Id]			INT PRIMARY KEY IDENTITY(1,1)	NOT NULL,
-	[VehicleNb]		VARCHAR(4)						NOT NULL,
-	[Bus_Status]	INT	DEFAULT (1)					NOT NULL,
-	[Work_Status]	INT DEFAULT (0)					NOT NULL
+	[Id]				INT PRIMARY KEY IDENTITY(1,1)	NOT NULL,
+	[VehicleNb]			VARCHAR(4)						NOT NULL,
+	[Bus_Status]		INT	DEFAULT (1)					NOT NULL,
+	[Work_Status]		INT DEFAULT (0)					NOT NULL,
+	[Latitude]			VARCHAR(18)	DEFAULT(0)			NULL,
+	[Longitude]			VARCHAR(18) DEFAULT(0)			NULL,
+	[EmergencyDistance]	VARCHAR(10)	DEFAULT(0)			NULL,
+	[TimeStamp]			DATETIME						NULL		
 );
 
 CREATE TABLE [dbo].[Vehicles_Status]
@@ -82,6 +86,7 @@ CREATE TABLE [dbo].[Operations]
 	[Id]						INT PRIMARY KEY IDENTITY(1,1)	NOT NULL,
 	[Employee_Id]				INT								NOT NULL,
 	[Operation]					INT								NOT NULL,
+	[GodzinaRozkladowa]			DATETIME						NOT NULL,
 	[FlightNb]					VARCHAR(7)						NOT NULL,
 	[Pax]						INT								NOT NULL,
 	[AirPort]					INT								NOT NULL,
@@ -91,11 +96,11 @@ CREATE TABLE [dbo].[Operations]
 	[RadioGate]					VARCHAR(3)						NULL,
 	[RadioNeon]					VARCHAR(3)						NULL,
 	[Created]					DATETIME						NOT NULL,
-	[Accepted]					TIME(3)							NULL,
-	[StartLoad]					TIME(3)							NULL,
-	[StartDrive]				TIME(3)							NULL,
-	[StartUnload]				TIME(3)							NULL,
-	[EndOp]						TIME(3)							NULL
+	[Accepted]					DATETIME						NULL,
+	[StartLoad]					DATETIME						NULL,
+	[StartDrive]				DATETIME						NULL,
+	[StartUnload]				DATETIME						NULL,
+	[EndOp]						DATETIME						NULL
 );
 
 

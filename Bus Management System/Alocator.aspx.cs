@@ -72,7 +72,7 @@ namespace Bus_Management_System
         {
             try
             {
-                SqlCommand cmd = new SqlCommand("SELECT a.Id, a.RadioGate, a.Created, a.FlightNb, a.Pax, a.RadioNeon, " +
+                SqlCommand cmd = new SqlCommand("SELECT a.Id, a.RadioGate, a.Created, a.GodzinaRozkladowa, a.FlightNb, a.Pax, a.RadioNeon, " +
                                                 "a.Accepted, a.StartLoad, a.StartDrive, a.StartUnload, a.EndOp, " +
                                                 "b.Operation, c.StationNb, d.IATA_Name, e.GateNb, f.VehicleNb, g.Shengen " +
                                                 "FROM Operations AS a " +
@@ -654,6 +654,7 @@ namespace Bus_Management_System
             // jak w poprawnie pobranym DataSource, ponieważ jakieś operacje już istniały
             dt.Columns.Add("Created");
             dt.Columns.Add("Operation");
+            dt.Columns.Add("GodzinaRozkladowa");
             dt.Columns.Add("FlightNb");
             dt.Columns.Add("IATA_Name");
             dt.Columns.Add("Shengen");
