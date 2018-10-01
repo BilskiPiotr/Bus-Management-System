@@ -53,7 +53,7 @@ namespace Bus_Management_System
 
         public DataSet GetBus()
         {
-            string sqlQuery = "SELECT Id, Status, VehicleNb, Work_Status FROM Vehicles";
+            string sqlQuery = "SELECT * FROM Vehicles";
             DataSet ds = new DataSet();
             SqlCommand sqlCmd = new SqlCommand(sqlQuery);
             ds = dal.GetDataSet(sqlCmd);

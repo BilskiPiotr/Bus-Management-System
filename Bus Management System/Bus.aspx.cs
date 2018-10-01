@@ -157,6 +157,10 @@ namespace Bus_Management_System
 
                 // zmiana tekstu dla menu Home na numer zalogowanego autobusu
                 this.busMenu.Items[0].Text = bus;
+                SqlCommand cmd = new SqlCommand("UPDATE Vehicles SET Bus_Status = @busStatus WHERE VehicleNb = @busNb");
+                cmd.Parameters.AddWithValue("@busStatus", 2);
+                cmd.Parameters.AddWithValue("@busNb", bus);
+                dal.QueryExecution(cmd);
             }
             else
             {
@@ -190,13 +194,15 @@ namespace Bus_Management_System
                     DataSet ds = dal.GetDataSet(cmd);
                     if (ds.Tables[0].Rows.Count > 0)
                     {
-                         dt = ds.Tables[0].Rows[0].Field<DateTime>("Accepted").ToString();
-                        if (dt == "1999-01-01 00:00:00")
+                         dt = ds.Tables[0].Rows[0].Field<TimeSpan>("Accepted").ToString();
+                        if (dt == "00:00:00")
                         {
                             GreyScreen(ds, shengen);
                         }
                         else
                         {
+                            SetButtonsStatus(ds);
+
                             int operation = bl.GetOperations(ds.Tables[0].Rows[0].Field<int>("Operation"));
 
                             R1C3.Text = bl.GetPPS(ds.Tables[0].Rows[0].Field<int>("PPS"));
@@ -217,8 +223,13 @@ namespace Bus_Management_System
                             }
                         }
                     }
+                    else
+                    {
+                        R1C3.Text = DateTime.Now.ToString("hh:mm");
+                        IddleBusControls();
+                    }
                 }
-                catch (Exception ex)
+                catch
                 {
                     R1C3.Text = DateTime.Now.ToString("hh:mm");
                     IddleBusControls();
@@ -228,6 +239,60 @@ namespace Bus_Management_System
             {
                 Session.Abandon();
                 Response.Redirect("global.aspx");
+            }
+        }
+
+
+
+        private void SetButtonsStatus(DataSet ds)
+        {
+            string startLoad = ds.Tables[0].Rows[0].Field<TimeSpan>("StartLoad").ToString();
+            string startDrive = ds.Tables[0].Rows[0].Field<TimeSpan>("StartDrive").ToString();
+            string startUnload = ds.Tables[0].Rows[0].Field<TimeSpan>("StartUnload").ToString();
+            string endOp = ds.Tables[0].Rows[0].Field<TimeSpan>("EndOp").ToString();
+
+            busAccept.Style.Add("background-color", "#a63d40");
+            busAccept.Enabled = false;
+
+            if (startLoad != "00:00:00")
+            {
+                busStartLoad.Style.Add("background-color", "#a63d40");
+                busStartLoad.Enabled = false;
+                if (startDrive != "00:00:00")
+                {
+                    busStartDrive.Style.Add("background-color", "#a63d40");
+                    busStartDrive.Enabled = false;
+                    if (startUnload != "00:00:00")
+                    {
+                        busStartUnload.Style.Add("background-color", "#a63d40");
+                        busStartUnload.Enabled = false; 
+                        if(endOp != "00:00:00")
+                        {
+                            busEndOp.Style.Add("background-color", "#a63d40");
+                            busEndOp.Enabled = false;
+                        }
+                        else
+                        {
+                            busEndOp.Style.Add("background - color", "Green");
+                            busEndOp.Enabled = true;
+                        }
+                    }
+                    else
+                    {
+                        busStartUnload.Style.Add("background - color", "Green");
+                        busStartUnload.Enabled = true;
+                    }
+                }
+                else
+                {
+                    busStartDrive.Style.Add("background - color", "Green");
+                    busStartDrive.Enabled = true;
+                }
+            }
+            else
+            {
+                busStartLoad.Style.Add("background-color", "Green");
+                busStartLoad.Enabled = true;
             }
         }
 
@@ -247,37 +312,28 @@ namespace Bus_Management_System
             //td1.Style.Add(HtmlTextWriterStyle.BackgroundImage, "Images/7.jpg");
         }
 
-        protected void BusAccept_Click(object sender, EventArgs e)
-        {
-            HttpCookie cookie = Request.Cookies["Bus"];
-            string bus = cookie.Values["busNb"].ToString();
-            SqlCommand cmd = new SqlCommand("UPDATE Operations SET Accepted = @accepted WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)");
-            cmd.Parameters.AddWithValue("@busNb", bus);
-            cmd.Parameters.AddWithValue("@accepted", DateTime.Now);
-            dal.QueryExecution(cmd);
-        }
 
         private void GreyScreen(DataSet ds, int shengen)
         {
             R1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "");
-            R1C2.Style.Add("background-color", "grey");
+            R1C2.Style.Add("background-color", "Grey");
             R1C3.Text = bl.GetPPS(ds.Tables[0].Rows[0].Field<int>("PPS"));
-            R1C3.Style.Add("color", "grey");
+            R1C3.Style.Add("color", "Grey");
             R1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "");
-            R1C4.Style.Add("background-color", "grey");
+            R1C4.Style.Add("background-color", "Grey");
             R3C2.Text = ds.Tables[0].Rows[0].Field<string>("FlightNb");
-            R3C2.Style.Add("color", "grey");
+            R3C2.Style.Add("color", "Grey");
             R3C3.Text = "00:00";
-            R3C3.Style.Add("color", "grey");
+            R3C3.Style.Add("color", "Grey");
             R3C4.Text = ds.Tables[0].Rows[0].Field<int>("Pax").ToString();
-            R3C4.Style.Add("color", "grey");
+            R3C4.Style.Add("color", "Grey");
             R4C2.Text = "WAW";
-            R4C2.Style.Add("color", "grey");
-            R4C3.Style.Add("color", "grey");
+            R4C2.Style.Add("color", "Grey");
+            R4C3.Style.Add("color", "Grey");
             R4C4.Text = bl.GetAirPort(ds.Tables[0].Rows[0].Field<int>("AirPort"), ref shengen);
-            R4C4.Style.Add("color", "grey");
+            R4C4.Style.Add("color", "Grey");
             R5C3.Text = bl.GetGate(ds.Tables[0].Rows[0].Field<int>("Gate")).ToString();
-            R5C3.Style.Add("color", "grey");
+            R5C3.Style.Add("color", "Grey");
             busAccept.Enabled = true;
             busAccept.Style.Add("background-color", "Green");
             busAccept.Style.Add("color", "White");
@@ -302,6 +358,7 @@ namespace Bus_Management_System
             R4C2.Style.Add("color", "Black");
             if (shengen == 0)
             {
+                R1C3.Style.Add("color", "Green");
                 R1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sz.png");
                 R1C2.Style.Add("background-repeat", "no-repeat");
                 R1C2.Style.Add("background-size", "100% 100%");
@@ -327,6 +384,41 @@ namespace Bus_Management_System
             }
                 R4C4.Text = "WAW";
                 R4C4.Style.Add("color", "Black");
+        }
+
+        protected void BusAccept_Click(object sender, EventArgs e)
+        {
+            HttpCookie cookie = Request.Cookies["Bus"];
+            string bus = cookie.Values["busNb"].ToString();
+            SqlCommand cmd = new SqlCommand("UPDATE Operations SET Accepted = @accepted WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)");
+            cmd.Parameters.AddWithValue("@busNb", bus);
+            cmd.Parameters.AddWithValue("@accepted", DateTime.Now);
+            dal.QueryExecution(cmd);
+        }
+
+        protected void BusStartLoad_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void BusStartDrive_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void BusStartUnload_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void BusEndOp_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void BusPause_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

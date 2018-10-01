@@ -91,11 +91,11 @@ CREATE TABLE [dbo].[Operations]
 	[RadioGate]					VARCHAR(3)						NULL,
 	[RadioNeon]					VARCHAR(3)						NULL,
 	[Created]					DATETIME						NOT NULL,
-	[Accepted]					DATETIME						NULL,
-	[StartLoad]					DATETIME						NULL,
-	[StartDrive]				DATETIME						NULL,
-	[StartUnload]				DATETIME						NULL,
-	[EndOp]						DATETIME						NULL
+	[Accepted]					TIME(3)							NULL,
+	[StartLoad]					TIME(3)							NULL,
+	[StartDrive]				TIME(3)							NULL,
+	[StartUnload]				TIME(3)							NULL,
+	[EndOp]						TIME(3)							NULL
 );
 
 

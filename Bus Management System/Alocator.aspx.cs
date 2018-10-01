@@ -282,7 +282,7 @@ namespace Bus_Management_System
             // pobranie i wypełnienie kontrolek DropDownList numerami autobusów
             try
             {
-                SqlCommand cmd = new SqlCommand("SELECT Id, VehicleNb FROM Vehicles WHERE Status = '" + 2 + "' AND Work_Status = '" + 0 + "'");
+                SqlCommand cmd = new SqlCommand("SELECT Id, VehicleNb FROM Vehicles WHERE Bus_Status = '" + 2 + "' AND Work_Status = '" + 0 + "'");
                 DataSet ds = dal.GetDataSet(cmd);
                 DropDownList ddl_busEdit = (DropDownList)e.Row.FindControl("ddl_busEdit");
                 if (ddl_busEdit != null && ds.Tables[0].Rows.Count == 0)
@@ -593,7 +593,7 @@ namespace Bus_Management_System
                 // pobranie numeru autobusu
                 numer = buses.Tables[0].Rows[i].Field<string>("VehicleNb");
                 // pobranie statusu tego autobusu
-                status = buses.Tables[0].Rows[i].Field<int>("Status");
+                status = buses.Tables[0].Rows[i].Field<int>("Bus_Status");
                 work_Status = buses.Tables[0].Rows[i].Field<int>("Work_Status");
 
                 //określenie klucza poszukiwań nazewnictwa kontrolek dla kolejnych wpisów w kontenerze DataSet

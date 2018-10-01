@@ -151,13 +151,13 @@
                                 <div class="bus-right">
                                     <div class="bus-1stLine">
                                         <asp:Button Id="busAccept" CssClass="bus-Buttons" runat="server" Text="AKCEPTUJ" Enabled="false" OnClick="BusAccept_Click"/>
-                                        <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L1-B2" Enabled="false"/>
-                                        <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L1-B3" Enabled="false"/>
+                                        <asp:Button Id="busStartLoad" CssClass="bus-Buttons" runat="server" Text="LOAD" Enabled="false" OnClick="BusStartLoad_Click"/>
+                                        <asp:Button Id="busStartDrive" CssClass="bus-Buttons" runat="server" Text="DRIVE" Enabled="false" OnClick="BusStartDrive_Click"/>
                                     </div>
                                     <div class="bus-2ndLine">
-                                        <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L2-B1" Enabled="false"/>
-                                        <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L2-B2" Enabled="false"/>
-                                        <asp:Button CssClass="bus-Buttons" runat="server" Text="Button L2-B3" Enabled="false"/>
+                                        <asp:Button Id="busStartUnload" CssClass="bus-Buttons" runat="server" Text="UNLOAD" Enabled="false" OnClick="BusStartUnload_Click"/>
+                                        <asp:Button Id="busEndOp" CssClass="bus-Buttons" runat="server" Text="END" Enabled="false" OnClick="BusEndOp_Click"/>
+                                        <asp:Button Id="busPause" CssClass="bus-Buttons" runat="server" Text="PAUSE" Enabled="false" OnClick="BusPause_Click"/>
                                     </div>
                                 </div>
                             </div>

@@ -426,7 +426,7 @@ namespace Bus_Management_System
                 }
 
 
-                int status = buses.Tables[0].Rows[i].Field<int>("Status");
+                int status = buses.Tables[0].Rows[i].Field<int>("Bus_Status");
 
                 switch (status)
                 {
