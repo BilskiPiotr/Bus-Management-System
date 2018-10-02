@@ -437,6 +437,7 @@ namespace Bus_Management_System
             {
                 DropDownList ddl_OperationAdd = (DropDownList)gv_Alocator.FooterRow.FindControl("ddl_operationAdd");
                 TextBox tb_FlightNbAdd = (TextBox)gv_Alocator.FooterRow.FindControl("tb_flightNbAdd");
+                TextBox tb_GodzinaRozkładowaAdd = (TextBox)gv_Alocator.FooterRow.FindControl("tb_godzinaRozkładowaAdd");
                 DropDownList ddl_AirPortAdd = (DropDownList)gv_Alocator.FooterRow.FindControl("ddl_airPortAdd");
                 TextBox tb_PaxAdd = (TextBox)gv_Alocator.FooterRow.FindControl("tb_paxAdd");
                 DropDownList ddl_GateAdd = (DropDownList)gv_Alocator.FooterRow.FindControl("ddl_gateAdd");
@@ -451,7 +452,7 @@ namespace Bus_Management_System
 
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("INSERT INTO Operations (Employee_Id, Operation, FlightNb, AirPort, Pax, Gate, PPS, Bus, RadioGate, RadioNeon, Created, Accepted, StartLoad, StartDrive, StartUnload, EndOp) " +
+                    SqlCommand cmd = new SqlCommand("INSERT INTO Operations (Employee_Id, Operation, GodzinaRozkladowa, FlightNb, AirPort, Pax, Gate, PPS, Bus, RadioGate, RadioNeon, Created, Accepted, StartLoad, StartDrive, StartUnload, EndOp) " +
                                 "VALUES (" + 2 + ", " +
                                 "" + ddl_OperationAdd.SelectedValue + ", " +
                                 "'" + tb_FlightNbAdd.Text + "', " +

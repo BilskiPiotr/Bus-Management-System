@@ -150,7 +150,7 @@
                                 </div>
                                 <div class="bus-right">
                                     <div class="bus-1stLine">
-                                        <asp:Button Id="busAccept" CssClass="bus-Buttons" runat="server" Text="AKCEPTUJ" Enabled="false" OnClick="BusAccept_Click"/>
+                                        <asp:Button Id="busAccept" CssClass="bus-Buttons" runat="server" Text="ACCEPT" Enabled="false" OnClick="BusAccept_Click"/>
                                         <asp:Button Id="busStartLoad" CssClass="bus-Buttons" runat="server" Text="LOAD" Enabled="false" OnClick="BusStartLoad_Click"/>
                                         <asp:Button Id="busStartDrive" CssClass="bus-Buttons" runat="server" Text="DRIVE" Enabled="false" OnClick="BusStartDrive_Click"/>
                                     </div>

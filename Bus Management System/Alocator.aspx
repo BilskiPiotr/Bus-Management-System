@@ -1,5 +1,6 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Alocator.aspx.cs" Inherits="Bus_Management_System.Alocator" %>
 
+
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -9,6 +10,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="SysBus_Management" content:"" />
 	<link rel="stylesheet" href="css/alocator.css" />
+
 </head>
 <body>
     <form id="form1" runat="server">
@@ -131,7 +133,21 @@
                                 <asp:TextBox ID="tb_godzinaRozkładowa" runat="server" Width ="100%" DataFormatString = "{HH:mm}"></asp:TextBox>
                             </EditItemTemplate>
                             <FooterTemplate >
-                                <asp:TextBox ID="tb_godzinaRozkładowaAdd" runat="server" Width="100%" DataFormatString = "{HH:mm}"></asp:TextBox>
+                                <asp:TextBox ID="tb_godzinaRozkładowaAdd" runat="server" Width="100%" DataFormatString = "{0:HH:mm}" Text=""></asp:TextBox>
+
+                                <ajaxToolkit:MaskedEditExtender ID="MaskedEditExtender7" runat="server" 
+         Mask="99:99"
+         MaskType="Time" 
+         TargetControlID="TextBox111" 
+         ShowMessageErrorFloat="true">
+      </ajaxToolkit:>
+   <ajaxToolkit: MaskedEditValidator ID="MaskedEditValidator7" runat="server" 
+         ControlExtender="MaskedEditExtender7" 
+         IsValidEmpty="false" 
+         EmptyValueText="*" 
+         EmptyValueMessage="Time requeried"
+         ControlToValidate="TextBox111">
+   </ajaxToolkit:>
                             </FooterTemplate>
                         </asp:TemplateField>
 
