@@ -1,5 +1,5 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Alocator.aspx.cs" Inherits="Bus_Management_System.Alocator" %>
-
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="hourFormat" %>
 
 <!DOCTYPE html>
 
@@ -10,6 +10,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="SysBus_Management" content:"" />
 	<link rel="stylesheet" href="css/alocator.css" />
+
+    <script type="text/javascript">
+    
+      function pageLoad() {
+      }
+    
+    </script>
 
 </head>
 <body>
@@ -75,6 +82,9 @@
                 </table>
             </div>
             <div class="alocator-Panel">
+
+                <asp:ScriptManager ID="ScriptManager1" runat="server" />
+
                 <asp:GridView ID="gv_Alocator" runat="server"   AutoGenerateColumns ="False"
                                                                 ShowHeaderWhenEmpty="True"
                                                                 ondatabound="Gv_CheckSecurityZone"
@@ -104,7 +114,7 @@
                                 <%# Eval("Created", "{0:HH:mm:ss}") %>
                             </ItemTemplate>
                             <EditItemTemplate >
-                                <asp:Label ID="lbleid" runat="server" Text='<%#Eval("Created") %>' width ="100%"></asp:Label>
+                                <asp:Label ID="lbleid" runat="server" Text='<%#Eval("Created", "{0:HH:mm:ss}") %>' width ="100%" ForeColor="White"></asp:Label>
                             </EditItemTemplate>
                             <FooterTemplate >
                                 <asp:Button ID="bt_insert" runat="server" Text= "Dodaj" CommandName="Insert" width ="100%" ></asp:Button>
@@ -127,27 +137,29 @@
 <%-- Godzina z rozkładu lotów --%>
                         <asp:TemplateField HeaderText="Godzina" ItemStyle-Width="5%">
                             <ItemTemplate>
-                                <asp:Label ID="lb_godzinaRozkładowa" runat="server" Text='<%#Eval("GodzinaRozkladowa", "{0:HH:mm:ss}") %>'></asp:Label>
+                                <asp:Label ID="lb_godzinaRozkładowa" runat="server" Width ="100%" Text='<%#Eval("GodzinaRozkladowa", "{0:HH:mm}") %>'></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate >
-                                <asp:TextBox ID="tb_godzinaRozkładowa" runat="server" Width ="100%" DataFormatString = "{HH:mm}"></asp:TextBox>
+                                <asp:TextBox ID="tb_godzinaRozkładowa" runat="server" Width ="100%" Text='<%#Eval("GodzinaRozkladowa", "{0:HH:mm}") %>'> </asp:TextBox>
+                                <hourFormat:MaskedEditExtender ID="MaskedEditExtender1" 
+                                                               TargetControlID="tb_godzinaRozkładowa"
+                                                               Mask="99:99"
+                                                               MaskType="Time"
+                                                               CultureName="en-us"
+                                                               MessageValidatorTip="true"
+                                                               runat="server">
+                                </hourFormat:MaskedEditExtender>
                             </EditItemTemplate>
                             <FooterTemplate >
-                                <asp:TextBox ID="tb_godzinaRozkładowaAdd" runat="server" Width="100%" DataFormatString = "{0:HH:mm}" Text=""></asp:TextBox>
-
-                                <ajaxToolkit:MaskedEditExtender ID="MaskedEditExtender7" runat="server" 
-         Mask="99:99"
-         MaskType="Time" 
-         TargetControlID="TextBox111" 
-         ShowMessageErrorFloat="true">
-      </ajaxToolkit:>
-   <ajaxToolkit: MaskedEditValidator ID="MaskedEditValidator7" runat="server" 
-         ControlExtender="MaskedEditExtender7" 
-         IsValidEmpty="false" 
-         EmptyValueText="*" 
-         EmptyValueMessage="Time requeried"
-         ControlToValidate="TextBox111">
-   </ajaxToolkit:>
+                                <asp:TextBox ID="tb_godzinaRozkładowaAdd" runat="server" Width="100%"></asp:TextBox>
+                                <hourFormat:MaskedEditExtender ID="MaskedEditExtender2" 
+                                                               TargetControlID="tb_godzinaRozkładowaAdd"
+                                                               Mask="99:99"
+                                                               MaskType="Time"
+                                                               CultureName="en-us"
+                                                               MessageValidatorTip="true"
+                                                               runat="server">
+                                </hourFormat:MaskedEditExtender>
                             </FooterTemplate>
                         </asp:TemplateField>
 
@@ -276,58 +288,60 @@
                         </asp:TemplateField>
 
 <%-- Godzina przyjęcia zlecenia przez operatora Autobusu --%>
-                        <asp:TemplateField HeaderText="Accepted" ItemStyle-Width="6%">
+                        <asp:TemplateField HeaderText="Accepted" ItemStyle-Width="6%" >
                             <ItemTemplate>
-                                <%# Eval("Accepted") %>
+                                <%# Eval("Accepted", "{0:T}") %> 
                             </ItemTemplate>
                             <EditItemTemplate >
-                                <asp:Label ID="lb_accepted" runat="server" Text='<%#Eval("Accepted") %>'></asp:Label>
+                                <asp:Label ID="lb_accepted" runat="server" Text='<%# Eval("Accepted", "{0:T}") %>' ForeColor="White"></asp:Label>
                             </EditItemTemplate>
                         </asp:TemplateField>
 
 <%-- Godzina rozpoczęcia załadunku pasażerów --%>
                         <asp:TemplateField HeaderText="Load" ItemStyle-Width="6%">
                             <ItemTemplate>
-                                <%# Eval("StartLoad") %>
+                                <%# Eval("StartLoad", "{0:T}") %>
                             </ItemTemplate>
                             <EditItemTemplate >
-                                <asp:Label ID="lb_startLoad" runat="server" Text='<%#Eval("StartLoad") %>'></asp:Label>
+                                <asp:Label ID="lb_startLoad" runat="server" Text='<%#Eval("StartLoad", "{0:T}") %>' ForeColor="White"></asp:Label>
                             </EditItemTemplate>
                         </asp:TemplateField>
 
 <%-- rozpoczęcie operacji przewozu pasażerów --%>
                         <asp:TemplateField HeaderText="Drive" ItemStyle-Width="6%">
                             <ItemTemplate>
-                                <%# Eval("StartDrive") %>
+                                <%# Eval("StartDrive", "{0:T}") %>
                             </ItemTemplate>
                             <EditItemTemplate >
-                                <asp:Label ID="lb_startDrive" runat="server" Text='<%#Eval("StartDrive") %>'></asp:Label>
+                                <asp:Label ID="lb_startDrive" runat="server" Text='<%#Eval("StartDrive", "{0:T}") %>' ForeColor="White"></asp:Label>
                             </EditItemTemplate>
                         </asp:TemplateField>
 
 <%-- Rozpoczęcie operacji wyładowania pasażerów z Autobusu --%>
                         <asp:TemplateField HeaderText="Unload" ItemStyle-Width="6%">
                             <ItemTemplate>
-                                <%# Eval("StartUnload") %>
+                                <%# Eval("StartUnload", "{0:T}") %>
                             </ItemTemplate>
                             <EditItemTemplate >
-                                <asp:Label ID="lb_startUnload" runat="server" Text='<%#Eval("StartUnload") %>'></asp:Label>
+                                <asp:Label ID="lb_startUnload" runat="server" Text='<%#Eval("StartUnload", "{0:T}") %>' ForeColor="White"></asp:Label>
                             </EditItemTemplate>
                         </asp:TemplateField>
 
 <%-- Zakończenie operacji transportowej --%>
                         <asp:TemplateField HeaderText="End Op" ItemStyle-Width="6%">
                             <ItemTemplate>
-                                <%# Eval("EndOp") %>
+                                <%# Eval("EndOp", "{0:T}") %>
                             </ItemTemplate>
                             <EditItemTemplate >
-                                <asp:Label ID="lb_andOp" runat="server" Text='<%#Eval("EndOp") %>'></asp:Label>
+                                <asp:Label ID="lb_andOp" runat="server" Text='<%#Eval("EndOp", "{0:T}") %>' ForeColor="White"></asp:Label>
                             </EditItemTemplate>
                         </asp:TemplateField>
 
 <%-- Konfiguracja kolumny z kontrolkami kontrolnymi dostępnych operacji --%>
                         <asp:CommandField ControlStyle-ForeColor ="Blue " ButtonType="Button" ShowEditButton="True" ShowDeleteButton="True"  ItemStyle-Width="10%" UpdateText="Popraw">
                             <ControlStyle ForeColor="Blue"></ControlStyle>
+
+<ItemStyle Width="10%"></ItemStyle>
                         </asp:CommandField>
                     </Columns>
                 </asp:GridView>

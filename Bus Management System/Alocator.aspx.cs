@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -448,13 +449,29 @@ namespace Bus_Management_System
 
                 string bus = ddl_BusAdd.SelectedItem.ToString();
                 DateTime zeroDate = new DateTime(1999, 01, 01);
-                
+                DateTime dt = new DateTime();
+                if (!DateTime.TryParseExact(tb_GodzinaRozkładowaAdd.Text, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out dt))
+                {
+                    // w przypadku błędu konwersji daty
+                    Response.Write("<script> alert('Błąd - format daty wydaje się być nieprawidłowy' ) </script>");
+                    return;
+                }
+                else 
+                    if(dt.ToString() == "0001-01-01 00:00:00")
+                {
+                    Response.Write("<script> alert('Błąd - wprowadzona godzina wydaje się być nieprawidłowa' ) </script>");
+                    return;
+                }
+                    
+                // a jeśli będzie potrzebny tylko czas to...
+                // TimeSpan time = dt.TimeOfDay;
 
                 try
                 {
                     SqlCommand cmd = new SqlCommand("INSERT INTO Operations (Employee_Id, Operation, GodzinaRozkladowa, FlightNb, AirPort, Pax, Gate, PPS, Bus, RadioGate, RadioNeon, Created, Accepted, StartLoad, StartDrive, StartUnload, EndOp) " +
                                 "VALUES (" + 2 + ", " +
                                 "" + ddl_OperationAdd.SelectedValue + ", " +
+                                "'" + dt + "', " +
                                 "'" + tb_FlightNbAdd.Text + "', " +
                                 "" + ddl_AirPortAdd.SelectedValue + ", " +
                                 "'" + tb_PaxAdd.Text + "', " +
@@ -487,6 +504,7 @@ namespace Bus_Management_System
         {
             int id = int.Parse(((Label)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("lb_id"))).Text);
             int operation = int.Parse(((DropDownList)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_operationEdit"))).SelectedValue);
+            DateTime
             string flightNb = (((TextBox)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_flightNbEdit"))).Text);
             int airPort = int.Parse(((DropDownList)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_airPortEdit"))).SelectedValue);
             string pax = (((TextBox)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_paxEdit"))).Text);
@@ -677,5 +695,14 @@ namespace Bus_Management_System
 
             return dt;
         }
+
+        // formatowanie wyświetlania godziny w kontrolce z danymi typu DateTime
+        //private object FormatDate(DateTime input)
+        //{
+        //    if (input.GetType = DBNull.Value)
+        //        return input;
+        //    else
+        //        return String.Format("{0:MM/dd/yy}", input);
+        //}
     }
 }
