@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace Bus_Management_System
@@ -388,6 +383,7 @@ namespace Bus_Management_System
         // poprawić tak, żeby po uruchomieniu w kontrolkach wyświetliły się dane przed poprawkami a nie defaultowe
         protected void Gv_Alocator_RowEditing(object sender, GridViewEditEventArgs e)
         {
+            btn_addNewOperation.Enabled = false;
             gv_Alocator.EditIndex = e.NewEditIndex;
 
             try
@@ -456,12 +452,12 @@ namespace Bus_Management_System
                     Response.Write("<script> alert('Błąd - format daty wydaje się być nieprawidłowy' ) </script>");
                     return;
                 }
-                else 
-                    if(dt.ToString() == "0001-01-01 00:00:00")
-                {
-                    Response.Write("<script> alert('Błąd - wprowadzona godzina wydaje się być nieprawidłowa' ) </script>");
-                    return;
-                }
+                //else 
+                //    if(dt.ToString() == "0001-01-01 00:00:00")
+                //{
+                //    Response.Write("<script> alert('Błąd - wprowadzona godzina wydaje się być nieprawidłowa' ) </script>");
+                //    return;
+                //}
                     
                 // a jeśli będzie potrzebny tylko czas to...
                 // TimeSpan time = dt.TimeOfDay;
@@ -504,22 +500,22 @@ namespace Bus_Management_System
         {
             int id = int.Parse(((Label)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("lb_id"))).Text);
             int operation = int.Parse(((DropDownList)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_operationEdit"))).SelectedValue);
-            DateTime
+            string godzinaRozkladowa = (((TextBox)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_godzinaRozkładowa"))).Text);
             string flightNb = (((TextBox)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_flightNbEdit"))).Text);
             int airPort = int.Parse(((DropDownList)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_airPortEdit"))).SelectedValue);
             string pax = (((TextBox)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_paxEdit"))).Text);
             int gate = int.Parse(((DropDownList)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_gateEdit"))).SelectedValue);
             int pps = int.Parse(((DropDownList)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_ppsEdit"))).SelectedValue);
             int bus = int.Parse(((DropDownList)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_busEdit"))).SelectedValue);
-            //DropDownList ddl_BusEdit = (DropDownList)gv_Alocator.FooterRow.FindControl("ddl_busEdit");
-
             string radioGate = ((TextBox)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_radioGateEdit"))).Text;
             string radioNeon = ((TextBox)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_radioNeonEdit"))).Text;
 
             DateTime editDate = DateTime.Now;
+            DateTime opTime = CheckTimeFormat(godzinaRozkladowa);
 
                 SqlCommand cmd = new SqlCommand("UPDATE Operations SET Operation = @operation, " +
                                 "FlightNb = @flightNb, " +
+                                "GodzinaRozkladowa = @opTime, " +
                                 "AirPort = @airPort, " +
                                 "Pax = @pax, " +
                                 "Gate = @gate, " +
@@ -531,6 +527,7 @@ namespace Bus_Management_System
                                 "WHERE Id=@id ");
                 cmd.Parameters.AddWithValue("@operation", operation);
                 cmd.Parameters.AddWithValue("@flightNb", flightNb);
+                cmd.Parameters.AddWithValue("@opTime", opTime);
                 cmd.Parameters.AddWithValue("@airPort", airPort);
                 cmd.Parameters.AddWithValue("@pax", pax);
                 cmd.Parameters.AddWithValue("@gate", gate);
@@ -560,6 +557,7 @@ namespace Bus_Management_System
                 dal.QueryExecution(cmd1);
 
                 gv_Alocator.EditIndex = -1;
+                btn_addNewOperation.Enabled = true;
                 BindGrid();
             }
             catch
@@ -572,6 +570,7 @@ namespace Bus_Management_System
         // Rezygnacja z poprawienia operacjhi
         protected void Gv_Alocator_CancelEdit(object sender, GridViewCancelEditEventArgs e)
         {
+            btn_addNewOperation.Enabled = true;
             gv_Alocator.EditIndex = -1;
             BindGrid();
         }
@@ -696,13 +695,19 @@ namespace Bus_Management_System
             return dt;
         }
 
-        // formatowanie wyświetlania godziny w kontrolce z danymi typu DateTime
-        //private object FormatDate(DateTime input)
-        //{
-        //    if (input.GetType = DBNull.Value)
-        //        return input;
-        //    else
-        //        return String.Format("{0:MM/dd/yy}", input);
-        //}
+
+        // Sprawdzenie formatu wprowadzonej godziny operacji
+        private DateTime CheckTimeFormat(string time)
+        {
+            DateTime dt = new DateTime();
+            if (!DateTime.TryParseExact(time, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out dt))
+            {
+                // w przypadku błędu konwersji daty
+                Response.Write("<script> alert('Błąd - format daty wydaje się być nieprawidłowy' ) </script>");
+                Response.Redirect("Alocator.aspx");
+            }
+            return dt;
+        }
+        
     }
 }

@@ -197,7 +197,7 @@
                         </asp:TemplateField>
 
 <%-- Zadeklarowana liczba pasażerów --%>
-                        <asp:TemplateField HeaderText="PAX" ItemStyle-Width="4%">
+                        <asp:TemplateField HeaderText="PAX" ItemStyle-Width="3%">
                             <ItemTemplate>
                                 <%#Eval("Pax") %>
                             </ItemTemplate>
@@ -236,7 +236,7 @@
                         </asp:TemplateField>
 
 <%-- Opreślenie miejsca postoju statku powietrznego --%>
-                        <asp:TemplateField HeaderText="PPS"  ItemStyle-Width="4%">
+                        <asp:TemplateField HeaderText="PPS"  ItemStyle-Width="5%">
                             <ItemTemplate>
                                 <asp:Label ID="lb_pps" runat="server" Text='<%#Eval("StationNb") %>'></asp:Label>
                             </ItemTemplate>
