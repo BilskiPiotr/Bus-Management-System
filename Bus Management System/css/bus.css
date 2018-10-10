@@ -224,6 +224,27 @@
         padding: 4px 0 0 0;
     }
 
+    .ddlBusSelect 
+    {
+        margin: 4px auto;
+        width: 100px;
+        height: 40px;
+        font-size: 24px;
+        font-weight: bold;
+        color: darkblue;
+    }
+
+    #bt_busSelect 
+    {
+        margin: 4px auto;
+        width: 50px;
+        height: 40px;
+        font-size: 24px;
+        font-weight: bold;
+        background-color: #a63d40;
+        color: #ebe54d;
+    }
+
     .busTable 
     {
         background-color: #FFFFCC;
@@ -314,6 +335,27 @@
         font-size: 16px;
         text-align: center;
         padding: 4px 0 0 0;
+    }
+
+    .ddlBusSelect 
+    {
+        margin: 4px auto;
+        width: 100px;
+        height: 40px;
+        font-size: 24px;
+        font-weight: bold;
+        color: darkblue;
+    }
+
+    #bt_busSelect 
+    {
+        margin: 4px auto;
+        width: 50px;
+        height: 40px;
+        font-size: 24px;
+        font-weight: bold;
+        background-color: #a63d40;
+        color: #ebe54d;
     }
 
     .busTable 

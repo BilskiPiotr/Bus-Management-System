@@ -13,6 +13,63 @@ namespace Bus_Management_System
         DataAccessLayer dal = new DataAccessLayer();
 
 
+        public DataTable GetUserData(int iD)
+        {
+            SqlCommand cmd = new SqlCommand("SELECT Employee_CompanyId, Employee_Imie, Employee_Nazwisko, Employee_Priv FROM Employees_Basic WHERE Id = @userId");
+            cmd.Parameters.AddWithValue("@userId", iD);
+
+            try
+            {
+                DataTable dt = dal.GetDataTable(cmd);
+                return dt;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        // zapisanie w systemie informacji o zalogowaniu użytykownika
+        public bool UserLogIn(int iD, DateTime loginDate)
+        {
+            try
+            {
+                DataAccessLayer dal = new DataAccessLayer();
+                SqlCommand cmd = new SqlCommand("INSERT INTO Employees_Status (Employee_Id, Employee_Login) VALUES (@iD, @loginDate)");
+                cmd.Parameters.AddWithValue("@iD", iD);
+                cmd.Parameters.AddWithValue("@loginDate", loginDate);
+                dal.QueryExecution(cmd);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+        }
+
+
+        public bool UserLogOut(HttpCookie cookie)
+        {
+            SqlCommand cmd = new SqlCommand();
+            try
+            {
+                cmd.CommandText = "INSERT INTO Employees_Status (Employee_Id, Employee_Logout) VALUES (@userId, @logOut)";
+                cmd.Parameters.AddWithValue("@userId", Convert.ToInt32(cookie.Values["Id"]));
+                cmd.Parameters.AddWithValue("@logOut", DateTime.Now);
+                dal.QueryExecution(cmd);
+                cmd.CommandText = "UPDATE VEHICLES SET Bus_Status = @busStatus WHERE VehicleNb = @busNb";
+                cmd.Parameters.AddWithValue("@busStatus", 1);
+                cmd.Parameters.AddWithValue("@busNb", cookie.Values["busNb"].ToString());
+                dal.QueryExecution(cmd);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
         public void ClearFields(BusinessLayer bl)
         {
 

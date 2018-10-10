@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Data;
+using System.Data.SqlClient;
+using System.Globalization;
 using System.Web;
 using System.Web.UI.WebControls;
 
@@ -7,6 +9,7 @@ namespace Bus_Management_System
 {
     public partial class global : System.Web.UI.Page
     {
+        BusinessLayer bl = new BusinessLayer();
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -25,6 +28,8 @@ namespace Bus_Management_System
             inp_name.Focus();
         }
 
+
+        // weryfikacja logowania
         protected void Bt_submitLogin_Click(object sender, EventArgs e)
         {
             VerifyLayer vl = new VerifyLayer
@@ -35,23 +40,24 @@ namespace Bus_Management_System
             };
             bool istnieje = false;
             int iD = 0;
-            string errorMsg = "";
 
-            istnieje = vl.VerifyUser(ref iD, ref errorMsg);
+            // sprawdzenie poświadczeń
+            istnieje = vl.VerifyUser(ref iD);
 
+
+            // user nie istnieje, albo wprowadzono dane z błedem
             if (!istnieje)
             {
                 ClearTextbox();
                 lb_errorMsg.Visible = true;
                 lb_errorMsg.Text = "Błędny Login lub Hasło! ";
             }
+            // user istnieje - wiedz tworzenie danych sesji
             else
             {
-                LoggedUser loggedUser = new LoggedUser();
-                DataTable loggedUserData = new DataTable();
-                loggedUserData = loggedUser.GetLoggedUserData(iD, ref errorMsg);
+                DataTable loggedUserData = bl.GetUserData(iD);
 
-                // Session object constructor
+                // Konstruktor obiektu SESJA
                 if (loggedUserData.Rows.Count > 0)
                 {
                     User user = new User
@@ -65,23 +71,38 @@ namespace Bus_Management_System
                     string sessionName = (string)loggedUserData.Rows[0][0];
                     Session[sessionName] = user;
 
+
+                    // tworzenie ciasteczka z danymi aktualnie zalogowanego operatora
+                    // sprawdzenie, czy ptzypadkiem takie ciasteczko już nie zostało stworzone, 
+                    // bo jeśli tak - to kasujemy je!
                     if (Request.Cookies["Bus"] != null)
                     {
                         Response.Cookies["Bus"].Expires = DateTime.Now.AddDays(-1);
-                        CreateNewBusCookie(sessionName, iD);
-                    }
-                    else
-                    {
-                        CreateNewBusCookie(sessionName, iD);
                     }
 
-                    Response.Redirect("busPanel.aspx");
+                    DateTime loginDate = DateTime.Now;
+                    CreateNewBusCookie(sessionName, iD, loginDate);
+
+                    // wprowadzenie danych o zalogowaniu operatora do bazy i wywołanie odpowiedniego panelu
+                    // to jeszcze trzeba przekonfigurować, żeby całkowicie pominąć busPanel
+                    if (bl.UserLogIn(iD, loginDate))
+                        Response.Redirect("busPanel.aspx");
+                    // w przypadku błędu dodania do bazy informacji o zalogowaniu użytkownika 
+                    // skasowanie ciasteczka i zamknięcie sesji - co jest jednoznaczne z wylogowaniem
+                    else
+                    {
+                        if (Request.Cookies["Bus"] != null)
+                        {
+                            Response.Cookies["Bus"].Expires = DateTime.Now.AddDays(-1);
+                        }
+                        Session.Abandon();
+                        Response.Redirect("global.aspx");
+                    }
                 }
                 else
                 {
                     ClearTextbox();
-                    lb_errorMsg.Visible = true;
-                    lb_errorMsg.Text = "Błąd dostępu do danych, proszę podać innedane uwieżytelnienia ";
+                    Response.Write("<script> alert('Błąd - proszę wprowadzić inne poświadczenia' ) </script>");
                 }
             }
         }
@@ -95,16 +116,19 @@ namespace Bus_Management_System
         }
 
 
-        private void CreateNewBusCookie(string sessionName, int iD)
+        private void CreateNewBusCookie(string sessionName, int iD, DateTime loginDate)
         {
             HttpCookie BusCookie = new HttpCookie("Bus");
             BusCookie.Values["userId"] = sessionName;
             BusCookie.Values["Id"] = iD.ToString();
             // dodać gdzieś sprawdzanie ile czasu już upłyneło
-            BusCookie.Values["lastVisit"] = DateTime.Now.ToString();
+            BusCookie.Values["loginTime"] = loginDate.ToString();
             BusCookie.Values["busNb"] = "";
             BusCookie.Expires = DateTime.Now.AddHours(8);
             Response.Cookies.Add(BusCookie);
         }
+
+
+
     }
 }

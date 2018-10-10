@@ -107,8 +107,17 @@ namespace Bus_Management_System
                     break;
                 case "3":
                     {
-                        Session.Abandon();
-                        Response.Redirect("global.aspx");
+                        HttpCookie cookie = Request.Cookies["Bus"];
+                        if (cookie != null)
+                        {
+                            bl.UserLogOut(cookie);
+                            Session.Abandon();
+                            Response.Redirect("global.aspx");
+                        }
+                        else
+                        {
+                            Response.Write("<script> alert('Błąd - nie udało się poprawnie wylogować') </script>");
+                        }
                     }
                     break;
                 default:
@@ -188,14 +197,12 @@ namespace Bus_Management_System
                 SqlCommand cmd = new SqlCommand("SELECT * FROM Operations WHERE Bus=(SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)");
                 cmd.Parameters.AddWithValue("@busNb", cookie.Values["busNb"].ToString());
                 int shengen = 0;
-                string dt = "";
                 try
                 {
                     DataSet ds = dal.GetDataSet(cmd);
                     if (ds.Tables[0].Rows.Count > 0)
                     {
-                         dt = ds.Tables[0].Rows[0].Field<TimeSpan>("Accepted").ToString();
-                        if (dt == "00:00:00")
+                        if (!GetStoredTime(ds.Tables[0].Rows[0].Field<DateTime>("Accepted")))
                         {
                             GreyScreen(ds, shengen);
                         }
@@ -208,7 +215,11 @@ namespace Bus_Management_System
                             R1C3.Text = bl.GetPPS(ds.Tables[0].Rows[0].Field<int>("PPS"));
                             R3C2.Text = ds.Tables[0].Rows[0].Field<string>("FlightNb");
                             R3C2.Style.Add("color", "Black");
-                            R3C3.Text = "00:00";
+
+                            DateTime dataOperacji = ds.Tables[0].Rows[0].Field<DateTime>("GodzinaRozkladowa");
+                            TimeSpan godzinaOperacji = dataOperacji.TimeOfDay;
+
+                            R3C3.Text = godzinaOperacji.ToString();
                             R3C3.Style.Add("color", "Black");
                             R3C4.Text = ds.Tables[0].Rows[0].Field<int>("Pax").ToString();
                             R3C4.Style.Add("color", "Black");
@@ -229,7 +240,7 @@ namespace Bus_Management_System
                         IddleBusControls();
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
                     R1C3.Text = DateTime.Now.ToString("hh:mm");
                     IddleBusControls();
@@ -246,27 +257,24 @@ namespace Bus_Management_System
 
         private void SetButtonsStatus(DataSet ds)
         {
-            string startLoad = ds.Tables[0].Rows[0].Field<TimeSpan>("StartLoad").ToString();
-            string startDrive = ds.Tables[0].Rows[0].Field<TimeSpan>("StartDrive").ToString();
-            string startUnload = ds.Tables[0].Rows[0].Field<TimeSpan>("StartUnload").ToString();
-            string endOp = ds.Tables[0].Rows[0].Field<TimeSpan>("EndOp").ToString();
-
             busAccept.Style.Add("background-color", "#a63d40");
             busAccept.Enabled = false;
+            busMINEtable.Visible = false;
+            busDriveTable.Visible = true;
 
-            if (startLoad != "00:00:00")
+            if (GetStoredTime(ds.Tables[0].Rows[0].Field<DateTime>("StartLoad")))
             {
                 busStartLoad.Style.Add("background-color", "#a63d40");
                 busStartLoad.Enabled = false;
-                if (startDrive != "00:00:00")
+                if (GetStoredTime(ds.Tables[0].Rows[0].Field<DateTime>("StartDrive")))
                 {
                     busStartDrive.Style.Add("background-color", "#a63d40");
                     busStartDrive.Enabled = false;
-                    if (startUnload != "00:00:00")
+                    if (GetStoredTime(ds.Tables[0].Rows[0].Field<DateTime>("StartUnload")))
                     {
                         busStartUnload.Style.Add("background-color", "#a63d40");
                         busStartUnload.Enabled = false; 
-                        if(endOp != "00:00:00")
+                        if(GetStoredTime(ds.Tables[0].Rows[0].Field<DateTime>("EndOp")))
                         {
                             busEndOp.Style.Add("background-color", "#a63d40");
                             busEndOp.Enabled = false;
@@ -279,13 +287,13 @@ namespace Bus_Management_System
                     }
                     else
                     {
-                        busStartUnload.Style.Add("background - color", "Green");
+                        busStartUnload.Style.Add("background-color", "Green");
                         busStartUnload.Enabled = true;
                     }
                 }
                 else
                 {
-                    busStartDrive.Style.Add("background - color", "Green");
+                    busStartDrive.Style.Add("background-color", "Green");
                     busStartDrive.Enabled = true;
                 }
             }
@@ -386,6 +394,19 @@ namespace Bus_Management_System
                 R4C4.Style.Add("color", "Black");
         }
 
+
+        // konwersja i sprawdzenie czy operacja została rozpoczęta
+        private Boolean GetStoredTime(DateTime inputDate)
+        {
+            TimeSpan time = inputDate.TimeOfDay;
+            if (time.ToString() == "00:00:00")
+                return false;
+            else
+                return true;
+        }
+
+
+        // operacja została zaakceptowana
         protected void BusAccept_Click(object sender, EventArgs e)
         {
             HttpCookie cookie = Request.Cookies["Bus"];
@@ -396,24 +417,45 @@ namespace Bus_Management_System
             dal.QueryExecution(cmd);
         }
 
+        // zaznaczenie początku operacji odbioru pasażerów z samolotu lub Gate
         protected void BusStartLoad_Click(object sender, EventArgs e)
         {
-
+            HttpCookie cookie = Request.Cookies["Bus"];
+            string bus = cookie.Values["busNb"].ToString();
+            SqlCommand cmd = new SqlCommand("UPDATE Operations SET StartLoad = @startLoad WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)");
+            cmd.Parameters.AddWithValue("@busNb", bus);
+            cmd.Parameters.AddWithValue("@startLoad", DateTime.Now);
+            dal.QueryExecution(cmd);
         }
 
         protected void BusStartDrive_Click(object sender, EventArgs e)
         {
-
+            HttpCookie cookie = Request.Cookies["Bus"];
+            string bus = cookie.Values["busNb"].ToString();
+            SqlCommand cmd = new SqlCommand("UPDATE Operations SET StartDrive = @startDrive WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)");
+            cmd.Parameters.AddWithValue("@busNb", bus);
+            cmd.Parameters.AddWithValue("@startDrive", DateTime.Now);
+            dal.QueryExecution(cmd);
         }
 
         protected void BusStartUnload_Click(object sender, EventArgs e)
         {
-
+            HttpCookie cookie = Request.Cookies["Bus"];
+            string bus = cookie.Values["busNb"].ToString();
+            SqlCommand cmd = new SqlCommand("UPDATE Operations SET StartUnload = @startUnload WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)");
+            cmd.Parameters.AddWithValue("@busNb", bus);
+            cmd.Parameters.AddWithValue("@startUnload", DateTime.Now);
+            dal.QueryExecution(cmd);
         }
 
         protected void BusEndOp_Click(object sender, EventArgs e)
         {
-
+            HttpCookie cookie = Request.Cookies["Bus"];
+            string bus = cookie.Values["busNb"].ToString();
+            SqlCommand cmd = new SqlCommand("UPDATE Operations SET EndOp = @endOp WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)");
+            cmd.Parameters.AddWithValue("@busNb", bus);
+            cmd.Parameters.AddWithValue("@endOp", DateTime.Now);
+            dal.QueryExecution(cmd);
         }
 
         protected void BusPause_Click(object sender, EventArgs e)

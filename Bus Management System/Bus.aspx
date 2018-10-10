@@ -10,10 +10,8 @@
     <meta name="SysBus_Management" content:"" />
 	<link rel="stylesheet" href="css/bus.css" />
 
-
-
 </head>
-<body runat="server" id="BodyTag">
+<body runat="server" id="BodyTag" onclick="clicked=true;">
     
     <script src="http://code.jquery.com/jquery-1.9.1.min.js""></script>
     <script type="text/javascript">
@@ -48,7 +46,7 @@
             dane[2] = document.getElementById("<%=HiddenField3.ClientID%>").value;
             PageMethods.PrzeliczArray(dane, OnSuccess);
         }
-        function OnSuccess(response, userContext, methodName) {
+            function OnSuccess(response, userContext, methodName) {
             document.getElementById("<%=lb_BusLatitude.ClientID %>").innerHTML = response[0];
             document.getElementById("<%=lb_BusLongitude.ClientID %>").innerHTML = response[1];
             document.getElementById("<%=lb_BusDistance.ClientID %>").innerHTML = response[2];
@@ -61,7 +59,7 @@
                 txt += "<p>Total width/height: " + screen.width + "*" + screen.height + "</p>";
                 txt += "<p>Available width/height: " + screen.availWidth + "*" + screen.availHeight + "</p>";
                 document.getElementById("<%=lblDim.ClientID %>").innerHTML = txt;
-        }
+            }
     }
 </script>
 
@@ -115,60 +113,85 @@
                             <asp:Timer runat="server" Id="BusHomeTimer" Interval="5000" OnTick="BusHomeTimer_Tick"></asp:Timer>
                                 <div class="bus-row">
                                     <div class="bus-left">
+
                                         <asp:Table ID="busMINEtable" runat="server" CssClass="busTable" 
-                                                                        CellPadding="5" 
-                                                                        CellSpacing="5" 
-                                                                        EnableTheming="False" 
-                                                                        ForeColor="#FFCC66" 
-                                                                        GridLines="Horizontal">
-                                                                        
+                                                                     CellPadding="5" 
+                                                                     CellSpacing="5" 
+                                                                     EnableTheming="False" 
+                                                                     ForeColor="#FFCC66" 
+                                                                     GridLines="Horizontal"
+                                                                     Visible="true">
+                                            <asp:TableRow CssClass="busTableBigRow" runat="server">
+                                                <asp:TableCell Id="R1C2" runat="server" RowSpan="5" Width="15%" BackColor="SkyBlue"></asp:TableCell>
+                                                <asp:TableCell Id="R1C3" runat="server" ColSpan="3" ForeColor="DarkBlue" Font-Size="36px" Font-Bold="true" HorizontalAlign="Center">00:00</asp:TableCell>
+                                                <asp:TableCell Id="R1C4" runat="server" RowSpan="5" Width="15%" BackColor="SkyBlue"></asp:TableCell>
+                                            </asp:TableRow>
+                                            <asp:TableRow CssClass="busTableVSmallRow" runat="server" Height="15px">
+                                                <asp:TableCell Id="R2C2" runat="server" ForeColor="Black" Font-Size="10px" Width="19%" HorizontalAlign="Center">Nr Rejsu</asp:TableCell>
+                                                <asp:TableCell Id="R2C3" runat="server" ForeColor="Black" Font-Size="10px" Width="19%" HorizontalAlign="Center">Godzina</asp:TableCell>
+                                                <asp:TableCell Id="R2C4" runat="server" ForeColor="Black" Font-Size="10px" Width="19%" HorizontalAlign="Center">liczba PAX</asp:TableCell>
+                                            </asp:TableRow>
+                                            <asp:TableRow CssClass="busTableSmallRow" runat="server">
+                                                <asp:TableCell Id="R3C2" runat="server" ForeColor="DarkBlue" Font-Size="16px" Font-Bold="true" Width="19%" HorizontalAlign="Center">XX0000</asp:TableCell>
+                                                <asp:TableCell Id="R3C3" runat="server" ForeColor="DarkBlue" Font-Size="16px" Font-Bold="true" Width="19%" HorizontalAlign="Center">00:00</asp:TableCell>
+                                                <asp:TableCell Id="R3C4" runat="server" ForeColor="DarkBlue" Font-Size="16px" Font-Bold="true" Width="19%" HorizontalAlign="Center">000</asp:TableCell>
+                                            </asp:TableRow>
+                                            <asp:TableRow CssClass="busTableMiddleRow" runat="server">
+                                                <asp:TableCell Id="R4C2" runat="server" ForeColor="Black" Font-Size="18" Font-Bold="true" HorizontalAlign="right">XXX</asp:TableCell>
+                                                <asp:TableCell Id="R4C3" runat="server" ForeColor="Black" Font-Size="18" Font-Bold="true" HorizontalAlign="center">>>></asp:TableCell>
+                                                <asp:TableCell Id="R4C4" runat="server" ForeColor="Black" Font-Size="18" Font-Bold="true" HorizontalAlign="left">XXX</asp:TableCell>
+                                            </asp:TableRow>
+                                            <asp:TableRow CssClass="busTableBigRow" runat="server">
+                                                <asp:TableCell Id="R5C3" runat="server" ColSpan="3" ForeColor="DarkBlue" Font-Size="36px" Font-Bold="true" HorizontalAlign="Center">PPS-GATE</asp:TableCell>
+                                            </asp:TableRow>
+                                        </asp:Table>
 
-                                        <asp:TableRow CssClass="busTableBigRow" runat="server">
-                                            <asp:TableCell Id="R1C2" runat="server" RowSpan="5" Width="15%" BackColor="SkyBlue"></asp:TableCell>
-                                            <asp:TableCell Id="R1C3" runat="server" ColSpan="3" ForeColor="DarkBlue" Font-Size="36px" Font-Bold="true" HorizontalAlign="Center">00:00</asp:TableCell>
-                                            <asp:TableCell Id="R1C4" runat="server" RowSpan="5" Width="15%" BackColor="SkyBlue"></asp:TableCell>
-                                        </asp:TableRow>
-                                        <asp:TableRow CssClass="busTableVSmallRow" runat="server" Height="15px">
-                                            <asp:TableCell Id="R2C2" runat="server" ForeColor="Black" Font-Size="10px" Width="19%" HorizontalAlign="Center">Nr Rejsu</asp:TableCell>
-                                            <asp:TableCell Id="R2C3" runat="server" ForeColor="Black" Font-Size="10px" Width="19%" HorizontalAlign="Center">Godzina</asp:TableCell>
-                                            <asp:TableCell Id="R2C4" runat="server" ForeColor="Black" Font-Size="10px" Width="19%" HorizontalAlign="Center">liczba PAX</asp:TableCell>
-                                        </asp:TableRow>
-                                        <asp:TableRow CssClass="busTableSmallRow" runat="server">
-                                            <asp:TableCell Id="R3C2" runat="server" ForeColor="DarkBlue" Font-Size="16px" Font-Bold="true" Width="19%" HorizontalAlign="Center">XX0000</asp:TableCell>
-                                            <asp:TableCell Id="R3C3" runat="server" ForeColor="DarkBlue" Font-Size="16px" Font-Bold="true" Width="19%" HorizontalAlign="Center">00:00</asp:TableCell>
-                                            <asp:TableCell Id="R3C4" runat="server" ForeColor="DarkBlue" Font-Size="16px" Font-Bold="true" Width="19%" HorizontalAlign="Center">000</asp:TableCell>
-                                        </asp:TableRow>
-                                        <asp:TableRow CssClass="busTableMiddleRow" runat="server">
-                                            <asp:TableCell Id="R4C2" runat="server" ForeColor="Black" Font-Size="18" Font-Bold="true" HorizontalAlign="right">XXX</asp:TableCell>
-                                            <asp:TableCell Id="R4C3" runat="server" ForeColor="Black" Font-Size="18" Font-Bold="true" HorizontalAlign="center">>>></asp:TableCell>
-                                            <asp:TableCell Id="R4C4" runat="server" ForeColor="Black" Font-Size="18" Font-Bold="true" HorizontalAlign="left">XXX</asp:TableCell>
-                                        </asp:TableRow>
-                                        <asp:TableRow CssClass="busTableBigRow" runat="server">
-                                            <asp:TableCell Id="R5C3" runat="server" ColSpan="3" ForeColor="DarkBlue" Font-Size="36px" Font-Bold="true" HorizontalAlign="Center">PPS-GATE</asp:TableCell>
-                                        </asp:TableRow>
-                                    </asp:Table>
-                                </div>
-                                <div class="bus-right">
-                                    <div class="bus-1stLine">
-                                        <asp:Button Id="busAccept" CssClass="bus-Buttons" runat="server" Text="ACCEPT" Enabled="false" OnClick="BusAccept_Click"/>
-                                        <asp:Button Id="busStartLoad" CssClass="bus-Buttons" runat="server" Text="LOAD" Enabled="false" OnClick="BusStartLoad_Click"/>
-                                        <asp:Button Id="busStartDrive" CssClass="bus-Buttons" runat="server" Text="DRIVE" Enabled="false" OnClick="BusStartDrive_Click"/>
-                                    </div>
-                                    <div class="bus-2ndLine">
-                                        <asp:Button Id="busStartUnload" CssClass="bus-Buttons" runat="server" Text="UNLOAD" Enabled="false" OnClick="BusStartUnload_Click"/>
-                                        <asp:Button Id="busEndOp" CssClass="bus-Buttons" runat="server" Text="END" Enabled="false" OnClick="BusEndOp_Click"/>
-                                        <asp:Button Id="busPause" CssClass="bus-Buttons" runat="server" Text="PAUSE" Enabled="false" OnClick="BusPause_Click"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </ContentTemplate>
-                        <Triggers>
-                            <asp:AsyncPostBackTrigger ControlID="BusHomeTimer" EventName="Tick"></asp:AsyncPostBackTrigger>
-                        </Triggers>
-                    </asp:UpdatePanel>
-                            
+                                        <asp:Table ID="busDriveTable" runat="server" CssClass="busTable" 
+                                                                                     CellPadding="5" 
+                                                                                     CellSpacing="5" 
+                                                                                     EnableTheming="False" 
+                                                                                     ForeColor="#FFCC66" 
+                                                                                     GridLines="Horizontal"
+                                                                                     Visible="false">
+                                            <asp:TableRow CssClass="busTableSmallRow" runat="server">
+                                                <asp:TableCell Id="Dr1C2" runat="server" RowSpan="5" Width="15%" BackColor="SkyBlue"></asp:TableCell>
+                                                <asp:TableCell Id="Dr1C3" runat="server" ColSpan="3" ForeColor="Black" Font-Size="14px" Font-Bold="true" HorizontalAlign="Center">FROM LOCATION</asp:TableCell>
+                                                <asp:TableCell Id="Dr1C4" runat="server" RowSpan="5" Width="15%" BackColor="SkyBlue"></asp:TableCell>
+                                            </asp:TableRow>
+                                            <asp:TableRow CssClass="busTableSmallRow" runat="server">
+                                                <asp:TableCell Id="Dr2C3" runat="server" ColSpan="3" ForeColor="DarkGreen" Font-Size="44px" Font-Bold="true" HorizontalAlign="Center">.....</asp:TableCell>
+                                            </asp:TableRow>
+                                            <asp:TableRow CssClass="busTableBigRow" runat="server">
+                                                <asp:TableCell Id="Dr3C3" runat="server" ColSpan="3" ForeColor="Purple" Font-Size="48px" Font-Bold="true" HorizontalAlign="Center">...distance...</asp:TableCell>
+                                            </asp:TableRow>
+                                            <asp:TableRow CssClass="busTableSmallRow" runat="server">
+                                                <asp:TableCell Id="Dr4C3" runat="server" ColSpan="3" ForeColor="Black" Font-Size="14px" Font-Bold="true" HorizontalAlign="Center">TO LOCATION</asp:TableCell>
+                                            </asp:TableRow>
+                                            <asp:TableRow CssClass="busTableSmallRow" runat="server">
+                                                <asp:TableCell Id="TableCell2" runat="server" ColSpan="3" ForeColor="DarkBlue" Font-Size="44px" Font-Bold="true" HorizontalAlign="Center">.....</asp:TableCell>
+                                            </asp:TableRow>
+                                        </asp:Table>
 
-                </asp:View>
+                                    </div>
+                                    <div class="bus-right">
+                                        <div class="bus-1stLine">
+                                            <asp:Button Id="busAccept" CssClass="bus-Buttons" runat="server" Text="ACCEPT" Enabled="false" OnClick="BusAccept_Click"/>
+                                            <asp:Button Id="busStartLoad" CssClass="bus-Buttons" runat="server" Text="LOAD" Enabled="false" OnClick="BusStartLoad_Click"/>
+                                            <asp:Button Id="busStartDrive" CssClass="bus-Buttons" runat="server" Text="DRIVE" Enabled="false" OnClick="BusStartDrive_Click"/>
+                                        </div>
+                                        <div class="bus-2ndLine">
+                                            <asp:Button Id="busStartUnload" CssClass="bus-Buttons" runat="server" Text="UNLOAD" Enabled="false" OnClick="BusStartUnload_Click"/>
+                                            <asp:Button Id="busEndOp" CssClass="bus-Buttons" runat="server" Text="END" Enabled="false" OnClick="BusEndOp_Click"/>
+                                            <asp:Button Id="busPause" CssClass="bus-Buttons" runat="server" Text="PAUSE" Enabled="false" OnClick="BusPause_Click"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ContentTemplate>
+                            <Triggers>
+                                <asp:AsyncPostBackTrigger ControlID="BusHomeTimer" EventName="Tick"></asp:AsyncPostBackTrigger>
+                            </Triggers>
+                        </asp:UpdatePanel>
+                    </asp:View>
 
 
 <%-- Panel z informacjami dodatkowymi --%>

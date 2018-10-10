@@ -47,7 +47,7 @@ namespace Bus_Management_System
                     SetActiveView(loggedUser, menuItems);
                 }
 
-                FillOperationList();
+                //FillOperationList();
             }
         }
 
@@ -549,30 +549,6 @@ namespace Bus_Management_System
             ddl_PPS.SelectedIndex = -1;
             tb_RadioNeon.Text = "";
             tb_RadioGate.Text = "";
-        }
-
-
-        private void FillOperationList()
-        {
-            //DataSet operations = bl.GetOperations();
-
-            //string errorMsg = "";
-            //DataTable opDataTable = bl.GetCurrentOp(operations, ref errorMsg);
-
-            //if (errorMsg == "")
-            //{
-
-            //}
-            //else
-            //{
-            //    Response.Write("<script> alert('" + errorMsg + "') </script>");
-            //}
-
-            //gv_OperationList.DataSource = opDataTable;
-            //gv_OperationList.DataBind();
-
-            //operations.Dispose();
-            //opDataTable.Dispose();
         }
     }
 }
