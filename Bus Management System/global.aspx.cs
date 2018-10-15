@@ -121,10 +121,13 @@ namespace Bus_Management_System
             HttpCookie BusCookie = new HttpCookie("Bus");
             BusCookie.Values["userId"] = sessionName;
             BusCookie.Values["Id"] = iD.ToString();
-            // dodać gdzieś sprawdzanie ile czasu już upłyneło
             BusCookie.Values["loginTime"] = loginDate.ToString();
             BusCookie.Values["busNb"] = "";
-            BusCookie.Expires = DateTime.Now.AddHours(8);
+            BusCookie.Values["operationStatus"] = "0";
+            BusCookie.Values["interval"] = "0";
+
+            // domyslnie cookie zaniknie po wyłączeniu przeglądarki
+            //BusCookie.Expires = DateTime.Now.AddHours(8);
             Response.Cookies.Add(BusCookie);
         }
 

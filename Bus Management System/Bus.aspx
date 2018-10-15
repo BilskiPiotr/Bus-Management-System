@@ -168,7 +168,7 @@
                                                 <asp:TableCell Id="Dr4C3" runat="server" ColSpan="3" ForeColor="Black" Font-Size="14px" Font-Bold="true" HorizontalAlign="Center">TO LOCATION</asp:TableCell>
                                             </asp:TableRow>
                                             <asp:TableRow CssClass="busTableSmallRow" runat="server">
-                                                <asp:TableCell Id="TableCell2" runat="server" ColSpan="3" ForeColor="DarkBlue" Font-Size="44px" Font-Bold="true" HorizontalAlign="Center">.....</asp:TableCell>
+                                                <asp:TableCell Id="Dr5C3" runat="server" ColSpan="3" ForeColor="DarkBlue" Font-Size="44px" Font-Bold="true" HorizontalAlign="Center">.....</asp:TableCell>
                                             </asp:TableRow>
                                         </asp:Table>
 

@@ -256,6 +256,17 @@ namespace Bus_Management_System
         }
 
 
+        public DataSet GetOperations(string bus)
+        {
+            SqlCommand cmd = new SqlCommand("SELECT * FROM Operations WHERE Bus=(SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)");
+            cmd.Parameters.AddWithValue("@busNb", bus);
+            DataSet ds = new DataSet();
+            ds = dal.GetDataSet(cmd);
+
+            return ds;
+        }
+
+
         public Boolean AddNewOperation(NewOperation newOp, int id)
         {
             SqlCommand sqlCmd = new SqlCommand();
@@ -341,8 +352,9 @@ namespace Bus_Management_System
         }
 
 
-        public string GetAirPort(int airPort, ref int shengen)
+        public string GetAirPort(int airPort, ref int shengen, ref string fullName, ref string country)
         {
+            // rozbudowac do zwracania FullName i CountryName
             SqlCommand cmd = new SqlCommand("SELECT a.IATA_Name, a.Full_Name, b.Country_name, b.Shengen " +
                                             "FROM AirPorts AS a " +
                                             "INNER JOIN Countries AS b ON a.Country_Id=b.Id " +
@@ -377,18 +389,18 @@ namespace Bus_Management_System
         }
 
 
-        public int GetGate(int gate)
+        public string GetGate(int gate)
         {
             SqlCommand cmd = new SqlCommand("SELECT * FROM Gates WHERE Id = @gateId");
             cmd.Parameters.AddWithValue("@gateId", gate);
             try
             {
                 DataSet ds = dal.GetDataSet(cmd);
-                return Convert.ToInt32(ds.Tables[0].Rows[0].Field<string>("GateNb"));
+                return ds.Tables[0].Rows[0].Field<string>("GateNb").ToString();
             }
-            catch (Exception ex)
+            catch
             {
-                return 0;
+                return "";
             }
         }
 

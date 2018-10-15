@@ -301,13 +301,13 @@ namespace Bus_Management_System {
         protected global::System.Web.UI.WebControls.TableCell Dr4C3;
         
         /// <summary>
-        /// Kontrolka TableCell2.
+        /// Kontrolka Dr5C3.
         /// </summary>
         /// <remarks>
         /// Pole generowane automatycznie.
         /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TableCell TableCell2;
+        protected global::System.Web.UI.WebControls.TableCell Dr5C3;
         
         /// <summary>
         /// Kontrolka busAccept.
