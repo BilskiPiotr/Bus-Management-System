@@ -51,6 +51,7 @@ namespace Bus_Management_System
                         locCookie.Values["startLocLon"] = "";
 
                         Response.Cookies.Add(locCookie);
+
                 }
                 else
                     Response.Redirect("global.aspx");
