@@ -221,6 +221,7 @@ namespace Bus_Management_System
                 int interval = Convert.ToInt32(cookie.Values["interval"]);
                 string bus = cookie.Values["busNb"].ToString();
 
+
                 if (cookie.Values["interval"] == "0")
                 {
                     DataSet ds = bl.GetOperations(cookie.Values["busNb"].ToString());
@@ -230,6 +231,9 @@ namespace Bus_Management_System
                     {
                         if (operationStatus == 0)
                         {
+                            cookie.Values["operationStatus"] = "1";
+                            Response.Cookies.Add(cookie);
+
                             string createdStatus = (ds.Tables[0].Rows[0].Field<DateTime>("Created")).ToString("HH:mm");
                             string acceptedStatus = (ds.Tables[0].Rows[0].Field<DateTime>("Accepted")).ToString("HH:mm");
                             string loadStatus = (ds.Tables[0].Rows[0].Field<DateTime>("StartLoad")).ToString("HH:mm");
@@ -248,57 +252,52 @@ namespace Bus_Management_System
                                 operationStatus = operationStatus + 1;
                             if (endStatus != "00:00")
                                 operationStatus = 0;
-                        }
 
-                        HttpCookie opCookie = Request.Cookies["opCookie"];
-                        if (opCookie == null)
-                        {
-                            opCookie = OpCookie.CreateCookie(ds);
-                            Response.Cookies.Add(opCookie);
+                            /* operationStatus wartości możliwe:
+                            * 0 - brak zlecenia       <-
+                            * 1 - zlecenie utworzone    |
+                            * 2 - zlecenie przyjete     |
+                            * 3 - rozpoczęty załadunek  |
+                            * 4 - dowóz pasażerów       |
+                            * 5 - rozpoczęty wyładunek >|
+                            */
+
+                            HttpCookie opCookie = Request.Cookies["opCookie"];
+                            if (opCookie == null)
+                            {
+                                opCookie = OpCookie.CreateCookie(ds);
+                                Response.Cookies.Add(opCookie);
+                            }
+
+                            InWorkBusControls(operationStatus);
                         }
+                        //else
+                        //{
+                        //    R1C3.Text = DateTime.Now.ToString("HH:mm");
+                        //    IddleBusControls();
+                        //}
                     }
-                    else
-                    {
-                        R1C3.Text = DateTime.Now.ToString("HH:mm");
-                        IddleBusControls();
-                    }
+                    //else
+                    //{
+                    //    R1C3.Text = DateTime.Now.ToString("HH:mm");
+                    //    IddleBusControls();
+                    //}
+                }
+                else
+                if (cookie.Values["interval"] == "20")
+                {
+                    cookie.Values["interval"] = "0";
+                    Response.Cookies.Add(cookie);
                 }
                 else
                 {
                     interval = interval + 5;
                     cookie.Values["interval"] = Convert.ToString(interval);
-                    R1C3.Text = DateTime.Now.ToString("hh:mm");
-                    IddleBusControls();
                     Response.Cookies.Add(cookie);
-                }
-
-                if (interval == 20)
-                {
-                    cookie.Values["interval"] = "0";
-                    Response.Cookies.Add(cookie);
-                }
-
-
-                /* operationStatus wartości możliwe:
-                 * 0 - brak zlecenia       <-
-                 * 1 - zlecenie utworzone    |
-                 * 2 - zlecenie przyjete     |
-                 * 3 - rozpoczęty załadunek  |
-                 * 4 - dowóz pasażerów       |
-                 * 5 - rozpoczęty wyładunek >|
-                 */
-
-                if (operationStatus > 0)
-                {
-                    InWorkBusControls(operationStatus);
-                }
-                else
-                {
-                    R1C3.Text = DateTime.Now.ToString("HH:mm");
-                    IddleBusControls();
                 }
 
                 SetButtonsStatus(operationStatus);
+                InWorkBusControls(operationStatus);
             }
             // "buss" cookie nie istnieje, wiedz na wszelki wypadek koniec sesji i wylogowanie
             else
@@ -494,7 +493,9 @@ namespace Bus_Management_System
 
                 if (Convert.ToInt32(cookie.Values["operationStatus"]) == 2)
                 {
-                    Dr2C3.Text = "start location";
+                    Dr2C2.Text = opCookie.Values["startLocLatDegree"].ToString();
+                    Dr2C3.Text = "";
+                    Dr2C4.Text = opCookie.Values["startLocLonDegree"].ToString();
                     Dr5C3.Text = opCookie.Values["gate"].ToString();
                 }
                 else
@@ -560,14 +561,22 @@ namespace Bus_Management_System
             cmd.Parameters.AddWithValue("@busNb", bus);
             cmd.Parameters.AddWithValue("@accepted", DateTime.Now);
             dal.QueryExecution(cmd);
+            cookie.Values["operationStatus"] = "2";
+            Response.Cookies.Add(cookie);
 
             string lat = "";
             string lon = "";
             
             TranslateColToDegree(ref lat, ref lon);
 
-            Dr1C3.Text = lat;
-            Dr2C3.Text = lon;
+            HttpCookie locCookie = Request.Cookies["locCookie"];
+            HttpCookie opCookie = Request.Cookies["opCookie"];
+
+            opCookie.Values["startLocLat"] = locCookie.Values["currentLocLat"].ToString();
+            opCookie.Values["startLocLon"] = locCookie.Values["currentLocLon"].ToString();
+            opCookie.Values["startLocLatDegree"] = lat;
+            opCookie.Values["startLocLonDegree"] = lon;
+            Response.Cookies.Add(opCookie);
         }
 
         // zaznaczenie początku operacji odbioru pasażerów z samolotu lub Gate

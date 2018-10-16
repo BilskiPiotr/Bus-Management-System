@@ -40,6 +40,33 @@ namespace Bus_Management_System {
         protected global::System.Web.UI.ScriptManager BusRefresh;
         
         /// <summary>
+        /// Kontrolka HiddenField1.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField HiddenField1;
+        
+        /// <summary>
+        /// Kontrolka HiddenField2.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField HiddenField2;
+        
+        /// <summary>
+        /// Kontrolka HiddenField3.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField HiddenField3;
+        
+        /// <summary>
         /// Kontrolka busMenu.
         /// </summary>
         /// <remarks>
@@ -274,6 +301,15 @@ namespace Bus_Management_System {
         protected global::System.Web.UI.WebControls.TableCell Dr1C4;
         
         /// <summary>
+        /// Kontrolka Dr2C2.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TableCell Dr2C2;
+        
+        /// <summary>
         /// Kontrolka Dr2C3.
         /// </summary>
         /// <remarks>
@@ -281,6 +317,15 @@ namespace Bus_Management_System {
         /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TableCell Dr2C3;
+        
+        /// <summary>
+        /// Kontrolka Dr2C4.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TableCell Dr2C4;
         
         /// <summary>
         /// Kontrolka Dr3C3.
@@ -380,33 +425,6 @@ namespace Bus_Management_System {
         /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblDim;
-        
-        /// <summary>
-        /// Kontrolka HiddenField1.
-        /// </summary>
-        /// <remarks>
-        /// Pole generowane automatycznie.
-        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField HiddenField1;
-        
-        /// <summary>
-        /// Kontrolka HiddenField2.
-        /// </summary>
-        /// <remarks>
-        /// Pole generowane automatycznie.
-        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField HiddenField2;
-        
-        /// <summary>
-        /// Kontrolka HiddenField3.
-        /// </summary>
-        /// <remarks>
-        /// Pole generowane automatycznie.
-        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField HiddenField3;
         
         /// <summary>
         /// Kontrolka lb_LatOpis.

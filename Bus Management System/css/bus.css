@@ -150,12 +150,22 @@
 
     .busTableBigRow
     {
-        height: 73px;
+        height: 75px;
     }
 
     .busTableMiddleRow
     {
         height: 50px;
+    }
+
+    .busTableSmallRow 
+    {
+        height: 40px;
+    }
+
+    .busTableVSmallRow 
+    {
+        height: 35px;
     }
 }
 

@@ -41,6 +41,10 @@ namespace Bus_Management_System
             cookie.Values["shengen"] = shengen.ToString();
             cookie.Values["portName"] = portName;
             cookie.Values["country"] = country;
+            cookie.Values["startLocLat"] = "";
+            cookie.Values["startLocLon"] = "";
+            cookie.Values["startLocLatDegree"] = "";
+            cookie.Values["startLocLonDegree"] = "";
             cookie.Values["gateLocLat"] = "";
             cookie.Values["gateLocLon"] = "";
             cookie.Values["ppsLocLat"] = "";
