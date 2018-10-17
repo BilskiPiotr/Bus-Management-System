@@ -19,6 +19,9 @@ namespace Bus_Management_System
             string portName = "";
             string country = "";
 
+            DataSet pps = bl.GetPPS(ds.Tables[0].Rows[0].Field<int>("PPS"));
+            DataSet gate = bl.GetGate(ds.Tables[0].Rows[0].Field<int>("Gate"));
+
             // utworzenie nowego instancji ciasteczka
             HttpCookie cookie = new HttpCookie("opCookie");
 
@@ -34,8 +37,12 @@ namespace Bus_Management_System
             cookie.Values["flightNb"] = ds.Tables[0].Rows[0].Field<string>("FlightNb").ToString();
             cookie.Values["pax"] = ds.Tables[0].Rows[0].Field<int>("Pax").ToString();
             cookie.Values["airPort"] = bl.GetAirPort(ds.Tables[0].Rows[0].Field<int>("AirPort"), ref shengen, ref portName, ref country);
-            cookie.Values["pps"] = bl.GetPPS(ds.Tables[0].Rows[0].Field<int>("PPS"));
-            cookie.Values["gate"] = bl.GetGate(ds.Tables[0].Rows[0].Field<int>("Gate"));
+            cookie.Values["pps"] = pps.Tables[0].Rows[0].Field<string>("StationNb");
+            cookie.Values["ppsLat"] = pps.Tables[0].Rows[0].Field<string>("GPS_Latitude");
+            cookie.Values["ppsLon"] = pps.Tables[0].Rows[0].Field<string>("GPS_Longitude");
+            cookie.Values["gate"] = gate.Tables[0].Rows[0].Field<string>("GateNb");
+            cookie.Values["gateLat"] = gate.Tables[0].Rows[0].Field<string>("GPS_Latitude");
+            cookie.Values["gateLon"] = gate.Tables[0].Rows[0].Field<string>("GPS_Longitude");
             cookie.Values["radioGate"] = ds.Tables[0].Rows[0].Field<string>("RadioGate").ToString();
             cookie.Values["radioNeon"] = ds.Tables[0].Rows[0].Field<string>("RadioNeon").ToString();
             cookie.Values["shengen"] = shengen.ToString();

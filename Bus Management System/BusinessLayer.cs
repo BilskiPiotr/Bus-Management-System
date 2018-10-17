@@ -265,7 +265,7 @@ namespace Bus_Management_System
 
             return ds;
         }
-
+        
 
         public Boolean AddNewOperation(NewOperation newOp, int id)
         {
@@ -336,18 +336,18 @@ namespace Bus_Management_System
         }
 
 
-        public string GetPPS(int pps)
+        public DataSet GetPPS(int pps)
         {
             SqlCommand cmd = new SqlCommand("SELECT * FROM Stations WHERE Id = @ppsNb");
             cmd.Parameters.AddWithValue("@ppsNb", pps);
             try
             {
                 DataSet ds = dal.GetDataSet(cmd);
-                return ds.Tables[0].Rows[0].Field<string>("StationNb");
+                return ds;
             }
             catch
             {
-                return "";
+                return null;
             }
         }
 
@@ -389,18 +389,18 @@ namespace Bus_Management_System
         }
 
 
-        public string GetGate(int gate)
+        public DataSet GetGate(int gate)
         {
             SqlCommand cmd = new SqlCommand("SELECT * FROM Gates WHERE Id = @gateId");
             cmd.Parameters.AddWithValue("@gateId", gate);
             try
             {
                 DataSet ds = dal.GetDataSet(cmd);
-                return ds.Tables[0].Rows[0].Field<string>("GateNb").ToString();
+                return ds;
             }
             catch
             {
-                return "";
+                return null;
             }
         }
 

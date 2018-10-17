@@ -229,11 +229,6 @@ namespace Bus_Management_System
                     // sprawdzenie, czy pojawiła się operacja
                     if (ds.Tables[0].Rows.Count > 0)
                     {
-                        if (operationStatus == 0)
-                        {
-                            cookie.Values["operationStatus"] = "1";
-                            Response.Cookies.Add(cookie);
-
                             string createdStatus = (ds.Tables[0].Rows[0].Field<DateTime>("Created")).ToString("HH:mm");
                             string acceptedStatus = (ds.Tables[0].Rows[0].Field<DateTime>("Accepted")).ToString("HH:mm");
                             string loadStatus = (ds.Tables[0].Rows[0].Field<DateTime>("StartLoad")).ToString("HH:mm");
@@ -253,6 +248,9 @@ namespace Bus_Management_System
                             if (endStatus != "00:00")
                                 operationStatus = 0;
 
+                        cookie.Values["operationStatus"] = operationStatus.ToString();
+                        Response.Cookies.Add(cookie);
+
                             /* operationStatus wartości możliwe:
                             * 0 - brak zlecenia       <-
                             * 1 - zlecenie utworzone    |
@@ -270,18 +268,7 @@ namespace Bus_Management_System
                             }
 
                             InWorkBusControls(operationStatus);
-                        }
-                        //else
-                        //{
-                        //    R1C3.Text = DateTime.Now.ToString("HH:mm");
-                        //    IddleBusControls();
-                        //}
                     }
-                    //else
-                    //{
-                    //    R1C3.Text = DateTime.Now.ToString("HH:mm");
-                    //    IddleBusControls();
-                    //}
                 }
                 else
                 if (cookie.Values["interval"] == "20")
@@ -322,12 +309,6 @@ namespace Bus_Management_System
                 GreyScreen(operation, shengen);
             else
             {
-                busAccept.Style.Add("background-color", "#a63d40");
-                busStartLoad.Style.Add("background-color", "#a63d40");
-                busStartDrive.Style.Add("background-color", "#a63d40");
-                busStartUnload.Style.Add("background-color", "#a63d40");
-                busEndOp.Style.Add("background-color", "#a63d40");
-
                 switch (operation)
                 {
                     case 0:
@@ -359,6 +340,7 @@ namespace Bus_Management_System
                 busStartLoad.Enabled = true;
                 busMINEtable.Visible = false;
                 busDriveTable.Visible = true;
+
             }
             else
                 if (operationStatus == 3)
@@ -420,7 +402,6 @@ namespace Bus_Management_System
             R4C3.Style.Add("color", "#FFFFCC");
             R4C4.Style.Add("color", "#FFFFCC");
             R5C3.Text = "oczekiwanie...";
-            //td1.Style.Add(HtmlTextWriterStyle.BackgroundImage, "Images/7.jpg");
         }
 
 
@@ -491,12 +472,47 @@ namespace Bus_Management_System
                 Dr1C4.Style.Add("background-repeat", "no-repeat");
                 Dr1C4.Style.Add("background-size", "100% 100%");
 
-                if (Convert.ToInt32(cookie.Values["operationStatus"]) == 2)
+                if (cookie.Values["operationStatus"].ToString() == "2" || cookie.Values["operationStatus"].ToString() == "4")
                 {
+                    if (opCookie.Values["startLocLatDegree"].ToString() == "" || opCookie.Values["startLocLonDegree"].ToString() == "")
+                    {
+                        string lat = "";
+                        string lon = "";
+                        TranslateColToDegree(ref lat, ref lon);
+                        opCookie.Values["startLocLatDegree"] = lat;
+                        opCookie.Values["startLocLonDegree"] = lon;
+                    }
                     Dr2C2.Text = opCookie.Values["startLocLatDegree"].ToString();
                     Dr2C3.Text = "";
                     Dr2C4.Text = opCookie.Values["startLocLonDegree"].ToString();
                     Dr5C3.Text = opCookie.Values["gate"].ToString();
+
+                    double distance = CheckDistance(opCookie, 2);
+
+                    if (cookie.Values["operationStatus"].ToString() == "2")
+                    {
+                        if (distance > 10.0d)
+                        {
+                            Dr3C3.Text = distance.ToString() + " m";
+                            Dr3C3.Style.Add("color", "Violet");
+                        }
+                        else
+                        {
+                            Dr3C3.Text = "OK!";
+                            Dr3C3.Style.Add("color", "Green");
+                        }
+                    }
+                    else
+                        if (distance > 20.0d)
+                    {
+                        Dr3C3.Text = distance.ToString() + " m";
+                        Dr3C3.Style.Add("color", "Violet");
+                    }
+                    else
+                    {
+                        Dr3C3.Text = "OK!";
+                        Dr3C3.Style.Add("color", "Green");
+                    }
                 }
                 else
                 {
@@ -504,6 +520,35 @@ namespace Bus_Management_System
                     Dr5C3.Text = opCookie.Values["pps"].ToString();
                 }
             }
+        }
+
+        private double CheckDistance(HttpCookie opCookie, int operation)
+        {
+            HttpCookie locCookie = Request.Cookies["locCookie"];
+            double busLat = Convert.ToDouble(locCookie.Values["currentLocLat"]);
+            double busLon = Convert.ToDouble(locCookie.Values["currentLocLon"]);
+
+            double targetLat = 0.0;
+            double targetLon = 0.0;
+
+            if (operation == 1)
+            {
+                targetLat = Convert.ToDouble(opCookie.Values["gateLat"], CultureInfo.InvariantCulture);
+                targetLon = Convert.ToDouble(opCookie.Values["gateLon"], CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                targetLat = double.Parse(opCookie.Values["ppsLat"], CultureInfo.InvariantCulture);
+                targetLon = Convert.ToDouble(opCookie.Values["ppsLon"], CultureInfo.InvariantCulture);
+            }
+            
+            GeoCoordinate busPosition = new GeoCoordinate(busLat, busLon);
+            GeoCoordinate targetPosition = new GeoCoordinate(targetLat, targetLon);
+
+            // zwrocenie odleglosci miedzy wspolrzednymi z ograniczeniem do 2 miejsc po przecinku
+            double distance = Math.Round(busPosition.GetDistanceTo(targetPosition), 2, MidpointRounding.AwayFromZero);
+
+            return distance;
         }
 
 
@@ -561,7 +606,8 @@ namespace Bus_Management_System
             cmd.Parameters.AddWithValue("@busNb", bus);
             cmd.Parameters.AddWithValue("@accepted", DateTime.Now);
             dal.QueryExecution(cmd);
-            cookie.Values["operationStatus"] = "2";
+
+            cookie.Values["operationStatus"]  = "2";
             Response.Cookies.Add(cookie);
 
             string lat = "";
@@ -571,6 +617,20 @@ namespace Bus_Management_System
 
             HttpCookie locCookie = Request.Cookies["locCookie"];
             HttpCookie opCookie = Request.Cookies["opCookie"];
+
+            // nie no - trzeba pobrac te współrzędne do ciasteczka podczas tworzenia OpCookie
+            switch (opCookie.Values["operation"].ToString())
+            {
+                case "1":
+                    {
+                        cmd = new SqlCommand("SELECT GPS_Latitude, GPS_Longitude FROM Stations WHERE StationNb = @pps");
+                        cmd.Parameters.AddWithValue("@pps", opCookie.Values["pps"].ToString());
+                        DataSet ds = dal.GetDataSet(cmd);
+                    }
+                    break;
+                case "2":
+                    break;
+            }
 
             opCookie.Values["startLocLat"] = locCookie.Values["currentLocLat"].ToString();
             opCookie.Values["startLocLon"] = locCookie.Values["currentLocLon"].ToString();
@@ -644,8 +704,8 @@ namespace Bus_Management_System
             double minutyLon = ((longitude - Math.Truncate(longitude) / 1) * 60);
             double sekundyLon = ((minutyLon - Math.Truncate(minutyLon) / 1) * 60);
 
-            lat = Convert.ToString(Math.Truncate(latitude) + "° " + Math.Truncate(minutyLat) + "' " + Math.Truncate(sekundyLat) + "'' " + latitude_Kierunek);
-            lon = Convert.ToString(Math.Truncate(longitude) + "° " + Math.Truncate(minutyLon) + "' " + Math.Truncate(sekundyLon) + "'' " + longitude_Kierunek);
+            lat = String.Format(Convert.ToString(Math.Truncate(latitude) + "° " +  + Math.Truncate(minutyLat) + "' " + Math.Truncate(sekundyLat) + "'' " + latitude_Kierunek));
+            lon = String.Format(Convert.ToString(Math.Truncate(longitude) + "° " + Math.Truncate(minutyLon) + "' " + Math.Truncate(sekundyLon) + "'' " + longitude_Kierunek));
         }
     }
 }

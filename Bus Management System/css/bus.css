@@ -148,24 +148,58 @@
         height: 200px;
     }
 
-    .busTableBigRow
+    .busTable80 
     {
-        height: 75px;
+        height: 80px;
+        padding: 0;
     }
 
-    .busTableMiddleRow
+    .busTable70
+    {
+        height: 70px;
+        padding: 0;
+    }
+
+    .busTable60 
+    {
+        height: 60px;
+        padding: 0;
+    }
+
+    .busTable55 
+    {
+        height: 55px;
+        padding: 0;
+    }
+
+    .busTable50 
     {
         height: 50px;
+        padding: 0;
     }
 
-    .busTableSmallRow 
+    .busTable40 
     {
         height: 40px;
+        padding: 0;
     }
 
-    .busTableVSmallRow 
+    .busTable30 
     {
-        height: 35px;
+        height: 30px;
+        padding: 0;
+    }
+
+    .busTable20 
+    {
+        height: 20px;
+        padding: 0;
+    }
+
+    .busTable15
+    {
+        height: 15px;
+        padding: 0;
     }
 }
 
