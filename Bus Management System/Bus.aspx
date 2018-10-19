@@ -67,8 +67,8 @@
         <asp:ScriptManager ID="BusRefresh" runat="server" EnablePageMethods="true"></asp:ScriptManager>
         <div class="bus-header">
             <asp:HiddenField ID="HiddenField1" runat="server" />
-                        <asp:HiddenField ID="HiddenField2" runat="server" />
-                        <asp:HiddenField ID="HiddenField3" runat="server" />
+            <asp:HiddenField ID="HiddenField2" runat="server" />
+            <asp:HiddenField ID="HiddenField3" runat="server" />
             <div class="bus-Menu">
                 <asp:Menu   ID="busMenu"
                             StaticMenuStyle-CssClass="sms"
