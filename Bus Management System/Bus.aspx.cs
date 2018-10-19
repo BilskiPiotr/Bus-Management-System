@@ -476,16 +476,16 @@ namespace Bus_Management_System
             }
             else
             {
-                Dr1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sn.png");
+                Dr1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/3snl.png");
                 Dr1C2.Style.Add("background-repeat", "no-repeat");
                 Dr1C2.Style.Add("background-size", "100% 100%");
-                Dr1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sn.png");
+                Dr1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/3snp.png");
                 Dr1C4.Style.Add("background-repeat", "no-repeat");
                 Dr1C4.Style.Add("background-size", "100% 100%");
 
                 if (loggedUser.operationStatus == 2 || loggedUser.operationStatus == 4)
                 {
-                    if (loggedUser.startLocLatDegree == "" || loggedUser.startLocLonDegree == "")
+                    if (loggedUser.startLocLatDegree == null || loggedUser.startLocLonDegree == null)
                     {
                         string lat = "";
                         string lon = "";
