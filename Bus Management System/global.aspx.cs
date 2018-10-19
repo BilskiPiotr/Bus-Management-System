@@ -66,7 +66,10 @@ namespace Bus_Management_System
                         CompanyId = Convert.ToInt32(loggedUserData.Rows[0][0]),
                         FirstName = (string)loggedUserData.Rows[0][1],
                         LastName = (string)loggedUserData.Rows[0][2],
-                        AdminPrivileges = Convert.ToInt32(loggedUserData.Rows[0][3])
+                        AdminPrivileges = Convert.ToInt32(loggedUserData.Rows[0][3]),
+                        interval = 0,
+                        bus = "",
+                        operationStatus = 0
                     };
                     string sessionName = (string)loggedUserData.Rows[0][0];
                     Session[sessionName] = user;
