@@ -266,8 +266,17 @@ namespace Bus_Management_System
                                 opCookie = OpCookie.CreateCookie(ds);
                                 Response.Cookies.Add(opCookie);
                             }
+                            else
+                        {
+                            opCookie = OpCookie.RebiuldCookie(ds);
+                            Response.Cookies.Add(opCookie);
+                        }
 
                             InWorkBusControls(operationStatus);
+
+                        interval = interval + 5;
+                        cookie.Values["interval"] = Convert.ToString(interval);
+                        Response.Cookies.Add(cookie);
                     }
                 }
                 else
@@ -282,6 +291,7 @@ namespace Bus_Management_System
                     cookie.Values["interval"] = Convert.ToString(interval);
                     Response.Cookies.Add(cookie);
                 }
+                
 
                 SetButtonsStatus(operationStatus);
                 InWorkBusControls(operationStatus);
