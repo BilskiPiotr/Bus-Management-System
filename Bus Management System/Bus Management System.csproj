@@ -70,6 +70,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="libman.json" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\sysbus-management.com.pl - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
@@ -91,6 +92,8 @@
     <Content Include="global.aspx" />
     <Content Include="js\get_location.js" />
     <Content Include="LogOut.aspx" />
+    <Content Include="pictures\3snl.png" />
+    <Content Include="pictures\3snp.png" />
     <Content Include="pictures\sc.png" />
     <Content Include="pictures\scr.png" />
     <Content Include="pictures\sn.png" />
