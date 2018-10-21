@@ -210,7 +210,7 @@ namespace Bus_Management_System
 
         protected void BusHomeTimer_Tick(object sender, EventArgs e)
         {
-            HttpCookie cookie = Request.Cookies["Bus"];   
+            HttpCookie cookie = Request.Cookies["Bus"];
 
             if (cookie != null)
             {
