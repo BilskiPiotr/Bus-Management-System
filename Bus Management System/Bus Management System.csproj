@@ -70,6 +70,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="js\audioKom01.js" />
     <Content Include="libman.json" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\sysbus-management.com.pl - Web Deploy.pubxml" />
