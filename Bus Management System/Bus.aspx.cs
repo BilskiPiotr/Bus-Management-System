@@ -218,8 +218,8 @@ namespace Bus_Management_System
                 int interval = loggedUser.interval;
                 string bus = cookie.Values["busNb"].ToString();
 
-                if (loggedUser.interval == 0)
-                {
+                //if (loggedUser.interval == 0)
+                //{
                     DataSet ds = bl.GetOperations(cookie.Values["busNb"].ToString());
 
                     // sprawdzenie, czy pojawiła się operacja
@@ -281,26 +281,26 @@ namespace Bus_Management_System
                         SetButtonsStatus(operationStatus);
                         InWorkBusControls(operationStatus);
 
-                        interval = interval + 5;
-                        loggedUser.interval = interval;
+                        //interval = interval + 5;
+                        //loggedUser.interval = interval;
                     }
                     else
                     {
                         IddleBusControls();
                     }
-                }
-                else
-                if (loggedUser.interval == 20)
-                {
-                    loggedUser.interval = 0;
-                    SetButtonsStatus(operationStatus);
-                    InWorkBusControls(operationStatus);
-                }
-                else
-                {
-                    interval = interval + 5;
-                    loggedUser.interval = interval;
-                }
+                //}
+                //else
+                //if (loggedUser.interval == 20)
+                //{
+                //    loggedUser.interval = 0;
+                //    SetButtonsStatus(operationStatus);
+                //    InWorkBusControls(operationStatus);
+                //}
+                //else
+                //{
+                    //interval = interval + 5;
+                    //loggedUser.interval = interval;
+                //}
                 
             }
             // "buss" cookie nie istnieje, wiedz na wszelki wypadek koniec sesji i wylogowanie
