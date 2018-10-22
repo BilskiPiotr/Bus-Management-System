@@ -212,14 +212,17 @@ namespace Bus_Management_System
         {
             HttpCookie cookie = Request.Cookies["Bus"];
 
+            //Button1_Click(null, null);
+            //Button1.OnClientClick();
+
             if (cookie != null)
             {
+                Page.ClientScript.RegisterClientScriptBlock(this.GetType(), "CallMyFunction", "PlaySound()", true);
+
                 int operationStatus = loggedUser.operationStatus;
                 int interval = loggedUser.interval;
                 string bus = cookie.Values["busNb"].ToString();
 
-                //if (loggedUser.interval == 0)
-                //{
                     DataSet ds = bl.GetOperations(cookie.Values["busNb"].ToString());
 
                     // sprawdzenie, czy pojawiła się operacja
@@ -280,28 +283,11 @@ namespace Bus_Management_System
 
                         SetButtonsStatus(operationStatus);
                         InWorkBusControls(operationStatus);
-
-                        //interval = interval + 5;
-                        //loggedUser.interval = interval;
                     }
                     else
                     {
                         IddleBusControls();
                     }
-                //}
-                //else
-                //if (loggedUser.interval == 20)
-                //{
-                //    loggedUser.interval = 0;
-                //    SetButtonsStatus(operationStatus);
-                //    InWorkBusControls(operationStatus);
-                //}
-                //else
-                //{
-                    //interval = interval + 5;
-                    //loggedUser.interval = interval;
-                //}
-                
             }
             // "buss" cookie nie istnieje, wiedz na wszelki wypadek koniec sesji i wylogowanie
             else
@@ -716,5 +702,10 @@ namespace Bus_Management_System
             lat = String.Format(Convert.ToString(Math.Truncate(latitude) + "° " +  + Math.Truncate(minutyLat) + "' " + Math.Truncate(sekundyLat) + "'' " + latitude_Kierunek));
             lon = String.Format(Convert.ToString(Math.Truncate(longitude) + "° " + Math.Truncate(minutyLon) + "' " + Math.Truncate(sekundyLon) + "'' " + longitude_Kierunek));
         }
+
+        //protected void Button1_Click(object sender, EventArgs e)
+        //{
+        //    Page.ClientScript.RegisterStartupScript(this.GetType(), "callSound", "PlaySound()", true);
+        //}
     }
 }

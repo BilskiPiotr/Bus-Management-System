@@ -10,6 +10,22 @@
     <meta name="SysBus_Management" content:"" />
 	<link rel="stylesheet" href="css/bus.css" />
 
+    <script type="text/javascript">
+    var soundObject = null;
+        function PlaySound() {
+            if (soundObject != null) {
+        document.body.removeChild(soundObject);
+    soundObject.removed = true;
+    soundObject = null;
+}
+soundObject = document.createElement("embed");
+soundObject.setAttribute("src", "audio/beep02.wav");
+soundObject.setAttribute("hidden", true);
+soundObject.setAttribute("autostart", true);
+document.body.appendChild(soundObject);
+}
+    </script>
+
 </head>
 <body runat="server" id="BodyTag" onclick="clicked=true;">
     
@@ -65,6 +81,7 @@
 
     <form id="form1" runat="server">
         <asp:ScriptManager ID="BusRefresh" runat="server" EnablePageMethods="true"></asp:ScriptManager>
+        
         <div class="bus-header">
             <asp:HiddenField ID="HiddenField1" runat="server" />
             <asp:HiddenField ID="HiddenField2" runat="server" />
@@ -116,6 +133,7 @@
                             <asp:Timer runat="server" Id="BusHomeTimer" Interval="5000" OnTick="BusHomeTimer_Tick"></asp:Timer>
                                 <div class="bus-row">
                                     <div class="bus-left">
+                                        <asp:Button ID="Button1" runat="server" Text="Button" OnClientClick="PlaySound();"/>
 
                                         <asp:Table ID="busMINEtable" runat="server" CssClass="busTable" 
                                                                      EnableTheming="False" 
