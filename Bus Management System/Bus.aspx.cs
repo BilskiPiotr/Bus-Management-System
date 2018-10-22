@@ -5,6 +5,7 @@ using System.Device.Location;
 using System.Globalization;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 
 namespace Bus_Management_System
@@ -212,9 +213,12 @@ namespace Bus_Management_System
         {
             HttpCookie cookie = Request.Cookies["Bus"];
 
+            HtmlGenericControl sound = new HtmlGenericControl("<embed src=""audio\beep02.wav"" autostart =\"true\" hidden=\"true\"></embed>");
+            
+            sound.ID = 
             //Button1_Click(null, null);
             //Button1.OnClientClick();
-
+            BusHomeUP.Controls.Add()
             if (cookie != null)
             {
                 Page.ClientScript.RegisterClientScriptBlock(this.GetType(), "CallMyFunction", "PlaySound()", true);
