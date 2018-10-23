@@ -48,7 +48,7 @@
             dane[2] = document.getElementById("<%=HiddenField3.ClientID%>").value;
             PageMethods.PrzeliczArray(dane, OnSuccess);
         }
-            function OnSuccess(response, userContext, methodName) {
+            function OnSuccess(response, userContext, PlaySound(alert) {
 <%--            document.getElementById("<%=lb_BusLatitude.ClientID %>").innerHTML = response[0];
             document.getElementById("<%=lb_BusLongitude.ClientID %>").innerHTML = response[1];
             document.getElementById("<%=lb_BusDistance.ClientID %>").innerHTML = response[2];
