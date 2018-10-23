@@ -54,5 +54,9 @@
         public string startLon { get; set; }
         public string startLocLatDegree { get; set; }
         public string startLocLonDegree { get; set; }
+
+
+
+        public string audioFile { get; set; }
     }
 }

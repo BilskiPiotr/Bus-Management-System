@@ -71,7 +71,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="audio\beep02.wav" />
-    <Content Include="js\audioKom01.js" />
+    <Content Include="audio\danger.wav" />
+    <Content Include="js\getCoordinates.js" />
+    <Content Include="js\danger.js" />
     <Content Include="libman.json" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\sysbus-management.com.pl - Web Deploy.pubxml" />

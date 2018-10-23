@@ -14,10 +14,13 @@ namespace Bus_Management_System
         private static BusinessLayer bl = new BusinessLayer();
         private static DataAccessLayer dal = new DataAccessLayer();
         User loggedUser;
+        private string nazwa = "";
 
         protected void Page_Load(object sender, EventArgs e)
         {
             string userId = "";
+
+            ScriptManager.RegisterStartupScript(BusHomeUP, this.GetType(), "PlayVoice", "PlaySound('"+nazwa+"');", true);
 
             if (Request.Cookies["Bus"] != null)
             {
@@ -63,6 +66,7 @@ namespace Bus_Management_System
             double longitude = double.Parse(arrayIn[1], CultureInfo.InvariantCulture);
             double distance = 0.0;
 
+           
             //dopisanie surowych danych do HttpCookie
             HttpCookie locCookie = HttpContext.Current.Request.Cookies.Get("locCookie");
 
@@ -212,8 +216,11 @@ namespace Bus_Management_System
         {
             HttpCookie cookie = Request.Cookies["Bus"];
 
+            loggedUser.audioFile = "audio/danger.wav";
             //Button1_Click(null, null);
             //Button1.OnClientClick();
+
+            nazwa = "audio/danger.wav";
 
             if (cookie != null)
             {
