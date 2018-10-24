@@ -10,21 +10,7 @@
     <meta name="SysBus_Management" content:"" />
 	<link rel="stylesheet" href="css/bus.css" />
 
-    <script type="text/javascript">
-    var soundObject = null;
-        function PlaySound() {
-            if (soundObject != null) {
-        document.body.removeChild(soundObject);
-    soundObject.removed = true;
-    soundObject = null;
-}
-soundObject = document.createElement("embed");
-soundObject.setAttribute("src", "audio/beep02.wav");
-soundObject.setAttribute("hidden", true);
-soundObject.setAttribute("autostart", true);
-document.body.appendChild(soundObject);
-}
-    </script>
+    <script src="/js/danger.js" type="text/javascript"></script>
 
 </head>
 <body runat="server" id="BodyTag" onclick="clicked=true;">
@@ -62,7 +48,7 @@ document.body.appendChild(soundObject);
             dane[2] = document.getElementById("<%=HiddenField3.ClientID%>").value;
             PageMethods.PrzeliczArray(dane, OnSuccess);
         }
-            function OnSuccess(response, userContext, methodName) {
+            function OnSuccess(response, userContext, PlaySound(alert) {
 <%--            document.getElementById("<%=lb_BusLatitude.ClientID %>").innerHTML = response[0];
             document.getElementById("<%=lb_BusLongitude.ClientID %>").innerHTML = response[1];
             document.getElementById("<%=lb_BusDistance.ClientID %>").innerHTML = response[2];
@@ -133,7 +119,6 @@ document.body.appendChild(soundObject);
                             <asp:Timer runat="server" Id="BusHomeTimer" Interval="5000" OnTick="BusHomeTimer_Tick"></asp:Timer>
                                 <div class="bus-row">
                                     <div class="bus-left">
-                                        <asp:Button ID="Button1" runat="server" Text="Button" OnClientClick="PlaySound();"/>
 
                                         <asp:Table ID="busMINEtable" runat="server" CssClass="busTable" 
                                                                      EnableTheming="False" 

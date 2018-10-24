@@ -139,15 +139,6 @@ namespace Bus_Management_System {
         protected global::System.Web.UI.Timer BusHomeTimer;
         
         /// <summary>
-        /// Kontrolka Button1.
-        /// </summary>
-        /// <remarks>
-        /// Pole generowane automatycznie.
-        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Button1;
-        
-        /// <summary>
         /// Kontrolka busMINEtable.
         /// </summary>
         /// <remarks>
