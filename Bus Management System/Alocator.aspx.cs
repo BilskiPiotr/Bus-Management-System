@@ -486,7 +486,7 @@ namespace Bus_Management_System
                     gv_Alocator.ShowFooter = false;
                     BindGrid();
                 }
-                catch (Exception ex)
+                catch
                 {
                     Response.Write("<script> alert('Błąd - nie udało się dodać nowej operacji' ) </script>");
                 }

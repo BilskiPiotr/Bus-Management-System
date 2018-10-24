@@ -64,7 +64,7 @@ namespace Bus_Management_System
                 dal.QueryExecution(cmd);
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }
@@ -415,8 +415,8 @@ namespace Bus_Management_System
                 DataSet ds = dal.GetDataSet(cmd);
                 return ds.Tables[0].Rows[0].Field<int>("OpValue");
             }
-            catch (Exception ex)
-            {
+            catch
+            { 
                 return 0;
             }
         }

@@ -10,21 +10,19 @@
     <meta name="SysBus_Management" content:"" />
 	<link rel="stylesheet" href="css/bus.css" />
 
-    <script src="/js/danger.js" type="text/javascript"></script>
-
 </head>
 <body runat="server" id="BodyTag" onclick="clicked=true;">
     
     <script src="http://code.jquery.com/jquery-1.9.1.min.js""></script>
     <script type="text/javascript">
         {
-            var coorLat = "";
-            var coorLon = "";
-            var coorAcc = "";
-            var coorSpe = "";
-            var alert = "";
-            var error = "";
-            var dane = new Array();
+            var lat = "";
+            var lon = "";
+            var acc = "";
+            var spe = "";
+
+        var error = "";
+        var dane = new Array();
 
         setInterval(getLocation, 5000);
 
@@ -39,56 +37,31 @@
         }
 
         function KonstruujArray(coordinates) {
-            coorLat = coordinates.coords.latitude;
-            coorLon = coordinates.coords.longitude;
-            coorAcc = coordinates.coords.accuracy;
-            coorSpe = coordinates.coords.speed;
-            document.getElementById("<%=HiddenField1.ClientID%>").value = coorLat;
-            document.getElementById("<%=HiddenField2.ClientID%>").value = coorLon;
-            document.getElementById("<%=HiddenField3.ClientID%>").value = coorAcc;
-            document.getElementById("<%=HiddenField4.ClientID%>").Value = coorSpe;
+            lat = coordinates.coords.latitude;
+            lon = coordinates.coords.longitude;
+            acc = coordinates.coords.accuracy;
+            spe = coordinates.coords.speed;
+            document.getElementById("<%=HiddenField1.ClientID%>").value = lat;
+            document.getElementById("<%=HiddenField2.ClientID%>").value = lon;
+            document.getElementById("<%=HiddenField3.ClientID%>").value = acc;
+            document.getElementById("<%=HiddenField4.ClientID%>").value = spe;
             dane[0] = document.getElementById("<%=HiddenField1.ClientID%>").value;
             dane[1] = document.getElementById("<%=HiddenField2.ClientID%>").value;
             dane[2] = document.getElementById("<%=HiddenField3.ClientID%>").value;
-            dane[3] = document.getElementById("<%=HiddenField4.ClientID")
+            dane[3] = document.getElementById("<%=HiddenField4.ClientID%>").value;
             PageMethods.PrzeliczArray(dane, OnSuccess);
         }
-            function OnSuccess(response, userContext, PlaySound(alert) {
-<%--            document.getElementById("<%=lb_BusLatitude.ClientID %>").innerHTML = response[0];
-            document.getElementById("<%=lb_BusLongitude.ClientID %>").innerHTML = response[1];
-            document.getElementById("<%=lb_BusDistance.ClientID %>").innerHTML = response[2];
-            document.getElementById("<%=lb_BusAccuracy.ClientID %>").innerHTML = wartosc3;--%>
-            coorLat = "";
-            coorLon = "";
-            coorAcc = "";
-
-<%--            var txt = "";
-                txt += "<p>Total width/height: " + screen.width + "*" + screen.height + "</p>";
-                txt += "<p>Available width/height: " + screen.availWidth + "*" + screen.availHeight + "</p>";
-                document.getElementById("<%=lblDim.ClientID %>").innerHTML = txt;--%>
-            }
-
-            var soundObject = null;
-
-            function PlaySound(nazwa)
+            function OnSuccess(response, userContext, methodName)
             {
-                _nazwa = nazwa;
-                if (_nazwa != "")
-                {
-                    if (soundObject != null)
-                    {
-                        document.body.removeChild(soundObject);
-                        soundObject.removed = true;
-                        soundObject = null;
-                    }
-                        soundObject = document.createElement("embed");
-                        soundObject.setAttribute("src", _nazwa);
-                        soundObject.setAttribute("hidden", true);
-                        soundObject.setAttribute("autostart", true);
-                        document.body.appendChild(soundObject);
-                    }
-                }
+
+     <%--       document.getElementById("<%=lb_speed.ClientID %>").innerHTML = response;--%>
+
+            lat = "";
+            lon = "";
+                acc = "";
+                spe = "";
             }
+    }
 </script>
 
     <form id="form1" runat="server">
@@ -202,7 +175,6 @@
                                                 <asp:TableCell Id="Dr5C3" runat="server" ColSpan="3" ForeColor="DarkBlue" Font-Size="44px" Font-Bold="true" HorizontalAlign="Center">.....</asp:TableCell>
                                             </asp:TableRow>
                                         </asp:Table>
-
                                     </div>
                                     <div class="bus-right">
                                         <div class="bus-1stLine">
@@ -222,6 +194,7 @@
                                 <asp:AsyncPostBackTrigger ControlID="BusHomeTimer" EventName="Tick"></asp:AsyncPostBackTrigger>
                             </Triggers>
                         </asp:UpdatePanel>
+                    <audio id="busAlert" runat="server"></audio>
                     </asp:View>
 
 
@@ -267,8 +240,9 @@
 
 
             <div class= "bus-footer">
-                <a class="right-lbl"><asp:Label ID="Label2" runat="server" Text="Zalogowano jako:  "></asp:Label></a>
+                <a class="right-lbl"><asp:Label ID="lb_zalogowany" runat="server" Text="Zalogowano jako:  "></asp:Label></a>
             	<a class="right-lbl"><asp:Label ID="lb_loggedUser" runat="server"></asp:Label></a>
+<%--                <a class="right-lbl"><asp:Label ID="lb_speed" runat="server"></asp:Label></a>--%>
             </div>
         </div>
     </form>
