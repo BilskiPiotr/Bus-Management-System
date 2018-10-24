@@ -74,6 +74,7 @@
     <Content Include="audio\danger.wav" />
     <Content Include="js\getCoordinates.js" />
     <Content Include="js\danger.js" />
+    <Content Include="js\test.js" />
     <Content Include="libman.json" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\sysbus-management.com.pl - Web Deploy.pubxml" />

@@ -16,7 +16,7 @@
     </style>
 </head>
 <body runat="server" id="BodyTag">
-    <script type="text/javascript">
+<%--    <script type="text/javascript">
 
         var wartosc1 = "";
         var wartosc2 = "";
@@ -57,7 +57,7 @@
             wartosc2 = "";
             wartosc3 = "";
         }
-</script>
+</script>--%>
         <form id="login_form" runat="server" enctype="multipart/form-data">
             <div class="header">
                 <div class="topnav">
@@ -212,10 +212,10 @@
 	                </div>
 	                <div class="busRight">
 		                <div class="busRightTop">
-                            <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
+<%--                            <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
                             <asp:HiddenField ID="HiddenField1" runat="server" />
                             <asp:HiddenField ID="HiddenField2" runat="server" />
-                            <asp:HiddenField ID="HiddenField3" runat="server" />
+                            <asp:HiddenField ID="HiddenField3" runat="server" />--%>
 
                             <table id="currentLoc-table" style="width: auto; height: auto;">
                             <tr>

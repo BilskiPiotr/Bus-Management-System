@@ -18,11 +18,13 @@
     <script src="http://code.jquery.com/jquery-1.9.1.min.js""></script>
     <script type="text/javascript">
         {
-        var wartosc1 = "";
-        var wartosc2 = "";
-        var wartosc3 = "";
-        var error = "";
-        var dane = new Array();
+            var coorLat = "";
+            var coorLon = "";
+            var coorAcc = "";
+            var coorSpe = "";
+            var alert = "";
+            var error = "";
+            var dane = new Array();
 
         setInterval(getLocation, 5000);
 
@@ -37,15 +39,18 @@
         }
 
         function KonstruujArray(coordinates) {
-            wartosc1 = coordinates.coords.latitude;
-            wartosc2 = coordinates.coords.longitude;
-            wartosc3 = coordinates.coords.accuracy;
-            document.getElementById("<%=HiddenField1.ClientID%>").value = wartosc1;
-            document.getElementById("<%=HiddenField2.ClientID%>").value = wartosc2;
-            document.getElementById("<%=HiddenField3.ClientID%>").value = wartosc3;
+            coorLat = coordinates.coords.latitude;
+            coorLon = coordinates.coords.longitude;
+            coorAcc = coordinates.coords.accuracy;
+            coorSpe = coordinates.coords.speed;
+            document.getElementById("<%=HiddenField1.ClientID%>").value = coorLat;
+            document.getElementById("<%=HiddenField2.ClientID%>").value = coorLon;
+            document.getElementById("<%=HiddenField3.ClientID%>").value = coorAcc;
+            document.getElementById("<%=HiddenField4.ClientID%>").Value = coorSpe;
             dane[0] = document.getElementById("<%=HiddenField1.ClientID%>").value;
             dane[1] = document.getElementById("<%=HiddenField2.ClientID%>").value;
             dane[2] = document.getElementById("<%=HiddenField3.ClientID%>").value;
+            dane[3] = document.getElementById("<%=HiddenField4.ClientID")
             PageMethods.PrzeliczArray(dane, OnSuccess);
         }
             function OnSuccess(response, userContext, PlaySound(alert) {
@@ -53,16 +58,37 @@
             document.getElementById("<%=lb_BusLongitude.ClientID %>").innerHTML = response[1];
             document.getElementById("<%=lb_BusDistance.ClientID %>").innerHTML = response[2];
             document.getElementById("<%=lb_BusAccuracy.ClientID %>").innerHTML = wartosc3;--%>
-            wartosc1 = "";
-            wartosc2 = "";
-            wartosc3 = "";
+            coorLat = "";
+            coorLon = "";
+            coorAcc = "";
 
 <%--            var txt = "";
                 txt += "<p>Total width/height: " + screen.width + "*" + screen.height + "</p>";
                 txt += "<p>Available width/height: " + screen.availWidth + "*" + screen.availHeight + "</p>";
                 document.getElementById("<%=lblDim.ClientID %>").innerHTML = txt;--%>
             }
-    }
+
+            var soundObject = null;
+
+            function PlaySound(nazwa)
+            {
+                _nazwa = nazwa;
+                if (_nazwa != "")
+                {
+                    if (soundObject != null)
+                    {
+                        document.body.removeChild(soundObject);
+                        soundObject.removed = true;
+                        soundObject = null;
+                    }
+                        soundObject = document.createElement("embed");
+                        soundObject.setAttribute("src", _nazwa);
+                        soundObject.setAttribute("hidden", true);
+                        soundObject.setAttribute("autostart", true);
+                        document.body.appendChild(soundObject);
+                    }
+                }
+            }
 </script>
 
     <form id="form1" runat="server">
@@ -72,6 +98,7 @@
             <asp:HiddenField ID="HiddenField1" runat="server" />
             <asp:HiddenField ID="HiddenField2" runat="server" />
             <asp:HiddenField ID="HiddenField3" runat="server" />
+            <asp:HiddenField ID="HiddenField4" runat="server" />
             <div class="bus-Menu">
                 <asp:Menu   ID="busMenu"
                             StaticMenuStyle-CssClass="sms"
