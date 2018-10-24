@@ -5,6 +5,7 @@ using System.Device.Location;
 using System.Globalization;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 
 namespace Bus_Management_System
@@ -13,6 +14,7 @@ namespace Bus_Management_System
     {
         private static BusinessLayer bl = new BusinessLayer();
         private static DataAccessLayer dal = new DataAccessLayer();
+        private static string audioAlert = "";
         User loggedUser;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -47,6 +49,7 @@ namespace Bus_Management_System
 
                 locCookie.Values["currentLocLat"] = "";
                 locCookie.Values["currentLocLon"] = "";
+                locCookie.Values["currentSpeed"] = "";
                 locCookie.Values["distance"] = "";
                 locCookie.Values["startLocLat"] = "";
                 locCookie.Values["startLocLon"] = "";
@@ -57,11 +60,13 @@ namespace Bus_Management_System
 
 
         [System.Web.Services.WebMethod]
-        public static string[] PrzeliczArray(string[] arrayIn)
+        public static string PrzeliczArray(string[] arrayIn)
         {
             double latitude = double.Parse(arrayIn[0], CultureInfo.InvariantCulture);
             double longitude = double.Parse(arrayIn[1], CultureInfo.InvariantCulture);
-            double distance = 0.0;
+            string accuracy = arrayIn[2].ToString();
+            string speed = arrayIn[3].ToString();
+            //double distance = 0.0;
 
             //dopisanie surowych danych do HttpCookie
             HttpCookie locCookie = HttpContext.Current.Request.Cookies.Get("locCookie");
@@ -70,39 +75,40 @@ namespace Bus_Management_System
             {
                 locCookie.Values["currentLocLat"] = latitude.ToString();
                 locCookie.Values["currentLocLon"] = longitude.ToString();
+                locCookie.Values["currentSpeed"] = speed;
                 HttpContext.Current.Response.Cookies.Add(locCookie);
             }
 
-            // aktualne współrzędne podane ze ClientSide w tablicy
-            GeoCoordinate objectPosition = new GeoCoordinate(latitude, longitude);
+            //// aktualne współrzędne podane ze ClientSide w tablicy
+            //GeoCoordinate objectPosition = new GeoCoordinate(latitude, longitude);
 
-            // współrzędne docelowe, pobierane z wysłanego zlecenia
-            GeoCoordinate targetPosition = new GeoCoordinate(52.17021166666667, 20.971659999999996);
+            //// współrzędne docelowe, pobierane z wysłanego zlecenia
+            //GeoCoordinate targetPosition = new GeoCoordinate(52.17021166666667, 20.971659999999996);
 
-            // zwrocenie odleglosci miedzy wspolrzednymi z ograniczeniem do 2 miejsc po przecinku
-            distance = Math.Round(objectPosition.GetDistanceTo(targetPosition), 2, MidpointRounding.AwayFromZero);
+            //// zwrocenie odleglosci miedzy wspolrzednymi z ograniczeniem do 2 miejsc po przecinku
+            //distance = Math.Round(objectPosition.GetDistanceTo(targetPosition), 2, MidpointRounding.AwayFromZero);
 
-            string latitude_Kierunek = (latitude >= 0 ? "N" : "S");
+            //string latitude_Kierunek = (latitude >= 0 ? "N" : "S");
 
-            latitude = Math.Abs(latitude);
-            double minutyLat = ((latitude - Math.Truncate(latitude) / 1) * 60);
-            double sekundyLat = ((minutyLat - Math.Truncate(minutyLat) / 1) * 60);
+            //latitude = Math.Abs(latitude);
+            //double minutyLat = ((latitude - Math.Truncate(latitude) / 1) * 60);
+            //double sekundyLat = ((minutyLat - Math.Truncate(minutyLat) / 1) * 60);
 
-            string longitude_Kierunek = (longitude >= 0 ? "E" : "W");
-            longitude = Math.Abs(longitude);
-            double minutyLon = ((longitude - Math.Truncate(longitude) / 1) * 60);
-            double sekundyLon = ((minutyLon - Math.Truncate(minutyLon) / 1) * 60);
+            //string longitude_Kierunek = (longitude >= 0 ? "E" : "W");
+            //longitude = Math.Abs(longitude);
+            //double minutyLon = ((longitude - Math.Truncate(longitude) / 1) * 60);
+            //double sekundyLon = ((minutyLon - Math.Truncate(minutyLon) / 1) * 60);
 
-            string wsp1 = Convert.ToString(Math.Truncate(latitude) + "° " + Math.Truncate(minutyLat) + "' " + Math.Truncate(sekundyLat) + "'' " + latitude_Kierunek);
-            string wsp2 = Convert.ToString(Math.Truncate(longitude) + "° " + Math.Truncate(minutyLon) + "' " + Math.Truncate(sekundyLon) + "'' " + longitude_Kierunek);
+            //string wsp1 = Convert.ToString(Math.Truncate(latitude) + "° " + Math.Truncate(minutyLat) + "' " + Math.Truncate(sekundyLat) + "'' " + latitude_Kierunek);
+            //string wsp2 = Convert.ToString(Math.Truncate(longitude) + "° " + Math.Truncate(minutyLon) + "' " + Math.Truncate(sekundyLon) + "'' " + longitude_Kierunek);
 
-            string[] wynikowaArray = new string[3];
+            //string[] wynikowaArray = new string[3];
 
-            wynikowaArray[0] = wsp1;
-            wynikowaArray[1] = wsp2;
-            wynikowaArray[2] = distance.ToString();
+            //wynikowaArray[0] = wsp1;
+            //wynikowaArray[1] = wsp2;
+            //wynikowaArray[2] = distance.ToString();
 
-            return wynikowaArray;
+            return accuracy;
         }
 
 
@@ -210,7 +216,14 @@ namespace Bus_Management_System
 
         protected void BusHomeTimer_Tick(object sender, EventArgs e)
         {
+            
             HttpCookie cookie = Request.Cookies["Bus"];
+
+            audioAlert = "/audio/danger.wav";
+
+            HtmlGenericControl sound = new HtmlGenericControl("<embed src=\"" + audioAlert + "\" type=\"audio/wav\" autostart =\"true\" hidden=\"true\"></embed>");
+            BusHomeUP.ContentTemplateContainer.Controls.Remove(sound);
+            BusHomeUP.ContentTemplateContainer.Controls.Add(sound);
 
             //Button1_Click(null, null);
             //Button1.OnClientClick();
@@ -219,8 +232,8 @@ namespace Bus_Management_System
             {
                 Page.ClientScript.RegisterClientScriptBlock(this.GetType(), "CallMyFunction", "PlaySound()", true);
 
-                int operationStatus = loggedUser.operationStatus;
-                int interval = loggedUser.interval;
+                int operationStatus = loggedUser.OperationStatus;
+                //int interval = loggedUser.Interval;
                 string bus = cookie.Values["busNb"].ToString();
 
                     DataSet ds = bl.GetOperations(cookie.Values["busNb"].ToString());
@@ -235,42 +248,42 @@ namespace Bus_Management_System
                         DataSet pps = bl.GetPPS(ds.Tables[0].Rows[0].Field<int>("PPS"));
                         DataSet gate = bl.GetGate(ds.Tables[0].Rows[0].Field<int>("Gate"));
 
-                        loggedUser.created = (ds.Tables[0].Rows[0].Field<DateTime>("Created")).ToString("HH:mm");
-                        loggedUser.accepted = (ds.Tables[0].Rows[0].Field<DateTime>("Accepted")).ToString("HH:mm");
-                        loggedUser.startLoad = (ds.Tables[0].Rows[0].Field<DateTime>("StartLoad")).ToString("HH:mm");
-                        loggedUser.startDrive = (ds.Tables[0].Rows[0].Field<DateTime>("StartDrive")).ToString("HH:mm");
-                        loggedUser.startUnload = (ds.Tables[0].Rows[0].Field<DateTime>("StartUnload")).ToString("HH:mm");
-                        loggedUser.endOp = (ds.Tables[0].Rows[0].Field<DateTime>("EndOp")).ToString("HH:mm");
-                        if (loggedUser.created != "00:00")
+                        loggedUser.Created = (ds.Tables[0].Rows[0].Field<DateTime>("Created")).ToString("HH:mm");
+                        loggedUser.Accepted = (ds.Tables[0].Rows[0].Field<DateTime>("Accepted")).ToString("HH:mm");
+                        loggedUser.StartLoad = (ds.Tables[0].Rows[0].Field<DateTime>("StartLoad")).ToString("HH:mm");
+                        loggedUser.StartDrive = (ds.Tables[0].Rows[0].Field<DateTime>("StartDrive")).ToString("HH:mm");
+                        loggedUser.StartUnload = (ds.Tables[0].Rows[0].Field<DateTime>("StartUnload")).ToString("HH:mm");
+                        loggedUser.EndOp = (ds.Tables[0].Rows[0].Field<DateTime>("EndOp")).ToString("HH:mm");
+                        if (loggedUser.Created != "00:00")
                             operationStatus = 1;
-                        if (loggedUser.accepted != "00:00")
+                        if (loggedUser.Accepted != "00:00")
                             operationStatus = operationStatus + 1;
-                        if (loggedUser.startLoad != "00:00")
+                        if (loggedUser.StartLoad != "00:00")
                             operationStatus = operationStatus + 1;
-                        if (loggedUser.startDrive != "00:00")
+                        if (loggedUser.StartDrive != "00:00")
                             operationStatus = operationStatus + 1;
-                        if (loggedUser.startUnload != "00:00")
+                        if (loggedUser.StartUnload != "00:00")
                             operationStatus = operationStatus + 1;
-                        if (loggedUser.endOp != "00:00")
+                        if (loggedUser.EndOp != "00:00")
                             operationStatus = 0;
 
-                        loggedUser.operation = ds.Tables[0].Rows[0].Field<int>("Operation");
-                        loggedUser.flightNb = ds.Tables[0].Rows[0].Field<string>("FlightNb");
-                        loggedUser.pax = ds.Tables[0].Rows[0].Field<int>("Pax").ToString();
-                        loggedUser.airPort = bl.GetAirPort(ds.Tables[0].Rows[0].Field<int>("AirPort"), ref shengen, ref portName, ref country);
-                        loggedUser.pps = pps.Tables[0].Rows[0].Field<string>("StationNb");
-                        loggedUser.ppsLat = pps.Tables[0].Rows[0].Field<string>("GPS_Latitude");
-                        loggedUser.ppsLon = pps.Tables[0].Rows[0].Field<string>("GPS_Longitude");
-                        loggedUser.gate = gate.Tables[0].Rows[0].Field<string>("GateNb");
-                        loggedUser.gateLat = gate.Tables[0].Rows[0].Field<string>("GPS_Latitude");
-                        loggedUser.gateLon = gate.Tables[0].Rows[0].Field<string>("GPS_Longitude");
-                        loggedUser.radioGate = ds.Tables[0].Rows[0].Field<string>("RadioGate").ToString();
-                        loggedUser.radioNeon = ds.Tables[0].Rows[0].Field<string>("RadioNeon").ToString();
-                        loggedUser.shengen = shengen;
-                        loggedUser.portName = portName;
-                        loggedUser.country = country;
+                        loggedUser.Operation = ds.Tables[0].Rows[0].Field<int>("Operation");
+                        loggedUser.FlightNb = ds.Tables[0].Rows[0].Field<string>("FlightNb");
+                        loggedUser.Pax = ds.Tables[0].Rows[0].Field<int>("Pax").ToString();
+                        loggedUser.AirPort = bl.GetAirPort(ds.Tables[0].Rows[0].Field<int>("AirPort"), ref shengen, ref portName, ref country);
+                        loggedUser.Pps = pps.Tables[0].Rows[0].Field<string>("StationNb");
+                        loggedUser.PpsLat = pps.Tables[0].Rows[0].Field<string>("GPS_Latitude");
+                        loggedUser.PpsLon = pps.Tables[0].Rows[0].Field<string>("GPS_Longitude");
+                        loggedUser.Gate = gate.Tables[0].Rows[0].Field<string>("GateNb");
+                        loggedUser.GateLat = gate.Tables[0].Rows[0].Field<string>("GPS_Latitude");
+                        loggedUser.GateLon = gate.Tables[0].Rows[0].Field<string>("GPS_Longitude");
+                        loggedUser.RadioGate = ds.Tables[0].Rows[0].Field<string>("RadioGate").ToString();
+                        loggedUser.RadioNeon = ds.Tables[0].Rows[0].Field<string>("RadioNeon").ToString();
+                        loggedUser.Shengen = shengen;
+                        loggedUser.PortName = portName;
+                        loggedUser.Country = country;
 
-                        loggedUser.operationStatus = operationStatus;
+                        loggedUser.OperationStatus = operationStatus;
 
                         /* operationStatus wartości możliwe:
                         * 0 - brak zlecenia       <-
@@ -302,8 +315,8 @@ namespace Bus_Management_System
         // ustawienie kolorów aktywnych dla wszystrkich przycisków na stronie bus
         private void InWorkBusControls(int operationStatus)
         {
-            int operation = bl.GetOperations(loggedUser.operation);
-            int shengen = loggedUser.shengen;
+            int operation = bl.GetOperations(loggedUser.Operation);
+            int shengen = loggedUser.Shengen;
 
             if (operationStatus == 1)
                 GreyScreen(operation, shengen);
@@ -411,9 +424,9 @@ namespace Bus_Management_System
             {
                 R1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sso.png");
                 R1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sso.png");
-                R1C3.Text = loggedUser.airPort;
-                R4C2.Text = loggedUser.gate;
-                R4C4.Text = loggedUser.pps;
+                R1C3.Text = loggedUser.AirPort;
+                R4C2.Text = loggedUser.Gate;
+                R4C4.Text = loggedUser.Pps;
                 R5C3.Text = "WAW";
             }
             else
@@ -421,9 +434,9 @@ namespace Bus_Management_System
                 R1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/ssp.png");
                 R1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/ssp.png");
                 R1C3.Text = "WAW";
-                R4C2.Text = loggedUser.pps;
-                R4C4.Text = loggedUser.gate;
-                R5C3.Text = loggedUser.airPort;
+                R4C2.Text = loggedUser.Pps;
+                R4C4.Text = loggedUser.Gate;
+                R5C3.Text = loggedUser.AirPort;
             }
 
             R1C2.Style.Add("background-repeat", "no-repeat");
@@ -432,11 +445,11 @@ namespace Bus_Management_System
             R1C4.Style.Add("background-size", "100% 100%");
 
             R1C3.Style.Add("color", "Grey");
-            R3C2.Text = loggedUser.flightNb;
+            R3C2.Text = loggedUser.FlightNb;
             R3C2.Style.Add("color", "Grey");
-            R3C3.Text = loggedUser.godzinaRozkladowa;
+            R3C3.Text = loggedUser.GodzinaRozkladowa;
             R3C3.Style.Add("color", "Grey");
-            R3C4.Text = loggedUser.pax;
+            R3C4.Text = loggedUser.Pax;
             R3C4.Style.Add("color", "Grey");
             R4C2.Style.Add("color", "Grey");
             R4C3.Style.Add("color", "Grey");
@@ -469,24 +482,24 @@ namespace Bus_Management_System
                 Dr1C4.Style.Add("background-repeat", "no-repeat");
                 Dr1C4.Style.Add("background-size", "100% 100%");
 
-                if (loggedUser.operationStatus == 2 || loggedUser.operationStatus == 4)
+                if (loggedUser.OperationStatus == 2 || loggedUser.OperationStatus == 4)
                 {
-                    if (loggedUser.startLocLatDegree == null || loggedUser.startLocLonDegree == null)
+                    if (loggedUser.StartLocLatDegree == null || loggedUser.StartLocLonDegree == null)
                     {
                         string lat = "";
                         string lon = "";
                         TranslateColToDegree(ref lat, ref lon);
-                        loggedUser.startLocLatDegree = lat;
-                        loggedUser.startLocLonDegree = lon;
+                        loggedUser.StartLocLatDegree = lat;
+                        loggedUser.StartLocLonDegree = lon;
                     }
-                    Dr2C2.Text = loggedUser.startLocLatDegree;
+                    Dr2C2.Text = loggedUser.StartLocLatDegree;
                     Dr2C3.Text = "";
-                    Dr2C4.Text = loggedUser.startLocLonDegree;
-                    Dr5C3.Text = loggedUser.gate;
+                    Dr2C4.Text = loggedUser.StartLocLonDegree;
+                    Dr5C3.Text = loggedUser.Gate;
 
-                    double distance = CheckDistance(loggedUser.gateLat, loggedUser.gateLon, loggedUser.ppsLat, loggedUser.ppsLon, 2);
+                    double distance = CheckDistance(loggedUser.GateLat, loggedUser.GateLon, loggedUser.PpsLat, loggedUser.PpsLon, 2);
 
-                    if (loggedUser.operationStatus == 2)
+                    if (loggedUser.OperationStatus == 2)
                     {
                         if (distance > 10.0d)
                         {
@@ -513,8 +526,8 @@ namespace Bus_Management_System
                 }
                 else
                 {
-                    Dr2C3.Text = loggedUser.gate;
-                    Dr5C3.Text = loggedUser.pps;
+                    Dr2C3.Text = loggedUser.Gate;
+                    Dr5C3.Text = loggedUser.Pps;
                 }
             }
         }
@@ -613,7 +626,7 @@ namespace Bus_Management_System
             TranslateColToDegree(ref lat, ref lon);
 
             HttpCookie locCookie = Request.Cookies["locCookie"];
-            int operation = loggedUser.operation;
+            int operation = loggedUser.Operation;
 
             // nie no - trzeba pobrac te współrzędne do ciasteczka podczas tworzenia OpCookie
             switch(operation)
@@ -621,17 +634,17 @@ namespace Bus_Management_System
                 case 1:
                     {
                         cmd = new SqlCommand("SELECT GPS_Latitude, GPS_Longitude FROM Stations WHERE StationNb = @pps");
-                        cmd.Parameters.AddWithValue("@pps", loggedUser.pps);
+                        cmd.Parameters.AddWithValue("@pps", loggedUser.Pps);
                         DataSet ds = dal.GetDataSet(cmd);
                     }
                     break;
                 case 2:
                     break;
             }
-            loggedUser.startLat = locCookie.Values["currentLocLat"].ToString();
-            loggedUser.startLon = locCookie.Values["currentLocLon"].ToString();
-            loggedUser.startLocLatDegree = lat;
-            loggedUser.startLocLonDegree = lon;
+            loggedUser.StartLat = locCookie.Values["currentLocLat"].ToString();
+            loggedUser.StartLon = locCookie.Values["currentLocLon"].ToString();
+            loggedUser.StartLocLatDegree = lat;
+            loggedUser.StartLocLonDegree = lon;
         }
 
         // zaznaczenie początku operacji odbioru pasażerów z samolotu lub Gate

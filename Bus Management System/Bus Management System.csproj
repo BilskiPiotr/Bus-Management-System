@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="audio\beep02.wav" />
+    <Content Include="audio\danger.wav" />
     <Content Include="js\audioKom01.js" />
     <Content Include="libman.json" />
     <None Include="packages.config" />

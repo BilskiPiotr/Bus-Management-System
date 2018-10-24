@@ -67,6 +67,15 @@ namespace Bus_Management_System {
         protected global::System.Web.UI.WebControls.HiddenField HiddenField3;
         
         /// <summary>
+        /// Kontrolka HiddenField4.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField HiddenField4;
+        
+        /// <summary>
         /// Kontrolka busMenu.
         /// </summary>
         /// <remarks>
@@ -137,15 +146,6 @@ namespace Bus_Management_System {
         /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
         /// </remarks>
         protected global::System.Web.UI.Timer BusHomeTimer;
-        
-        /// <summary>
-        /// Kontrolka Button1.
-        /// </summary>
-        /// <remarks>
-        /// Pole generowane automatycznie.
-        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Button1;
         
         /// <summary>
         /// Kontrolka busMINEtable.
@@ -418,6 +418,15 @@ namespace Bus_Management_System {
         protected global::System.Web.UI.WebControls.Button busPause;
         
         /// <summary>
+        /// Kontrolka busAlert.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAudio busAlert;
+        
+        /// <summary>
         /// Kontrolka Detail.
         /// </summary>
         /// <remarks>
@@ -508,13 +517,13 @@ namespace Bus_Management_System {
         protected global::System.Web.UI.WebControls.Label lb_BusAccuracy;
         
         /// <summary>
-        /// Kontrolka Label2.
+        /// Kontrolka lb_zalogowany.
         /// </summary>
         /// <remarks>
         /// Pole generowane automatycznie.
         /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label2;
+        protected global::System.Web.UI.WebControls.Label lb_zalogowany;
         
         /// <summary>
         /// Kontrolka lb_loggedUser.

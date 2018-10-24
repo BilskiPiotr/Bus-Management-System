@@ -10,31 +10,17 @@
     <meta name="SysBus_Management" content:"" />
 	<link rel="stylesheet" href="css/bus.css" />
 
-    <script type="text/javascript">
-    var soundObject = null;
-        function PlaySound() {
-            if (soundObject != null) {
-        document.body.removeChild(soundObject);
-    soundObject.removed = true;
-    soundObject = null;
-}
-soundObject = document.createElement("embed");
-soundObject.setAttribute("src", "audio/beep02.wav");
-soundObject.setAttribute("hidden", true);
-soundObject.setAttribute("autostart", true);
-document.body.appendChild(soundObject);
-}
-    </script>
-
 </head>
 <body runat="server" id="BodyTag" onclick="clicked=true;">
     
     <script src="http://code.jquery.com/jquery-1.9.1.min.js""></script>
     <script type="text/javascript">
         {
-        var wartosc1 = "";
-        var wartosc2 = "";
-        var wartosc3 = "";
+            var lat = "";
+            var lon = "";
+            var acc = "";
+            var spe = "";
+
         var error = "";
         var dane = new Array();
 
@@ -51,30 +37,29 @@ document.body.appendChild(soundObject);
         }
 
         function KonstruujArray(coordinates) {
-            wartosc1 = coordinates.coords.latitude;
-            wartosc2 = coordinates.coords.longitude;
-            wartosc3 = coordinates.coords.accuracy;
-            document.getElementById("<%=HiddenField1.ClientID%>").value = wartosc1;
-            document.getElementById("<%=HiddenField2.ClientID%>").value = wartosc2;
-            document.getElementById("<%=HiddenField3.ClientID%>").value = wartosc3;
+            lat = coordinates.coords.latitude;
+            lon = coordinates.coords.longitude;
+            acc = coordinates.coords.accuracy;
+            spe = coordinates.coords.speed;
+            document.getElementById("<%=HiddenField1.ClientID%>").value = lat;
+            document.getElementById("<%=HiddenField2.ClientID%>").value = lon;
+            document.getElementById("<%=HiddenField3.ClientID%>").value = acc;
+            document.getElementById("<%=HiddenField4.ClientID%>").value = spe;
             dane[0] = document.getElementById("<%=HiddenField1.ClientID%>").value;
             dane[1] = document.getElementById("<%=HiddenField2.ClientID%>").value;
             dane[2] = document.getElementById("<%=HiddenField3.ClientID%>").value;
+            dane[3] = document.getElementById("<%=HiddenField4.ClientID%>").value;
             PageMethods.PrzeliczArray(dane, OnSuccess);
         }
-            function OnSuccess(response, userContext, methodName) {
-<%--            document.getElementById("<%=lb_BusLatitude.ClientID %>").innerHTML = response[0];
-            document.getElementById("<%=lb_BusLongitude.ClientID %>").innerHTML = response[1];
-            document.getElementById("<%=lb_BusDistance.ClientID %>").innerHTML = response[2];
-            document.getElementById("<%=lb_BusAccuracy.ClientID %>").innerHTML = wartosc3;--%>
-            wartosc1 = "";
-            wartosc2 = "";
-            wartosc3 = "";
+            function OnSuccess(response, userContext, methodName)
+            {
 
-<%--            var txt = "";
-                txt += "<p>Total width/height: " + screen.width + "*" + screen.height + "</p>";
-                txt += "<p>Available width/height: " + screen.availWidth + "*" + screen.availHeight + "</p>";
-                document.getElementById("<%=lblDim.ClientID %>").innerHTML = txt;--%>
+     <%--       document.getElementById("<%=lb_speed.ClientID %>").innerHTML = response;--%>
+
+            lat = "";
+            lon = "";
+                acc = "";
+                spe = "";
             }
     }
 </script>
@@ -86,6 +71,7 @@ document.body.appendChild(soundObject);
             <asp:HiddenField ID="HiddenField1" runat="server" />
             <asp:HiddenField ID="HiddenField2" runat="server" />
             <asp:HiddenField ID="HiddenField3" runat="server" />
+            <asp:HiddenField ID="HiddenField4" runat="server" />
             <div class="bus-Menu">
                 <asp:Menu   ID="busMenu"
                             StaticMenuStyle-CssClass="sms"
@@ -133,7 +119,6 @@ document.body.appendChild(soundObject);
                             <asp:Timer runat="server" Id="BusHomeTimer" Interval="5000" OnTick="BusHomeTimer_Tick"></asp:Timer>
                                 <div class="bus-row">
                                     <div class="bus-left">
-                                        <asp:Button ID="Button1" runat="server" Text="Button" OnClientClick="PlaySound();"/>
 
                                         <asp:Table ID="busMINEtable" runat="server" CssClass="busTable" 
                                                                      EnableTheming="False" 
@@ -190,7 +175,6 @@ document.body.appendChild(soundObject);
                                                 <asp:TableCell Id="Dr5C3" runat="server" ColSpan="3" ForeColor="DarkBlue" Font-Size="44px" Font-Bold="true" HorizontalAlign="Center">.....</asp:TableCell>
                                             </asp:TableRow>
                                         </asp:Table>
-
                                     </div>
                                     <div class="bus-right">
                                         <div class="bus-1stLine">
@@ -210,6 +194,7 @@ document.body.appendChild(soundObject);
                                 <asp:AsyncPostBackTrigger ControlID="BusHomeTimer" EventName="Tick"></asp:AsyncPostBackTrigger>
                             </Triggers>
                         </asp:UpdatePanel>
+                    <audio id="busAlert" runat="server"></audio>
                     </asp:View>
 
 
@@ -255,8 +240,9 @@ document.body.appendChild(soundObject);
 
 
             <div class= "bus-footer">
-                <a class="right-lbl"><asp:Label ID="Label2" runat="server" Text="Zalogowano jako:  "></asp:Label></a>
+                <a class="right-lbl"><asp:Label ID="lb_zalogowany" runat="server" Text="Zalogowano jako:  "></asp:Label></a>
             	<a class="right-lbl"><asp:Label ID="lb_loggedUser" runat="server"></asp:Label></a>
+<%--                <a class="right-lbl"><asp:Label ID="lb_speed" runat="server"></asp:Label></a>--%>
             </div>
         </div>
     </form>

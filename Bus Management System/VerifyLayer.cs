@@ -28,12 +28,14 @@ namespace Bus_Management_System
                 if (dt.Rows.Count > 0)
                 {
                     iD = (int)dt.Rows[0][0];
-                    return istnieje = true;
+                    istnieje = true;
+                    return istnieje;
                 }
                 else
                 {
                     iD = 0;
-                    return istnieje = false;
+                    istnieje = false;
+                    return istnieje;
                 }
             }
             catch 
