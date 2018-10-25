@@ -13,30 +13,33 @@
 </head>
 <body runat="server" id="BodyTag" onclick="clicked=true;">
     
-    <script src="http://code.jquery.com/jquery-1.9.1.min.js""></script>
-    <script type="text/javascript">
-        {
-            var lat = "";
-            var lon = "";
-            var acc = "";
-            var spe = "";
+<script src="http://code.jquery.com/jquery-1.9.1.min.js""></script>
+<script type="text/javascript">
+    {
+        var lat = "";
+        var lon = "";
+        var acc = "";
+        var spe = "";
 
         var error = "";
         var dane = new Array();
 
         setInterval(getLocation, 5000);
 
-        function getLocation() {
+        function getLocation() 
+        {
             if (navigator.geolocation)
             {
                 navigator.geolocation.getCurrentPosition(KonstruujArray, function () { }, { enableHighAccuracy: true });
             }
-            else {
+            else 
+            {
                 error.innerHTML = "Ta przeglądarka nie obsługuje geolokacji.";
             }
         }
 
-        function KonstruujArray(coordinates) {
+        function KonstruujArray(coordinates) 
+        {
             lat = coordinates.coords.latitude;
             lon = coordinates.coords.longitude;
             acc = coordinates.coords.accuracy;
@@ -51,16 +54,17 @@
             dane[3] = document.getElementById("<%=HiddenField4.ClientID%>").value;
             PageMethods.PrzeliczArray(dane, OnSuccess);
         }
-            function OnSuccess(response, userContext, methodName)
-            {
-
-     <%--       document.getElementById("<%=lb_speed.ClientID %>").innerHTML = response;--%>
+        function OnSuccess(response, userContext, methodName)
+        {
+            var predkosc = "";
+            predkosc += "<p>Prędkość :  " + response;
+            document.getElementById("<%=Dr4C3.ClientID %>").innerHTML = predkosc;
 
             lat = "";
             lon = "";
-                acc = "";
-                spe = "";
-            }
+            acc = "";
+            spe = "";
+        }
     }
 </script>
 
@@ -241,7 +245,6 @@
             <div class= "bus-footer">
                 <a class="right-lbl"><asp:Label ID="lb_zalogowany" runat="server" Text="Zalogowano jako:  "></asp:Label></a>
             	<a class="right-lbl"><asp:Label ID="lb_loggedUser" runat="server"></asp:Label></a>
-<%--                <a class="right-lbl"><asp:Label ID="lb_speed" runat="server"></asp:Label></a>--%>
             </div>
         </div>
     </form>

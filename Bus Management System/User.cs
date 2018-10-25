@@ -59,5 +59,10 @@
 
         public int Alert { get; set; }
 
+
+
+        public double Speed { get; set; }
+        public double Accuracy { get; set; }
+
     }
 }

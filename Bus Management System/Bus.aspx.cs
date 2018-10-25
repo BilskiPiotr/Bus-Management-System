@@ -14,7 +14,8 @@ namespace Bus_Management_System
     {
         private static BusinessLayer bl = new BusinessLayer();
         private static DataAccessLayer dal = new DataAccessLayer();
-        private static string audioAlert = "";
+        private static double speed = 0.0d;
+        private static double accuracy = 0.0d;
         User loggedUser;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -49,7 +50,6 @@ namespace Bus_Management_System
 
                 locCookie.Values["currentLocLat"] = "";
                 locCookie.Values["currentLocLon"] = "";
-                locCookie.Values["currentSpeed"] = "";
                 locCookie.Values["distance"] = "";
                 locCookie.Values["startLocLat"] = "";
                 locCookie.Values["startLocLon"] = "";
@@ -64,51 +64,27 @@ namespace Bus_Management_System
         {
             double latitude = double.Parse(arrayIn[0], CultureInfo.InvariantCulture);
             double longitude = double.Parse(arrayIn[1], CultureInfo.InvariantCulture);
-            string accuracy = arrayIn[2].ToString();
-            string speed = arrayIn[3].ToString();
-            //double distance = 0.0;
+            double currentAccuracy = double.Parse(arrayIn[2], CultureInfo.InvariantCulture);
+            double currentSpeed = double.Parse(arrayIn[3], CultureInfo.InvariantCulture);
 
             //dopisanie surowych danych do HttpCookie
             HttpCookie locCookie = HttpContext.Current.Request.Cookies.Get("locCookie");
+
+            speed = currentSpeed;
+            accuracy = currentAccuracy;
 
             if (locCookie != null)
             {
                 locCookie.Values["currentLocLat"] = latitude.ToString();
                 locCookie.Values["currentLocLon"] = longitude.ToString();
-                locCookie.Values["currentSpeed"] = speed;
+                locCookie.Values["currentSpeed"] = speed.ToString();
                 HttpContext.Current.Response.Cookies.Add(locCookie);
             }
-
-            //// aktualne współrzędne podane ze ClientSide w tablicy
-            //GeoCoordinate objectPosition = new GeoCoordinate(latitude, longitude);
-
-            //// współrzędne docelowe, pobierane z wysłanego zlecenia
-            //GeoCoordinate targetPosition = new GeoCoordinate(52.17021166666667, 20.971659999999996);
-
-            //// zwrocenie odleglosci miedzy wspolrzednymi z ograniczeniem do 2 miejsc po przecinku
-            //distance = Math.Round(objectPosition.GetDistanceTo(targetPosition), 2, MidpointRounding.AwayFromZero);
-
-            //string latitude_Kierunek = (latitude >= 0 ? "N" : "S");
-
-            //latitude = Math.Abs(latitude);
-            //double minutyLat = ((latitude - Math.Truncate(latitude) / 1) * 60);
-            //double sekundyLat = ((minutyLat - Math.Truncate(minutyLat) / 1) * 60);
-
-            //string longitude_Kierunek = (longitude >= 0 ? "E" : "W");
-            //longitude = Math.Abs(longitude);
-            //double minutyLon = ((longitude - Math.Truncate(longitude) / 1) * 60);
-            //double sekundyLon = ((minutyLon - Math.Truncate(minutyLon) / 1) * 60);
-
-            //string wsp1 = Convert.ToString(Math.Truncate(latitude) + "° " + Math.Truncate(minutyLat) + "' " + Math.Truncate(sekundyLat) + "'' " + latitude_Kierunek);
-            //string wsp2 = Convert.ToString(Math.Truncate(longitude) + "° " + Math.Truncate(minutyLon) + "' " + Math.Truncate(sekundyLon) + "'' " + longitude_Kierunek);
-
-            //string[] wynikowaArray = new string[3];
-
-            //wynikowaArray[0] = wsp1;
-            //wynikowaArray[1] = wsp2;
-            //wynikowaArray[2] = distance.ToString();
-
-            return accuracy;
+            else
+            {
+                return (currentAccuracy = 0.0d).ToString();
+            }
+            return currentAccuracy.ToString();
         }
 
 
@@ -219,18 +195,17 @@ namespace Bus_Management_System
             
             HttpCookie cookie = Request.Cookies["Bus"];
 
-            audioAlert = "/audio/danger.wav";
+            loggedUser.Speed = speed;
+            loggedUser.Accuracy = accuracy;
 
-            HtmlGenericControl sound = new HtmlGenericControl("<embed src=\"" + audioAlert + "\" type=\"audio/wav\" autostart =\"true\" hidden=\"true\"></embed>");
-            BusHomeUP.ContentTemplateContainer.Controls.Remove(sound);
-            BusHomeUP.ContentTemplateContainer.Controls.Add(sound);
+            //audioAlert = "/audio/danger.wav";
 
-            //Button1_Click(null, null);
-            //Button1.OnClientClick();
+            //HtmlGenericControl sound = new HtmlGenericControl("<embed src=\"" + audioAlert + "\" type=\"audio/wav\" autostart =\"true\" hidden=\"true\" showcontrols=\"0\" volume=\"-1\"></embed>");
+            //BusHomeUP.ContentTemplateContainer.Controls.Remove(sound);
+            //BusHomeUP.ContentTemplateContainer.Controls.Add(sound);
 
             if (cookie != null)
             {
-                Page.ClientScript.RegisterClientScriptBlock(this.GetType(), "CallMyFunction", "PlaySound()", true);
 
                 int operationStatus = loggedUser.OperationStatus;
                 //int interval = loggedUser.Interval;
@@ -309,6 +284,39 @@ namespace Bus_Management_System
                 Session.Abandon();
                 Response.Redirect("global.aspx");
             }
+
+
+            // narazie na stałe wybranie dzwieku nr 1 dla alert
+            loggedUser.Alert = 1;
+            // sprawdzenie stanu alertu, i ewentualne odtworzenie go
+            BusAlert(loggedUser.Alert);
+        }
+
+
+
+        // podstawienie odpowiedniego dzwieku do alertu
+        private void BusAlert(int alert)
+        {
+            string audioAlert = "";
+
+            switch (alert)
+            {
+                case 0:
+                    audioAlert = "";
+                    break;
+                case 1:
+                    audioAlert = "/audio/danger.wav";
+                    break;
+                case 2:
+                    break;
+                default:
+                    audioAlert = "";
+                    break;
+            };
+
+            HtmlGenericControl sound = new HtmlGenericControl("<embed src=\"" + audioAlert + "\" type=\"audio/wav\" autostart =\"true\" hidden=\"true\" showcontrols=\"0\" volume=\"-1\"></embed>");
+            BusHomeUP.ContentTemplateContainer.Controls.Remove(sound);
+            BusHomeUP.ContentTemplateContainer.Controls.Add(sound);
         }
 
 
