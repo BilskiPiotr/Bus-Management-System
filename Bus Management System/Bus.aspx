@@ -125,27 +125,27 @@
                                                                      ForeColor="#FFCC66" 
                                                                      GridLines="Horizontal"
                                                                      Visible="true">
-                                            <asp:TableRow CssClass="busTable70" runat="server">
+                                            <asp:TableRow CssClass="busTable1Row1" runat="server">
                                                 <asp:TableCell Id="R1C2" runat="server" RowSpan="5" Width="15%" BackColor="SkyBlue"></asp:TableCell>
                                                 <asp:TableCell Id="R1C3" runat="server" ColSpan="3" ForeColor="DarkBlue" Font-Size="36px" Font-Bold="true" HorizontalAlign="Center">00:00</asp:TableCell>
                                                 <asp:TableCell Id="R1C4" runat="server" RowSpan="5" Width="15%" BackColor="SkyBlue"></asp:TableCell>
                                             </asp:TableRow>
-                                            <asp:TableRow CssClass="busTable15" runat="server">
+                                            <asp:TableRow CssClass="busTable1Row2" runat="server">
                                                 <asp:TableCell Id="R2C2" runat="server" ForeColor="Black" Font-Size="10px" Width="19%" HorizontalAlign="Center">Nr Rejsu</asp:TableCell>
                                                 <asp:TableCell Id="R2C3" runat="server" ForeColor="Black" Font-Size="10px" Width="19%" HorizontalAlign="Center">Godzina</asp:TableCell>
                                                 <asp:TableCell Id="R2C4" runat="server" ForeColor="Black" Font-Size="10px" Width="19%" HorizontalAlign="Center">liczba PAX</asp:TableCell>
                                             </asp:TableRow>
-                                            <asp:TableRow CssClass="busTable40" runat="server">
+                                            <asp:TableRow CssClass="busTable1Row3" runat="server">
                                                 <asp:TableCell Id="R3C2" runat="server" ForeColor="DarkBlue" Font-Size="16px" Font-Bold="true" Width="19%" HorizontalAlign="Center">XX0000</asp:TableCell>
                                                 <asp:TableCell Id="R3C3" runat="server" ForeColor="DarkBlue" Font-Size="16px" Font-Bold="true" Width="19%" HorizontalAlign="Center">00:00</asp:TableCell>
                                                 <asp:TableCell Id="R3C4" runat="server" ForeColor="DarkBlue" Font-Size="16px" Font-Bold="true" Width="19%" HorizontalAlign="Center">000</asp:TableCell>
                                             </asp:TableRow>
-                                            <asp:TableRow CssClass="busTable55" runat="server">
+                                            <asp:TableRow CssClass="busTable1Row4" runat="server">
                                                 <asp:TableCell Id="R4C2" runat="server" ForeColor="Black" Font-Size="24px" Font-Bold="true" HorizontalAlign="right">XXX</asp:TableCell>
                                                 <asp:TableCell Id="R4C3" runat="server" ForeColor="Black" Font-Size="24px" Font-Bold="true" HorizontalAlign="center">>>></asp:TableCell>
                                                 <asp:TableCell Id="R4C4" runat="server" ForeColor="Black" Font-Size="24px" Font-Bold="true" HorizontalAlign="left">XXX</asp:TableCell>
                                             </asp:TableRow>
-                                            <asp:TableRow CssClass="busTable70" runat="server">
+                                            <asp:TableRow CssClass="busTable1Row5" runat="server">
                                                 <asp:TableCell Id="R5C3" runat="server" ColSpan="3" ForeColor="DarkBlue" Font-Size="36px" Font-Bold="true" HorizontalAlign="Center">PPS-GATE</asp:TableCell>
                                             </asp:TableRow>
                                         </asp:Table>
@@ -155,24 +155,24 @@
                                                                                      ForeColor="#FFCC66" 
                                                                                      GridLines="Horizontal"
                                                                                      Visible="false">
-                                            <asp:TableRow CssClass="busTable20" runat="server">
+                                            <asp:TableRow CssClass="busTable2Row1" runat="server">
                                                 <asp:TableCell Id="Dr1C2" runat="server" RowSpan="5" Width="15%" BackColor="SkyBlue"></asp:TableCell>
                                                 <asp:TableCell Id="Dr1C3" runat="server" ColSpan="3" ForeColor="Black" Font-Size="12px" Font-Bold="true" HorizontalAlign="Center">FROM LOCATION</asp:TableCell>
                                                 <asp:TableCell Id="Dr1C4" runat="server" RowSpan="5" Width="15%" BackColor="SkyBlue"></asp:TableCell>
                                             </asp:TableRow>
-                                            <asp:TableRow CssClass="busTable60" runat="server">
-                                                <asp:TableCell Id="Dr2C2" runat="server"  ForeColor="DarkGreen" Font-Size="18px" Font-Bold="true" HorizontalAlign="Center">.....</asp:TableCell>
-                                                <asp:TableCell Id="Dr2C3" runat="server"  ForeColor="DarkGreen" Font-Size="36px" Font-Bold="true" HorizontalAlign="Center">.....</asp:TableCell>
-                                                <asp:TableCell Id="Dr2C4" runat="server"  ForeColor="DarkGreen" Font-Size="18px" Font-Bold="true" HorizontalAlign="Center">.....</asp:TableCell>
+                                            <asp:TableRow CssClass="busTable2Row2" runat="server">
+                                                <asp:TableCell Id="Dr2C2" runat="server"  ForeColor="DarkGreen" Font-Size="16px" Font-Bold="true" HorizontalAlign="Center">.....</asp:TableCell>
+                                                <asp:TableCell Id="Dr2C3" runat="server"  ForeColor="DarkGreen" Font-Size="20px" Font-Bold="true" HorizontalAlign="Center">.....</asp:TableCell>
+                                                <asp:TableCell Id="Dr2C4" runat="server"  ForeColor="DarkGreen" Font-Size="16px" Font-Bold="true" HorizontalAlign="Center">.....</asp:TableCell>
                                             </asp:TableRow>
-                                            <asp:TableRow CssClass="busTable70" runat="server">
+                                            <asp:TableRow CssClass="busTable2Row3" runat="server">
                                                 <asp:TableCell Id="Dr3C3" runat="server" ColSpan="3" ForeColor="Purple" Font-Size="36px" Font-Bold="true" HorizontalAlign="Center">...distance...</asp:TableCell>
                                             </asp:TableRow>
-                                            <asp:TableRow CssClass="busTable20" runat="server">
+                                            <asp:TableRow CssClass="busTable2Row4" runat="server">
                                                 <asp:TableCell Id="Dr4C3" runat="server" ColSpan="3" ForeColor="Black" Font-Size="12px" Font-Bold="true" HorizontalAlign="Center">TO LOCATION</asp:TableCell>
                                             </asp:TableRow>
-                                            <asp:TableRow CssClass="busTable80" runat="server">
-                                                <asp:TableCell Id="Dr5C3" runat="server" ColSpan="3" ForeColor="DarkBlue" Font-Size="44px" Font-Bold="true" HorizontalAlign="Center">.....</asp:TableCell>
+                                            <asp:TableRow CssClass="busTable2Row5" runat="server">
+                                                <asp:TableCell Id="Dr5C3" runat="server" ColSpan="3" ForeColor="DarkBlue" Font-Size="48px" Font-Bold="true" HorizontalAlign="Center">.....</asp:TableCell>
                                             </asp:TableRow>
                                         </asp:Table>
                                     </div>
@@ -194,7 +194,6 @@
                                 <asp:AsyncPostBackTrigger ControlID="BusHomeTimer" EventName="Tick"></asp:AsyncPostBackTrigger>
                             </Triggers>
                         </asp:UpdatePanel>
-                    <audio id="busAlert" runat="server"></audio>
                     </asp:View>
 
 

@@ -316,14 +316,7 @@
                             <tr>
                                 <td class="odstep" colspan="2"></td>
                             </tr>
-                            <tr>
-                                    <asp:UpdatePanel runat="server" id="UpdatePanel2">
-                                        <ContentTemplate>
-                                            <asp:Timer runat="server" id="Timer2" Interval="10000" OnTick="Timer1_Tick"></asp:Timer>
-                                            <asp:Label runat="server" Text="Długość Geograficzna" id="Label6"></asp:Label>
-                                        </ContentTemplate>
-                                    </asp:UpdatePanel>
-                            </tr>
+
                             <tr>
                                 <td class="odstep" colspan="2"></td>
                             </tr>

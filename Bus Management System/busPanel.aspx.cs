@@ -92,7 +92,7 @@ namespace Bus_Management_System
         protected void Timer1_Tick(object sender, EventArgs e)
         {
             string dlugosc = lb_Latitude.Text;
-            Label6.Text = "A teraz długość to : " + dlugosc;
+            //Label6.Text = "A teraz długość to : " + dlugosc;
             //DateTime.Now.ToLongTimeString();
         }
 

@@ -418,15 +418,6 @@ namespace Bus_Management_System {
         protected global::System.Web.UI.WebControls.Button busPause;
         
         /// <summary>
-        /// Kontrolka busAlert.
-        /// </summary>
-        /// <remarks>
-        /// Pole generowane automatycznie.
-        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlAudio busAlert;
-        
-        /// <summary>
         /// Kontrolka Detail.
         /// </summary>
         /// <remarks>
