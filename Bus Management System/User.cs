@@ -63,6 +63,7 @@
 
         public double Speed { get; set; }
         public double Accuracy { get; set; }
+        public string Distance { get; set; }
 
     }
 }

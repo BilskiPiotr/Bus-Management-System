@@ -192,7 +192,11 @@ namespace Bus_Management_System
 
         protected void BusHomeTimer_Tick(object sender, EventArgs e)
         {
-            
+            // zerowanie potęcjalnego komunikatu głosowego
+            loggedUser.Alert = 0;
+
+
+
             HttpCookie cookie = Request.Cookies["Bus"];
 
             loggedUser.Speed = speed;
@@ -287,7 +291,7 @@ namespace Bus_Management_System
 
 
             // narazie na stałe wybranie dzwieku nr 1 dla alert
-            loggedUser.Alert = 1;
+            //loggedUser.Alert = 1;
             // sprawdzenie stanu alertu, i ewentualne odtworzenie go
             BusAlert(loggedUser.Alert);
         }
@@ -301,13 +305,20 @@ namespace Bus_Management_System
 
             switch (alert)
             {
+                    // dojechałeś na miejsce
                 case 0:
+                   
                     audioAlert = "";
                     break;
+                    // odległość mniejsza niż 10m w złej strefie
                 case 1:
                     audioAlert = "/audio/danger.wav";
                     break;
+                    // autobus znajduje sie w strefie bezpieczeństwa Shengen "Alert - to strefa SHENGEN"
                 case 2:
+                    break;
+                    // autobus znajduje sie w strefie bezpieczeństwa Non Shengen "Alert - to strefa NON SHENGEN"
+                case 3:
                     break;
                 default:
                     audioAlert = "";
@@ -540,6 +551,133 @@ namespace Bus_Management_System
             }
         }
 
+
+
+        private void Przylot(int shengen)
+        {
+            // ustalenie kolorów w zależności od strefy
+            if (shengen == 0)
+            {
+                Dr1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sz.png");
+                Dr1C2.Style.Add("background-repeat", "no-repeat");
+                Dr1C2.Style.Add("background-size", "100% 100%");
+
+                Dr1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sz.png");
+                Dr1C4.Style.Add("background-repeat", "no-repeat");
+                Dr1C4.Style.Add("background-size", "100% 100%");
+
+                Dr5C3.Style.Add("color", "Green");
+                Dr5C3.Text = "SHENGEN";
+            }
+            else
+            {
+                Dr1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sc.png");
+                Dr1C2.Style.Add("background-repeat", "no-repeat");
+                Dr1C2.Style.Add("background-size", "100% 100%");
+                ;
+                Dr1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sc.png");
+                Dr1C4.Style.Add("background-repeat", "no-repeat");
+                Dr1C4.Style.Add("background-size", "100% 100%");
+
+                R5C3.Style.Add("color", "Red");
+                R5C3.Text = "NON SHENGEN";
+            }
+
+
+            // ustalenie zawartości pozostałych komurek tabeli w zależności od postępu zadania
+            if (busMINEtable.Visible == true)
+            {
+
+            }
+            else
+            {
+                if (loggedUser.OperationStatus == 2 || loggedUser.OperationStatus == 4)
+                {
+                    if (loggedUser.StartLocLatDegree == null || loggedUser.StartLocLonDegree == null)
+                    {
+                        string lat = "";
+                        string lon = "";
+                        TranslateColToDegree(ref lat, ref lon);
+                        loggedUser.StartLocLatDegree = lat;
+                        loggedUser.StartLocLonDegree = lon;
+                    }
+                    Dr2C2.Text = loggedUser.StartLocLatDegree;
+                    Dr2C3.Text = "";
+                    Dr2C4.Text = loggedUser.StartLocLonDegree;
+
+                    double distance = CheckDistance(loggedUser.GateLat, loggedUser.GateLon, loggedUser.PpsLat, loggedUser.PpsLon, 2);
+
+                    if (distance > 25.0d)
+                    {
+                        Dr3C3.Text = distance.ToString() + " m";
+                        Dr3C3.Style.Add("color", "Violet");
+
+                        CheckSecurityZone(loggedUser.Shengen);
+                    }
+                    else
+                    {
+                        if (distance < 25.0d && distance > 10.0d)
+                        {
+                            
+                        }
+                    }
+                    {
+                        Dr3C3.Text = "OK!";
+                        Dr3C3.Style.Add("color", "Green");
+                    }
+
+                        if (distance > 20.0d)
+                    {
+                        Dr3C3.Text = distance.ToString() + " m";
+                        Dr3C3.Style.Add("color", "Violet");
+                    }
+                    else
+                    {
+                        Dr3C3.Text = "OK!";
+                        Dr3C3.Style.Add("color", "Green");
+                    }
+                }
+            }
+        }
+
+
+
+        private void CheckSecurityZone(int securityZone)
+        {
+            HttpCookie locCookie = Request.Cookies["locCookie"];
+            double busLat = Convert.ToDouble(locCookie.Values["currentLocLat"]);
+            double busLon = Convert.ToDouble(locCookie.Values["currentLocLon"]);
+
+            GeoCoordinate busPosition = new GeoCoordinate(busLat, busLon);
+
+            double distance = 0.0d;
+
+            switch (securityZone)
+            {
+                case 0:
+                    {
+                        GeoCoordinate targetPosition = new GeoCoordinate(52.17236, 20.97005);
+                        distance = Math.Round(busPosition.GetDistanceTo(targetPosition), 2, MidpointRounding.AwayFromZero);
+
+                        // dodać ograniczenie dotyczące prędkości na całość
+                        if (distance < 25.0d && distance > 10.0d)
+                            loggedUser.Alert = 2;
+                        else
+                            if (distance < 10.0d)
+                            loggedUser.Alert = 1;
+                    }
+                    break;
+                case 1:
+                    {
+                        GeoCoordinate targetPosition = new GeoCoordinate(52.17042, 20.97161);
+                    }
+                    break;
+            }
+        }
+
+
+
+
         private double CheckDistance(string gateLat, string gateLon, string ppsLat, string ppsLon, int operation)
         {
             HttpCookie locCookie = Request.Cookies["locCookie"];
@@ -559,49 +697,19 @@ namespace Bus_Management_System
                 targetLat = Convert.ToDouble(ppsLat, CultureInfo.InvariantCulture);
                 targetLon = Convert.ToDouble(ppsLon, CultureInfo.InvariantCulture);
             }
-            
+
             GeoCoordinate busPosition = new GeoCoordinate(busLat, busLon);
             GeoCoordinate targetPosition = new GeoCoordinate(targetLat, targetLon);
 
             // zwrocenie odleglosci miedzy wspolrzednymi z ograniczeniem do 2 miejsc po przecinku
             double distance = Math.Round(busPosition.GetDistanceTo(targetPosition), 2, MidpointRounding.AwayFromZero);
 
+            loggedUser.Distance = distance.ToString();
+
             return distance;
         }
 
 
-        private void Przylot(int shengen)
-        {
-            R4C2.Style.Add("color", "Black");
-            if (shengen == 0)
-            {
-                R1C3.Style.Add("color", "Green");
-                R1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sz.png");
-                R1C2.Style.Add("background-repeat", "no-repeat");
-                R1C2.Style.Add("background-size", "100% 100%");
-                R4C2.Text = "";
-                R4C3.Style.Add("color", "Green");
-                R1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sz.png");
-                R1C4.Style.Add("background-repeat", "no-repeat");
-                R1C4.Style.Add("background-size", "100% 100%");
-                R5C3.Style.Add("color", "Green");
-                R5C3.Text = "SHENGEN";
-            }
-            else
-            {
-                R1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sc.png");
-                R1C2.Style.Add("background-repeat", "no-repeat");
-                R1C2.Style.Add("background-size", "100% 100%");
-                R4C3.Style.Add("color", "Red");
-                R1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sc.png");
-                R1C4.Style.Add("background-repeat", "no-repeat");
-                R1C4.Style.Add("background-size", "100% 100%");
-                R5C3.Style.Add("color", "Red");
-                R5C3.Text = "NON SHENGEN";
-            }
-            R4C4.Text = "WAW";
-            R4C4.Style.Add("color", "Black");
-        }
 
 
         // konwersja i sprawdzenie czy operacja została rozpoczęta
