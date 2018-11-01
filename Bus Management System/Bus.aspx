@@ -56,9 +56,9 @@
         }
         function OnSuccess(response, userContext, methodName)
         {
-            var predkosc = "";
+            <%--var predkosc = "";
             predkosc += "<p>Prędkość :  " + response;
-            document.getElementById("<%=Dr4C3.ClientID %>").innerHTML = predkosc;
+            document.getElementById("<%=Dr4C3.ClientID %>").innerHTML = predkosc;--%>
 
             lat = "";
             lon = "";
@@ -120,7 +120,7 @@
                 <asp:View ID="Home" runat="server">
                     <asp:UpdatePanel runat="server" Id="BusHomeUP" >
                         <ContentTemplate>
-                            <asp:Timer runat="server" Id="BusHomeTimer" Interval="5000" OnTick="BusHomeTimer_Tick"></asp:Timer>
+                            <asp:Timer runat="server" Id="BusHomeTimer" Interval="3000" OnTick="BusHomeTimer_Tick"></asp:Timer>
                                 <div class="bus-row">
                                     <div class="bus-left">
 
@@ -145,7 +145,7 @@
                                                 <asp:TableCell Id="R3C4" runat="server" ForeColor="DarkBlue" Font-Size="16px" Font-Bold="true" Width="19%" HorizontalAlign="Center">000</asp:TableCell>
                                             </asp:TableRow>
                                             <asp:TableRow CssClass="busTable1Row4" runat="server">
-                                                <asp:TableCell Id="R4C2" runat="server" ForeColor="Black" Font-Size="24px" Font-Bold="true" HorizontalAlign="right">XXX</asp:TableCell>
+                                                <asp:TableCell Id="R4C2" runat="server" Back-Color="" ForeColor="Black" Font-Size="24px" Font-Bold="true" HorizontalAlign="right">XXX</asp:TableCell>
                                                 <asp:TableCell Id="R4C3" runat="server" ForeColor="Black" Font-Size="24px" Font-Bold="true" HorizontalAlign="center">>>></asp:TableCell>
                                                 <asp:TableCell Id="R4C4" runat="server" ForeColor="Black" Font-Size="24px" Font-Bold="true" HorizontalAlign="left">XXX</asp:TableCell>
                                             </asp:TableRow>
@@ -225,15 +225,15 @@
                                 <td class="odstep" colspan="2"></td>
                             </tr>
                             <tr>
-                                <td class="dane-C1"><asp:Label ID="lb_DisOpis" runat="server" Text="Dis :"></asp:Label></td>
-                                <td class="dane-C2"><asp:Label ID="lb_BusDistance" runat="server" Text="" Width="100px"></asp:Label></td>
+                                <td class="dane-C1"><asp:Label ID="lb_HorAccOpis" runat="server" Text="HorAcc :"></asp:Label></td>
+                                <td class="dane-C2"><asp:Label ID="lb_BusHorAcc" runat="server" Text="" Width="100px"></asp:Label></td>
                             </tr>
                             <tr>
                                 <td class="odstep" colspan="2"></td>
                             </tr>
                             <tr>
-                                <td class="dane-C1"><asp:Label ID="lb_AccOpis" runat="server" Text="Acc :"></asp:Label></td>
-                                <td class="dane-C2"><asp:Label ID="lb_BusAccuracy" runat="server" Text="" Width="100px"></asp:Label></td>
+                                <td class="dane-C1"><asp:Label ID="lb_SpeedOpis" runat="server" Text="Acc :"></asp:Label></td>
+                                <td class="dane-C2"><asp:Label ID="lb_BusSpeed" runat="server" Text="" Width="100px"></asp:Label></td>
                             </tr>
                         </table>
                     </div>

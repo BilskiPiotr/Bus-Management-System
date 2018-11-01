@@ -43,17 +43,10 @@
 
 
 
-        public string PpsLat { get; set; }
-        public string PpsLon { get; set; }
-        public string GateLat { get; set; }
-        public string GateLon { get; set; }
-
-
-
-        public string StartLat { get; set; }
-        public string StartLon { get; set; }
-        public string StartLocLatDegree { get; set; }
-        public string StartLocLonDegree { get; set; }
+        public double PpsLat { get; set; }
+        public double PpsLon { get; set; }
+        public double GateLat { get; set; }
+        public double GateLon { get; set; }
 
 
 
@@ -63,7 +56,27 @@
 
         public double Speed { get; set; }
         public double Accuracy { get; set; }
-        public string Distance { get; set; }
+        public double OldDistanceT { get; set; }
+        public double DistanceT { get; set; }
+        public double OldDistanceS { get; set; }
+        public double DistanceS { get; set; }
+        public double OldDistanceN { get; set; }
+        public double DistanceN { get; set; }
+
+        public double CurrentLat { get; set; }
+        public double CurrentLon { get; set; }
+
+        public double StartLat { get; set; }
+        public double StartLon { get; set; }
+
+        public string StartLocLatDegree { get; set; }
+        public string StartLocLonDegree { get; set; }
+
+
+        public string geoLat { get; set; }
+        public string geoLon { get; set; }
+        public string geoAcc { get; set; }
+        public string geoSpee { get; set; }
 
     }
 }

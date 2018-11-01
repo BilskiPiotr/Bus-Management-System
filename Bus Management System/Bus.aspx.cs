@@ -16,6 +16,8 @@ namespace Bus_Management_System
         private static DataAccessLayer dal = new DataAccessLayer();
         private static double speed = 0.0d;
         private static double accuracy = 0.0d;
+        private static double currentLat = 0.0d;
+        private static double currentLon = 0.0d;
         User loggedUser;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -45,46 +47,61 @@ namespace Bus_Management_System
                     // załadowanie danych do psnelu Operatora
                     BindDdlData();
                 }
-
-                HttpCookie locCookie = new HttpCookie("locCookie");
-
-                locCookie.Values["currentLocLat"] = "";
-                locCookie.Values["currentLocLon"] = "";
-                locCookie.Values["distance"] = "";
-                locCookie.Values["startLocLat"] = "";
-                locCookie.Values["startLocLon"] = "";
-
-                Response.Cookies.Add(locCookie);
             }
         }
 
 
-        [System.Web.Services.WebMethod]
+        [System.Web.Services.WebMethod/*(EnableSession = true)*/]
         public static string PrzeliczArray(string[] arrayIn)
         {
+
+            double currentSpeed = 0.0d;
+            double currentAccuracy = 0.0d;
+
             double latitude = double.Parse(arrayIn[0], CultureInfo.InvariantCulture);
             double longitude = double.Parse(arrayIn[1], CultureInfo.InvariantCulture);
-            double currentAccuracy = double.Parse(arrayIn[2], CultureInfo.InvariantCulture);
-            double currentSpeed = double.Parse(arrayIn[3], CultureInfo.InvariantCulture);
 
-            //dopisanie surowych danych do HttpCookie
-            HttpCookie locCookie = HttpContext.Current.Request.Cookies.Get("locCookie");
-
-            speed = currentSpeed;
-            accuracy = currentAccuracy;
-
-            if (locCookie != null)
+            if (arrayIn[2] != "")
             {
-                locCookie.Values["currentLocLat"] = latitude.ToString();
-                locCookie.Values["currentLocLon"] = longitude.ToString();
-                locCookie.Values["currentSpeed"] = speed.ToString();
-                HttpContext.Current.Response.Cookies.Add(locCookie);
+                currentAccuracy = double.Parse(arrayIn[2], CultureInfo.InvariantCulture);
             }
             else
             {
-                return (currentAccuracy = 0.0d).ToString();
+                currentAccuracy = 0.0d;
             }
-            return currentAccuracy.ToString();
+            
+
+            if (arrayIn[3] != "")
+            {
+                currentSpeed = double.Parse(arrayIn[3], CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                currentSpeed = 0.0d;
+            }
+
+            speed = currentSpeed;
+            accuracy = currentAccuracy;
+            currentLat = latitude;
+            currentLon = longitude;
+
+            //HttpContext.Current.Session["CurrentLat"] = currentLat;
+            //HttpContext.Current.Session["CurrentLon"] = currentLon;
+            //HttpContext.Current.Session["Accuracy"] = accuracy;
+            //HttpContext.Current.Session["Speed"] = speed;
+
+            return currentSpeed.ToString();
+        }
+
+
+
+        // obsługa GeoCoordinate Watcher
+        private void watcher_PositionChanged(object sender, GeoPositionChangedEventArgs<GeoCoordinate> e)
+        {
+            loggedUser.geoLat = e.Position.Location.Latitude.ToString();
+            loggedUser.geoLon = e.Position.Location.Longitude.ToString();
+            loggedUser.geoAcc = e.Position.Location.HorizontalAccuracy.ToString();
+            loggedUser.geoSpee = e.Position.Location.Speed.ToString();
         }
 
 
@@ -192,21 +209,20 @@ namespace Bus_Management_System
 
         protected void BusHomeTimer_Tick(object sender, EventArgs e)
         {
+            // pomiar czasu wykonywania timera
+            int start, stop;
+            start = Environment.TickCount & Int32.MaxValue;
+
+
             // zerowanie potęcjalnego komunikatu głosowego
             loggedUser.Alert = 0;
 
-
-
-            HttpCookie cookie = Request.Cookies["Bus"];
-
             loggedUser.Speed = speed;
             loggedUser.Accuracy = accuracy;
+            loggedUser.CurrentLat = currentLat;
+            loggedUser.CurrentLon = currentLon;
 
-            //audioAlert = "/audio/danger.wav";
-
-            //HtmlGenericControl sound = new HtmlGenericControl("<embed src=\"" + audioAlert + "\" type=\"audio/wav\" autostart =\"true\" hidden=\"true\" showcontrols=\"0\" volume=\"-1\"></embed>");
-            //BusHomeUP.ContentTemplateContainer.Controls.Remove(sound);
-            //BusHomeUP.ContentTemplateContainer.Controls.Add(sound);
+            HttpCookie cookie = Request.Cookies["Bus"];
 
             if (cookie != null)
             {
@@ -251,13 +267,14 @@ namespace Bus_Management_System
                         loggedUser.Pax = ds.Tables[0].Rows[0].Field<int>("Pax").ToString();
                         loggedUser.AirPort = bl.GetAirPort(ds.Tables[0].Rows[0].Field<int>("AirPort"), ref shengen, ref portName, ref country);
                         loggedUser.Pps = pps.Tables[0].Rows[0].Field<string>("StationNb");
-                        loggedUser.PpsLat = pps.Tables[0].Rows[0].Field<string>("GPS_Latitude");
-                        loggedUser.PpsLon = pps.Tables[0].Rows[0].Field<string>("GPS_Longitude");
+                        loggedUser.PpsLat = Convert.ToDouble(pps.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
+                        loggedUser.PpsLon = Convert.ToDouble(pps.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
                         loggedUser.Gate = gate.Tables[0].Rows[0].Field<string>("GateNb");
-                        loggedUser.GateLat = gate.Tables[0].Rows[0].Field<string>("GPS_Latitude");
-                        loggedUser.GateLon = gate.Tables[0].Rows[0].Field<string>("GPS_Longitude");
+                        loggedUser.GateLat = Convert.ToDouble(gate.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
+                        loggedUser.GateLon = Convert.ToDouble(gate.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
                         loggedUser.RadioGate = ds.Tables[0].Rows[0].Field<string>("RadioGate").ToString();
                         loggedUser.RadioNeon = ds.Tables[0].Rows[0].Field<string>("RadioNeon").ToString();
+                        loggedUser.GodzinaRozkladowa = (ds.Tables[0].Rows[0].Field<DateTime>("GodzinaRozkladowa")).ToString("HH:mm");
                         loggedUser.Shengen = shengen;
                         loggedUser.PortName = portName;
                         loggedUser.Country = country;
@@ -294,6 +311,15 @@ namespace Bus_Management_System
             //loggedUser.Alert = 1;
             // sprawdzenie stanu alertu, i ewentualne odtworzenie go
             BusAlert(loggedUser.Alert);
+
+            stop = Environment.TickCount & Int32.MaxValue;
+
+            int czas = stop - start;
+
+            //lb_BusLatitude.Text = loggedUser.geoLat;
+            //lb_BusLongitude.Text = loggedUser.geoLon;
+            //lb_BusHorAcc.Text = loggedUser.geoAcc;
+            //lb_BusSpeed.Text = loggedUser.geoSpee;
         }
 
 
@@ -307,25 +333,26 @@ namespace Bus_Management_System
             {
                     // dojechałeś na miejsce
                 case 0:
-                   
                     audioAlert = "";
                     break;
                     // odległość mniejsza niż 10m w złej strefie
                 case 1:
-                    audioAlert = "/audio/danger.wav";
+                    audioAlert = "/audio/alert.mp3";
                     break;
                     // autobus znajduje sie w strefie bezpieczeństwa Shengen "Alert - to strefa SHENGEN"
                 case 2:
+                    audioAlert = "/audio/w_s_z.mp3";
                     break;
                     // autobus znajduje sie w strefie bezpieczeństwa Non Shengen "Alert - to strefa NON SHENGEN"
                 case 3:
+                    audioAlert = "/audio/w_ns_z.mp3";
                     break;
                 default:
                     audioAlert = "";
                     break;
             };
 
-            HtmlGenericControl sound = new HtmlGenericControl("<embed src=\"" + audioAlert + "\" type=\"audio/wav\" autostart =\"true\" hidden=\"true\" showcontrols=\"0\" volume=\"-1\"></embed>");
+            HtmlGenericControl sound = new HtmlGenericControl("<embed src=\"" + audioAlert + "\" type=\"audio/mp3\" autostart =\"true\" hidden=\"true\" showcontrols=\"0\" volume=\"-1\"></embed>");
             BusHomeUP.ContentTemplateContainer.Controls.Remove(sound);
             BusHomeUP.ContentTemplateContainer.Controls.Add(sound);
         }
@@ -516,13 +543,14 @@ namespace Bus_Management_System
                     Dr2C4.Text = loggedUser.StartLocLonDegree;
                     Dr5C3.Text = loggedUser.Gate;
 
-                    double distance = CheckDistance(loggedUser.GateLat, loggedUser.GateLon, loggedUser.PpsLat, loggedUser.PpsLon, 2);
+                    double distanceT = CheckDistance(loggedUser.CurrentLat, loggedUser.CurrentLon, loggedUser.GateLat, loggedUser.GateLon);
 
                     if (loggedUser.OperationStatus == 2)
                     {
-                        if (distance > 10.0d)
+                        if (distanceT > 10.0d)
                         {
-                            Dr3C3.Text = distance.ToString() + " m";
+                            // jesli poprzedni dystans do celu byl wiekszy (mniejszy) to
+                            Dr3C3.Text = Math.Round((distanceT + loggedUser.Speed), 2, MidpointRounding.AwayFromZero).ToString() + " m";
                             Dr3C3.Style.Add("color", "Violet");
                         }
                         else
@@ -532,9 +560,10 @@ namespace Bus_Management_System
                         }
                     }
                     else
-                        if (distance > 20.0d)
+                        if (distanceT > 20.0d)
                     {
-                        Dr3C3.Text = distance.ToString() + " m";
+                        // jesli poprzedni dystans do celu byl wiekszy (mniejszy) to
+                        Dr3C3.Text = Math.Round((distanceT + loggedUser.Speed), 2, MidpointRounding.AwayFromZero).ToString() + " m";
                         Dr3C3.Style.Add("color", "Violet");
                     }
                     else
@@ -555,6 +584,8 @@ namespace Bus_Management_System
 
         private void Przylot(int shengen)
         {
+            double distanceT = 0.0d;
+
             // ustalenie kolorów w zależności od strefy
             if (shengen == 0)
             {
@@ -593,7 +624,12 @@ namespace Bus_Management_System
             {
                 if (loggedUser.OperationStatus == 2 || loggedUser.OperationStatus == 4)
                 {
-                    if (loggedUser.StartLocLatDegree == null || loggedUser.StartLocLonDegree == null)
+                    //wyświetlenie aktualnej prędkości
+                    Dr4C3.Style.Add("font-size", "16px");
+                    Dr4C3.Text = Math.Round(loggedUser.Speed, 2, MidpointRounding.AwayFromZero).ToString() + " m/s   |   " + Math.Round(((loggedUser.Speed * 3600) / 1000), 2, MidpointRounding.AwayFromZero).ToString() + " km/h";
+
+                    // ustalenie, gdzie operacja została przyjęta
+                    if (loggedUser.StartLocLatDegree == "0° 0' 0'' N" || loggedUser.StartLocLonDegree == "0° 0' 0'' E")
                     {
                         string lat = "";
                         string lon = "";
@@ -601,112 +637,199 @@ namespace Bus_Management_System
                         loggedUser.StartLocLatDegree = lat;
                         loggedUser.StartLocLonDegree = lon;
                     }
+
+                    // sprawdzenie wszystkich odległości w zależności od celu
+                    if (loggedUser.OperationStatus == 2)
+                    {
+                        distanceT = CheckDistance(loggedUser.CurrentLat, loggedUser.CurrentLon, loggedUser.PpsLat, loggedUser.PpsLon);
+                        Dr5C3.Text = loggedUser.Pps;
+                    }
+                    else
+                    if (loggedUser.OperationStatus == 4)
+                    {
+                        distanceT = CheckDistance(loggedUser.CurrentLat, loggedUser.CurrentLon, loggedUser.GateLat, loggedUser.GateLon);
+                        Dr5C3.Text = loggedUser.Gate;
+                    }
+
                     Dr2C2.Text = loggedUser.StartLocLatDegree;
                     Dr2C3.Text = "";
                     Dr2C4.Text = loggedUser.StartLocLonDegree;
 
-                    double distance = CheckDistance(loggedUser.GateLat, loggedUser.GateLon, loggedUser.PpsLat, loggedUser.PpsLon, 2);
-
-                    if (distance > 25.0d)
-                    {
-                        Dr3C3.Text = distance.ToString() + " m";
-                        Dr3C3.Style.Add("color", "Violet");
-
-                        CheckSecurityZone(loggedUser.Shengen);
-                    }
+                    // jeśli nie było wcześniejszych wartości pomiarowych odległości
+                    if (loggedUser.OldDistanceT == 0.0d)
+                        Dr3C3.Text = distanceT.ToString() + " m";
+                    // a jeśli były
                     else
+                        Dr3C3.Text = Math.Round((distanceT + loggedUser.Speed), 2, MidpointRounding.AwayFromZero).ToString() + " m";
+
+
+
+                    // interakcja z użytkownikiem w zależności od odległości do punktów szczegulnych
+                    bool danger = false;
+
+                    if (distanceT > 100.0d)
                     {
-                        if (distance < 25.0d && distance > 10.0d)
+                        danger = CheckSecurityZone(loggedUser.Shengen);
+
+                        if (!danger)
                         {
-                            
+                            // metoda normalne kolory 
+                            Dr3C3.Style.Add("background-color", "#FFFFCC");
+                            Dr4C3.Style.Add("background-color", "#FFFFCC");
+                            Dr5C3.Style.Add("background-color", "#FFFFCC");
+                            Dr3C3.Style.Add("color", "Violet");
+                            Dr4C3.Style.Add("color", "Black");
+
+                            // metoda dojazd do strefy przeznaczenia
+                            if (shengen == 0)
+                                Dr5C3.Style.Add("color", "Green");
+                            else
+                            if (shengen == 1)
+                                Dr5C3.Style.Add("color", "Red");
+                        }
+                        else
+                        {
+                            // metoda kolory alarmowe
+                            Dr3C3.Style.Add("background-color", "Red");
+                            Dr4C3.Style.Add("background-color", "Red");
+                            Dr5C3.Style.Add("background-color", "Red");
+                            Dr3C3.Style.Add("color", "White");
+                            Dr4C3.Style.Add("color", "Black");
+                            Dr5C3.Style.Add("color", "Black");
                         }
                     }
-                    {
-                        Dr3C3.Text = "OK!";
-                        Dr3C3.Style.Add("color", "Green");
-                    }
-
-                        if (distance > 20.0d)
-                    {
-                        Dr3C3.Text = distance.ToString() + " m";
-                        Dr3C3.Style.Add("color", "Violet");
-                    }
                     else
                     {
-                        Dr3C3.Text = "OK!";
-                        Dr3C3.Style.Add("color", "Green");
+                        // metoda normalne kolody
+                        Dr3C3.Style.Add("background-color", "#FFFFCC");
+                        Dr4C3.Style.Add("background-color", "#FFFFCC");
+                        Dr5C3.Style.Add("background-color", "#FFFFCC");
+                        Dr3C3.Style.Add("color", "Violet");
+                        Dr4C3.Style.Add("color", "Black");
+
+                        // metoda dojazd do strefy przeznaczenia
+                        if (shengen == 0)
+                            Dr5C3.Style.Add("color", "Green");
+                        else
+                        if (shengen == 1)
+                            Dr5C3.Style.Add("color", "Red");
+
+
+
+                        // dojechano do strefy przeznaczenia
+                        if (loggedUser.DistanceT <= 15.0d)
+                        {
+                            Dr3C3.Text = "OK!";
+                        }
+                        else
+                        {
+                            Dr3C3.Text = loggedUser.DistanceT.ToString() + " m";
+                        }
                     }
+                }
+                else
+                {
+                    // jeśli autobus aktualnie nie przewozi ludzi
                 }
             }
         }
 
 
 
-        private void CheckSecurityZone(int securityZone)
+        private bool CheckSecurityZone(int securityZone)
         {
-            HttpCookie locCookie = Request.Cookies["locCookie"];
-            double busLat = Convert.ToDouble(locCookie.Values["currentLocLat"]);
-            double busLon = Convert.ToDouble(locCookie.Values["currentLocLon"]);
-
-            GeoCoordinate busPosition = new GeoCoordinate(busLat, busLon);
-
-            double distance = 0.0d;
+            bool danger = false;
+            double predictedDistance = 0.0d;
 
             switch (securityZone)
             {
                 case 0:
                     {
-                        GeoCoordinate targetPosition = new GeoCoordinate(52.17236, 20.97005);
-                        distance = Math.Round(busPosition.GetDistanceTo(targetPosition), 2, MidpointRounding.AwayFromZero);
-
-                        // dodać ograniczenie dotyczące prędkości na całość
-                        if (distance < 25.0d && distance > 10.0d)
-                            loggedUser.Alert = 2;
+                        if (loggedUser.OldDistanceN == 0.0d)
+                            predictedDistance = Math.Round(loggedUser.DistanceN, 2, MidpointRounding.AwayFromZero);
                         else
-                            if (distance < 10.0d)
+                        if (loggedUser.OldDistanceN > loggedUser.DistanceN)
+                            predictedDistance = Math.Round((loggedUser.DistanceN - loggedUser.Speed), 2, MidpointRounding.AwayFromZero);
+                        else
+                        if (loggedUser.OldDistanceN < loggedUser.DistanceN)
+                            predictedDistance = Math.Round((loggedUser.DistanceN + loggedUser.Speed), 2, MidpointRounding.AwayFromZero);
+
+                        // jeśli pojazd jadąc do shengen jest w pobliżu non shengen
+                        if (predictedDistance < 75.0d )
+                        {
+                            // w odległości mniejszej niż 75m 
+                            loggedUser.Alert = 3;
+                            danger = true;
+                        }
+                        else
+                        // odległość mniejsza niż 25m, i prędkość mniejsza od 1,5 km/h
+                        if (predictedDistance <= 25.0d && loggedUser.Speed >= 0.43d)
+                        {
                             loggedUser.Alert = 1;
+                            danger = true;
+                        }
+                        else
+                            danger = false;
                     }
                     break;
                 case 1:
                     {
-                        GeoCoordinate targetPosition = new GeoCoordinate(52.17042, 20.97161);
+                        if (loggedUser.OldDistanceS == 0.0d)
+                            predictedDistance = Math.Round(loggedUser.DistanceS, 2, MidpointRounding.AwayFromZero);
+                        else
+                        if (loggedUser.OldDistanceS > loggedUser.DistanceS)
+                            predictedDistance = Math.Round((loggedUser.DistanceS - loggedUser.Speed), 2, MidpointRounding.AwayFromZero);
+                        else
+                        if (loggedUser.OldDistanceS < loggedUser.DistanceS)
+                            predictedDistance = Math.Round((loggedUser.DistanceS + loggedUser.Speed), 2, MidpointRounding.AwayFromZero);
+
+                        // jeśli pojazd jadąc do NonShengen jest w pobliżu Shengen
+                        if (predictedDistance < 75.0d)
+                        {
+                            // w odległości mniejszej niż 60m 
+                            loggedUser.Alert = 2;
+                            danger = true;
+                        }
+                        else
+                        // odległość mniejsza niż 25m, i prędkość mniejsza od 1,5 km/h
+                        if (predictedDistance <= 25.0d && loggedUser.Speed >= 0.43d)
+                        {
+                            loggedUser.Alert = 1;
+                            danger = true;
+                        }
+                        else
+                            danger = false;
                     }
                     break;
             }
+            return danger;
         }
 
 
 
 
-        private double CheckDistance(string gateLat, string gateLon, string ppsLat, string ppsLon, int operation)
+        private double CheckDistance(double currentLat, double currentLon, double destinationLat, double destinationLon)
         {
-            HttpCookie locCookie = Request.Cookies["locCookie"];
-            double busLat = Convert.ToDouble(locCookie.Values["currentLocLat"]);
-            double busLon = Convert.ToDouble(locCookie.Values["currentLocLon"]);
-
-            double targetLat = 0.0;
-            double targetLon = 0.0;
-
-            if (operation == 1)
-            {
-                targetLat = Convert.ToDouble(gateLat, CultureInfo.InvariantCulture);
-                targetLon = Convert.ToDouble(gateLon, CultureInfo.InvariantCulture);
-            }
-            else
-            {
-                targetLat = Convert.ToDouble(ppsLat, CultureInfo.InvariantCulture);
-                targetLon = Convert.ToDouble(ppsLon, CultureInfo.InvariantCulture);
-            }
-
-            GeoCoordinate busPosition = new GeoCoordinate(busLat, busLon);
-            GeoCoordinate targetPosition = new GeoCoordinate(targetLat, targetLon);
+            GeoCoordinate busPosition = new GeoCoordinate(currentLat, currentLon);
+            GeoCoordinate targetPosition = new GeoCoordinate(destinationLat, destinationLon);
+            GeoCoordinate shengen = new GeoCoordinate(52.17035, 20.97174);
+            GeoCoordinate nonShengen = new GeoCoordinate(52.17224, 20.9702);
 
             // zwrocenie odleglosci miedzy wspolrzednymi z ograniczeniem do 2 miejsc po przecinku
-            double distance = Math.Round(busPosition.GetDistanceTo(targetPosition), 2, MidpointRounding.AwayFromZero);
+            double distanceT = Math.Round(busPosition.GetDistanceTo(targetPosition), 2, MidpointRounding.AwayFromZero);
+            double distanceS = Math.Round(busPosition.GetDistanceTo(shengen), 2, MidpointRounding.AwayFromZero);
+            double distanceN = Math.Round(busPosition.GetDistanceTo(nonShengen), 2, MidpointRounding.AwayFromZero);
 
-            loggedUser.Distance = distance.ToString();
+            loggedUser.OldDistanceT = loggedUser.DistanceT;
+            loggedUser.DistanceT = distanceT;
 
-            return distance;
+            loggedUser.OldDistanceS = loggedUser.DistanceS;
+            loggedUser.DistanceS = distanceS;
+
+            loggedUser.OldDistanceN = loggedUser.DistanceN;
+            loggedUser.DistanceN = distanceN;
+
+            return distanceT;
         }
 
 
@@ -741,7 +864,6 @@ namespace Bus_Management_System
             
             TranslateColToDegree(ref lat, ref lon);
 
-            HttpCookie locCookie = Request.Cookies["locCookie"];
             int operation = loggedUser.Operation;
 
             // nie no - trzeba pobrac te współrzędne do ciasteczka podczas tworzenia OpCookie
@@ -757,8 +879,6 @@ namespace Bus_Management_System
                 case 2:
                     break;
             }
-            loggedUser.StartLat = locCookie.Values["currentLocLat"].ToString();
-            loggedUser.StartLon = locCookie.Values["currentLocLon"].ToString();
             loggedUser.StartLocLatDegree = lat;
             loggedUser.StartLocLonDegree = lon;
         }
@@ -812,10 +932,8 @@ namespace Bus_Management_System
 
         private void TranslateColToDegree(ref string lat, ref string lon)
         {
-            HttpCookie locCookie = Request.Cookies["locCookie"];
-
-            double latitude = double.Parse(locCookie.Values["currentLocLat"]);
-            double longitude = double.Parse(locCookie.Values["currentLocLon"]);
+            double latitude = loggedUser.CurrentLat;
+            double longitude = loggedUser.CurrentLon;
 
             string latitude_Kierunek = (latitude >= 0 ? "N" : "S");
 
@@ -831,10 +949,5 @@ namespace Bus_Management_System
             lat = String.Format(Convert.ToString(Math.Truncate(latitude) + "° " +  + Math.Truncate(minutyLat) + "' " + Math.Truncate(sekundyLat) + "'' " + latitude_Kierunek));
             lon = String.Format(Convert.ToString(Math.Truncate(longitude) + "° " + Math.Truncate(minutyLon) + "' " + Math.Truncate(sekundyLon) + "'' " + longitude_Kierunek));
         }
-
-        //protected void Button1_Click(object sender, EventArgs e)
-        //{
-        //    Page.ClientScript.RegisterStartupScript(this.GetType(), "callSound", "PlaySound()", true);
-        //}
     }
 }

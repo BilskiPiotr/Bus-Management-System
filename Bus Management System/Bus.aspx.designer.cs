@@ -472,40 +472,40 @@ namespace Bus_Management_System {
         protected global::System.Web.UI.WebControls.Label lb_BusLongitude;
         
         /// <summary>
-        /// Kontrolka lb_DisOpis.
+        /// Kontrolka lb_HorAccOpis.
         /// </summary>
         /// <remarks>
         /// Pole generowane automatycznie.
         /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lb_DisOpis;
+        protected global::System.Web.UI.WebControls.Label lb_HorAccOpis;
         
         /// <summary>
-        /// Kontrolka lb_BusDistance.
+        /// Kontrolka lb_BusHorAcc.
         /// </summary>
         /// <remarks>
         /// Pole generowane automatycznie.
         /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lb_BusDistance;
+        protected global::System.Web.UI.WebControls.Label lb_BusHorAcc;
         
         /// <summary>
-        /// Kontrolka lb_AccOpis.
+        /// Kontrolka lb_SpeedOpis.
         /// </summary>
         /// <remarks>
         /// Pole generowane automatycznie.
         /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lb_AccOpis;
+        protected global::System.Web.UI.WebControls.Label lb_SpeedOpis;
         
         /// <summary>
-        /// Kontrolka lb_BusAccuracy.
+        /// Kontrolka lb_BusSpeed.
         /// </summary>
         /// <remarks>
         /// Pole generowane automatycznie.
         /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lb_BusAccuracy;
+        protected global::System.Web.UI.WebControls.Label lb_BusSpeed;
         
         /// <summary>
         /// Kontrolka lb_zalogowany.
