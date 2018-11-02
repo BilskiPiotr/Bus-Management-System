@@ -211,22 +211,43 @@
 
                         <table id="busDetail-table" style="width: auto; height: auto;">
                             <tr>
-                                <td class="dane-C1"><asp:Label ID="lb_LatOpis" runat="server" Text="Lat :"></asp:Label></td>
-                                <td class="dane-C2"><asp:Label ID="lb_BusLatitude" runat="server" Text="" Width="100px"></asp:Label></td>
+                                <td class="dane-C1"><asp:Label ID="lb_distanceT" runat="server" Text="DistanceT :"></asp:Label></td>
+                                <td class="dane-C2"><asp:Label ID="lb_BusDistanceT" runat="server" Text="" Width="100px"></asp:Label></td>
                             </tr>
                             <tr>
                                 <td class="odstep" colspan="2"></td>
                             </tr>
                             <tr>
-                                <td class="dane-C1"><asp:Label ID="lb_LonOpis" runat="server" Text="Lon :"></asp:Label></td>
-                                <td class="dane-C2"><asp:Label ID="lb_BusLongitude" runat="server" Text="" Width="100px"></asp:Label></td>
+                                <td class="dane-C1"><asp:Label ID="lb_oldDistanceT" runat="server" Text="Old DistanceT :"></asp:Label></td>
+                                <td class="dane-C2"><asp:Label ID="lb_OldBusDistanceT" runat="server" Text="" Width="100px"></asp:Label></td>
                             </tr>
                             <tr>
                                 <td class="odstep" colspan="2"></td>
                             </tr>
                             <tr>
-                                <td class="dane-C1"><asp:Label ID="lb_HorAccOpis" runat="server" Text="HorAcc :"></asp:Label></td>
-                                <td class="dane-C2"><asp:Label ID="lb_BusHorAcc" runat="server" Text="" Width="100px"></asp:Label></td>
+                                <td class="dane-C1"><asp:Label ID="lb_distanceS" runat="server" Text="DistanceS :"></asp:Label></td>
+                                <td class="dane-C2"><asp:Label ID="lb_BusDistanceS" runat="server" Text="" Width="100px"></asp:Label></td>
+                            </tr>
+                            <tr>
+                                <td class="odstep" colspan="2"></td>
+                            </tr>
+                            <tr>
+                                <td class="dane-C1"><asp:Label ID="lb_oldDistanceS" runat="server" Text="Old DistanceS :"></asp:Label></td>
+                                <td class="dane-C2"><asp:Label ID="lb_OldBusDistanceS" runat="server" Text="" Width="100px"></asp:Label></td>
+                            </tr>
+                            <tr>
+                                <td class="odstep" colspan="2"></td>
+                            </tr>
+                            <tr>
+                                <td class="dane-C1"><asp:Label ID="lb_distanceN" runat="server" Text="DistanceN :"></asp:Label></td>
+                                <td class="dane-C2"><asp:Label ID="lb_BusDistanceN" runat="server" Text="" Width="100px"></asp:Label></td>
+                            </tr>
+                            <tr>
+                                <td class="odstep" colspan="2"></td>
+                            </tr>
+                            <tr>
+                                <td class="dane-C1"><asp:Label ID="lb_oldDistanceN" runat="server" Text="Old DistanceN :"></asp:Label></td>
+                                <td class="dane-C2"><asp:Label ID="lb_OldBusDistanceN" runat="server" Text="" Width="100px"></asp:Label></td>
                             </tr>
                             <tr>
                                 <td class="odstep" colspan="2"></td>
@@ -234,6 +255,27 @@
                             <tr>
                                 <td class="dane-C1"><asp:Label ID="lb_SpeedOpis" runat="server" Text="Acc :"></asp:Label></td>
                                 <td class="dane-C2"><asp:Label ID="lb_BusSpeed" runat="server" Text="" Width="100px"></asp:Label></td>
+                            </tr>
+                            <tr>
+                                <td class="odstep" colspan="2"></td>
+                            </tr>
+                            <tr>
+                                <td class="dane-C1"><asp:Label ID="lb_predictedDistanceT" runat="server" Text="Predicted distance T :"></asp:Label></td>
+                                <td class="dane-C2"><asp:Label ID="lb_BudPredictedDistanceT" runat="server" Text="" Width="100px"></asp:Label></td>
+                            </tr>
+                            <tr>
+                                <td class="odstep" colspan="2"></td>
+                            </tr>
+                            <tr>
+                                <td class="dane-C1"><asp:Label ID="lb_predictedDistanceS" runat="server" Text="Predicted distance S :"></asp:Label></td>
+                                <td class="dane-C2"><asp:Label ID="lb_BusPredictedDistanceS" runat="server" Text="" Width="100px"></asp:Label></td>
+                            </tr>
+                            <tr>
+                                <td class="odstep" colspan="2"></td>
+                            </tr>
+                            <tr>
+                                <td class="dane-C1"><asp:Label ID="lb_predictedDistanceN" runat="server" Text="Predicted distance N :"></asp:Label></td>
+                                <td class="dane-C2"><asp:Label ID="lb_BusPredictedDistanceN" runat="server" Text="" Width="100px"></asp:Label></td>
                             </tr>
                         </table>
                     </div>

@@ -63,6 +63,8 @@
         public double OldDistanceN { get; set; }
         public double DistanceN { get; set; }
 
+        public double PredictedDistance { get; set; }
+
         public double CurrentLat { get; set; }
         public double CurrentLon { get; set; }
 

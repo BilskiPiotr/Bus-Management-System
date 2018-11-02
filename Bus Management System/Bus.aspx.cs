@@ -80,9 +80,13 @@ namespace Bus_Management_System
                 currentSpeed = 0.0d;
             }
 
+            //if (currentSpeed != 0.0d)
             speed = currentSpeed;
+            //if (currentAccuracy != 0.0d)
             accuracy = currentAccuracy;
+            //if (currentLat != 0.0d)
             currentLat = latitude;
+            //if (currentLon != 0.0d)
             currentLon = longitude;
 
             //HttpContext.Current.Session["CurrentLat"] = currentLat;
@@ -96,13 +100,13 @@ namespace Bus_Management_System
 
 
         // obsługa GeoCoordinate Watcher
-        private void watcher_PositionChanged(object sender, GeoPositionChangedEventArgs<GeoCoordinate> e)
-        {
-            loggedUser.geoLat = e.Position.Location.Latitude.ToString();
-            loggedUser.geoLon = e.Position.Location.Longitude.ToString();
-            loggedUser.geoAcc = e.Position.Location.HorizontalAccuracy.ToString();
-            loggedUser.geoSpee = e.Position.Location.Speed.ToString();
-        }
+        //private void watcher_PositionChanged(object sender, GeoPositionChangedEventArgs<GeoCoordinate> e)
+        //{
+        //    loggedUser.geoLat = e.Position.Location.Latitude.ToString();
+        //    loggedUser.geoLon = e.Position.Location.Longitude.ToString();
+        //    loggedUser.geoAcc = e.Position.Location.HorizontalAccuracy.ToString();
+        //    loggedUser.geoSpee = e.Position.Location.Speed.ToString();
+        //}
 
 
 
@@ -315,6 +319,10 @@ namespace Bus_Management_System
             stop = Environment.TickCount & Int32.MaxValue;
 
             int czas = stop - start;
+
+            Dr2C2.Text = "S: " + Math.Round(loggedUser.DistanceS, 2, MidpointRounding.AwayFromZero).ToString();
+            Dr2C3.Text = "T: " + Math.Round(loggedUser.DistanceT, 2, MidpointRounding.AwayFromZero).ToString();
+            Dr2C4.Text = "N: " + Math.Round(loggedUser.DistanceN, 2, MidpointRounding.AwayFromZero).ToString();
 
             //lb_BusLatitude.Text = loggedUser.geoLat;
             //lb_BusLongitude.Text = loggedUser.geoLon;
@@ -543,27 +551,22 @@ namespace Bus_Management_System
                     Dr2C4.Text = loggedUser.StartLocLonDegree;
                     Dr5C3.Text = loggedUser.Gate;
 
-                    double distanceT = CheckDistance(loggedUser.CurrentLat, loggedUser.CurrentLon, loggedUser.GateLat, loggedUser.GateLon);
+                    double distanceT = 0.0;
 
                     if (loggedUser.OperationStatus == 2)
                     {
-                        if (distanceT > 10.0d)
-                        {
-                            // jesli poprzedni dystans do celu byl wiekszy (mniejszy) to
-                            Dr3C3.Text = Math.Round((distanceT + loggedUser.Speed), 2, MidpointRounding.AwayFromZero).ToString() + " m";
-                            Dr3C3.Style.Add("color", "Violet");
-                        }
-                        else
-                        {
-                            Dr3C3.Text = "OK!";
-                            Dr3C3.Style.Add("color", "Green");
-                        }
+                        distanceT = CheckDistance(loggedUser.CurrentLat, loggedUser.CurrentLon, loggedUser.GateLat, loggedUser.GateLon);
                     }
                     else
-                        if (distanceT > 20.0d)
+                    {
+                        distanceT = CheckDistance(loggedUser.CurrentLat, loggedUser.CurrentLon, loggedUser.PpsLat, loggedUser.PpsLon);
+
+                    }
+
+                    if (distanceT > 15.0d)
                     {
                         // jesli poprzedni dystans do celu byl wiekszy (mniejszy) to
-                        Dr3C3.Text = Math.Round((distanceT + loggedUser.Speed), 2, MidpointRounding.AwayFromZero).ToString() + " m";
+                        Dr3C3.Text = Math.Round(loggedUser.DistanceT - (loggedUser.Speed * 2), 2, MidpointRounding.AwayFromZero).ToString() + " m";
                         Dr3C3.Style.Add("color", "Violet");
                     }
                     else
@@ -660,14 +663,14 @@ namespace Bus_Management_System
                         Dr3C3.Text = distanceT.ToString() + " m";
                     // a jeśli były
                     else
-                        Dr3C3.Text = Math.Round((distanceT + loggedUser.Speed), 2, MidpointRounding.AwayFromZero).ToString() + " m";
+                        Dr3C3.Text = Math.Round((distanceT - (loggedUser.Speed * 2)), 2, MidpointRounding.AwayFromZero).ToString() + " m";
 
 
 
                     // interakcja z użytkownikiem w zależności od odległości do punktów szczegulnych
                     bool danger = false;
 
-                    if (distanceT > 100.0d)
+                    if (Math.Round((distanceT - (loggedUser.Speed * 2)), 2, MidpointRounding.AwayFromZero) > 100.0d)
                     {
                         danger = CheckSecurityZone(loggedUser.Shengen);
 
@@ -717,13 +720,13 @@ namespace Bus_Management_System
 
 
                         // dojechano do strefy przeznaczenia
-                        if (loggedUser.DistanceT <= 15.0d)
+                        if (Math.Round((distanceT - (loggedUser.Speed * 2)), 2, MidpointRounding.AwayFromZero) <= 15.0d)
                         {
                             Dr3C3.Text = "OK!";
                         }
                         else
                         {
-                            Dr3C3.Text = loggedUser.DistanceT.ToString() + " m";
+                            Dr3C3.Text = Math.Round((distanceT - (loggedUser.Speed * 2)), 2, MidpointRounding.AwayFromZero).ToString() + " m";
                         }
                     }
                 }
@@ -749,13 +752,15 @@ namespace Bus_Management_System
                             predictedDistance = Math.Round(loggedUser.DistanceN, 2, MidpointRounding.AwayFromZero);
                         else
                         if (loggedUser.OldDistanceN > loggedUser.DistanceN)
-                            predictedDistance = Math.Round((loggedUser.DistanceN - loggedUser.Speed), 2, MidpointRounding.AwayFromZero);
+                            predictedDistance = Math.Round((loggedUser.DistanceN - (loggedUser.Speed * 2)), 2, MidpointRounding.AwayFromZero);
                         else
                         if (loggedUser.OldDistanceN < loggedUser.DistanceN)
-                            predictedDistance = Math.Round((loggedUser.DistanceN + loggedUser.Speed), 2, MidpointRounding.AwayFromZero);
+                            predictedDistance = Math.Round((loggedUser.DistanceN + (loggedUser.Speed * 2)), 2, MidpointRounding.AwayFromZero);
+
+                        loggedUser.PredictedDistance = predictedDistance;
 
                         // jeśli pojazd jadąc do shengen jest w pobliżu non shengen
-                        if (predictedDistance < 75.0d )
+                        if (predictedDistance < 75.0d  && predictedDistance  > 25.0d)
                         {
                             // w odległości mniejszej niż 75m 
                             loggedUser.Alert = 3;
@@ -763,10 +768,19 @@ namespace Bus_Management_System
                         }
                         else
                         // odległość mniejsza niż 25m, i prędkość mniejsza od 1,5 km/h
-                        if (predictedDistance <= 25.0d && loggedUser.Speed >= 0.43d)
+                        if (predictedDistance <= 25.0d)
                         {
-                            loggedUser.Alert = 1;
-                            danger = true;
+                            if (loggedUser.Speed <= 0.83d)
+                            {
+                                loggedUser.Alert = 1;
+                                danger = true;
+                            }
+                            else
+                                if (loggedUser.Speed > 0.83d)
+                            {
+                                loggedUser.Alert = 3;
+                                danger = true;
+                            }
                         }
                         else
                             danger = false;
@@ -778,24 +792,33 @@ namespace Bus_Management_System
                             predictedDistance = Math.Round(loggedUser.DistanceS, 2, MidpointRounding.AwayFromZero);
                         else
                         if (loggedUser.OldDistanceS > loggedUser.DistanceS)
-                            predictedDistance = Math.Round((loggedUser.DistanceS - loggedUser.Speed), 2, MidpointRounding.AwayFromZero);
+                            predictedDistance = Math.Round((loggedUser.DistanceS - (loggedUser.Speed * 2)), 2, MidpointRounding.AwayFromZero);
                         else
                         if (loggedUser.OldDistanceS < loggedUser.DistanceS)
-                            predictedDistance = Math.Round((loggedUser.DistanceS + loggedUser.Speed), 2, MidpointRounding.AwayFromZero);
+                            predictedDistance = Math.Round((loggedUser.DistanceS + (loggedUser.Speed * 2)), 2, MidpointRounding.AwayFromZero);
 
                         // jeśli pojazd jadąc do NonShengen jest w pobliżu Shengen
-                        if (predictedDistance < 75.0d)
+                        if (predictedDistance < 75.0d && predictedDistance > 25.0d)
                         {
-                            // w odległości mniejszej niż 60m 
+                            // w odległości mniejszej niż 75m 
                             loggedUser.Alert = 2;
                             danger = true;
                         }
                         else
                         // odległość mniejsza niż 25m, i prędkość mniejsza od 1,5 km/h
-                        if (predictedDistance <= 25.0d && loggedUser.Speed >= 0.43d)
+                        if (predictedDistance <= 25.0d)
                         {
-                            loggedUser.Alert = 1;
-                            danger = true;
+                            if (loggedUser.Speed <= 0.83d)
+                            {
+                                loggedUser.Alert = 1;
+                                danger = true;
+                            }
+                            else
+                                if (loggedUser.Speed > 0.83d)
+                            {
+                                loggedUser.Alert = 2;
+                                danger = true;
+                            }
                         }
                         else
                             danger = false;

@@ -436,58 +436,112 @@ namespace Bus_Management_System {
         protected global::System.Web.UI.WebControls.Label lblDim;
         
         /// <summary>
-        /// Kontrolka lb_LatOpis.
+        /// Kontrolka lb_distanceT.
         /// </summary>
         /// <remarks>
         /// Pole generowane automatycznie.
         /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lb_LatOpis;
+        protected global::System.Web.UI.WebControls.Label lb_distanceT;
         
         /// <summary>
-        /// Kontrolka lb_BusLatitude.
+        /// Kontrolka lb_BusDistanceT.
         /// </summary>
         /// <remarks>
         /// Pole generowane automatycznie.
         /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lb_BusLatitude;
+        protected global::System.Web.UI.WebControls.Label lb_BusDistanceT;
         
         /// <summary>
-        /// Kontrolka lb_LonOpis.
+        /// Kontrolka lb_oldDistanceT.
         /// </summary>
         /// <remarks>
         /// Pole generowane automatycznie.
         /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lb_LonOpis;
+        protected global::System.Web.UI.WebControls.Label lb_oldDistanceT;
         
         /// <summary>
-        /// Kontrolka lb_BusLongitude.
+        /// Kontrolka lb_OldBusDistanceT.
         /// </summary>
         /// <remarks>
         /// Pole generowane automatycznie.
         /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lb_BusLongitude;
+        protected global::System.Web.UI.WebControls.Label lb_OldBusDistanceT;
         
         /// <summary>
-        /// Kontrolka lb_HorAccOpis.
+        /// Kontrolka lb_distanceS.
         /// </summary>
         /// <remarks>
         /// Pole generowane automatycznie.
         /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lb_HorAccOpis;
+        protected global::System.Web.UI.WebControls.Label lb_distanceS;
         
         /// <summary>
-        /// Kontrolka lb_BusHorAcc.
+        /// Kontrolka lb_BusDistanceS.
         /// </summary>
         /// <remarks>
         /// Pole generowane automatycznie.
         /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lb_BusHorAcc;
+        protected global::System.Web.UI.WebControls.Label lb_BusDistanceS;
+        
+        /// <summary>
+        /// Kontrolka lb_oldDistanceS.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lb_oldDistanceS;
+        
+        /// <summary>
+        /// Kontrolka lb_OldBusDistanceS.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lb_OldBusDistanceS;
+        
+        /// <summary>
+        /// Kontrolka lb_distanceN.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lb_distanceN;
+        
+        /// <summary>
+        /// Kontrolka lb_BusDistanceN.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lb_BusDistanceN;
+        
+        /// <summary>
+        /// Kontrolka lb_oldDistanceN.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lb_oldDistanceN;
+        
+        /// <summary>
+        /// Kontrolka lb_OldBusDistanceN.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lb_OldBusDistanceN;
         
         /// <summary>
         /// Kontrolka lb_SpeedOpis.
@@ -506,6 +560,60 @@ namespace Bus_Management_System {
         /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lb_BusSpeed;
+        
+        /// <summary>
+        /// Kontrolka lb_predictedDistanceT.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lb_predictedDistanceT;
+        
+        /// <summary>
+        /// Kontrolka lb_BudPredictedDistanceT.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lb_BudPredictedDistanceT;
+        
+        /// <summary>
+        /// Kontrolka lb_predictedDistanceS.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lb_predictedDistanceS;
+        
+        /// <summary>
+        /// Kontrolka lb_BusPredictedDistanceS.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lb_BusPredictedDistanceS;
+        
+        /// <summary>
+        /// Kontrolka lb_predictedDistanceN.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lb_predictedDistanceN;
+        
+        /// <summary>
+        /// Kontrolka lb_BusPredictedDistanceN.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lb_BusPredictedDistanceN;
         
         /// <summary>
         /// Kontrolka lb_zalogowany.
