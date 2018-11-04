@@ -75,10 +75,7 @@
         public string StartLocLonDegree { get; set; }
 
 
-        public string geoLat { get; set; }
-        public string geoLon { get; set; }
-        public string geoAcc { get; set; }
-        public string geoSpee { get; set; }
+        public string LogFilePath { get; set; }
 
     }
 }

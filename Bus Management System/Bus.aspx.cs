@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Device.Location;
 using System.Globalization;
+using System.IO;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
@@ -35,9 +36,12 @@ namespace Bus_Management_System
 
             if (!IsPostBack)
             {
+
                 ScriptManager.RegisterClientScriptBlock(this, GetType(), "przeliczOdleglosc", "getLocation();", true);
 
                 MenuItemCollection menuItems = busMenu.Items;
+
+                
 
                 if (loggedUser != null)
                 {
@@ -46,6 +50,8 @@ namespace Bus_Management_System
 
                     // załadowanie danych do psnelu Operatora
                     BindDdlData();
+
+                    PrepareLogFile(DateTime.Now.ToString("yyyyMMdd_HH_mm_ss"));
                 }
             }
         }
@@ -69,7 +75,7 @@ namespace Bus_Management_System
             {
                 currentAccuracy = 0.0d;
             }
-            
+
 
             if (arrayIn[3] != "")
             {
@@ -182,6 +188,7 @@ namespace Bus_Management_System
             {
                 // dodanie wybranewgo autobusu do ciasteczka z operatorem
                 string bus = ddl_busSelect.SelectedItem.ToString();
+                loggedUser.Bus = bus;
                 cookie.Values["busNb"] = bus;
                 // i nadpisujemy ciasteczko
                 Response.Cookies.Add(cookie);
@@ -235,72 +242,72 @@ namespace Bus_Management_System
                 //int interval = loggedUser.Interval;
                 string bus = cookie.Values["busNb"].ToString();
 
-                    DataSet ds = bl.GetOperations(cookie.Values["busNb"].ToString());
+                DataSet ds = bl.GetOperations(cookie.Values["busNb"].ToString());
 
-                    // sprawdzenie, czy pojawiła się operacja
-                    if (ds.Tables[0].Rows.Count > 0)
-                    {
-                        int shengen = 0;
-                        string portName = "";
-                        string country = "";
+                // sprawdzenie, czy pojawiła się operacja
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    int shengen = 0;
+                    string portName = "";
+                    string country = "";
 
-                        DataSet pps = bl.GetPPS(ds.Tables[0].Rows[0].Field<int>("PPS"));
-                        DataSet gate = bl.GetGate(ds.Tables[0].Rows[0].Field<int>("Gate"));
+                    DataSet pps = bl.GetPPS(ds.Tables[0].Rows[0].Field<int>("PPS"));
+                    DataSet gate = bl.GetGate(ds.Tables[0].Rows[0].Field<int>("Gate"));
 
-                        loggedUser.Created = (ds.Tables[0].Rows[0].Field<DateTime>("Created")).ToString("HH:mm");
-                        loggedUser.Accepted = (ds.Tables[0].Rows[0].Field<DateTime>("Accepted")).ToString("HH:mm");
-                        loggedUser.StartLoad = (ds.Tables[0].Rows[0].Field<DateTime>("StartLoad")).ToString("HH:mm");
-                        loggedUser.StartDrive = (ds.Tables[0].Rows[0].Field<DateTime>("StartDrive")).ToString("HH:mm");
-                        loggedUser.StartUnload = (ds.Tables[0].Rows[0].Field<DateTime>("StartUnload")).ToString("HH:mm");
-                        loggedUser.EndOp = (ds.Tables[0].Rows[0].Field<DateTime>("EndOp")).ToString("HH:mm");
-                        if (loggedUser.Created != "00:00")
-                            operationStatus = 1;
-                        if (loggedUser.Accepted != "00:00")
-                            operationStatus = operationStatus + 1;
-                        if (loggedUser.StartLoad != "00:00")
-                            operationStatus = operationStatus + 1;
-                        if (loggedUser.StartDrive != "00:00")
-                            operationStatus = operationStatus + 1;
-                        if (loggedUser.StartUnload != "00:00")
-                            operationStatus = operationStatus + 1;
-                        if (loggedUser.EndOp != "00:00")
-                            operationStatus = 0;
+                    loggedUser.Created = (ds.Tables[0].Rows[0].Field<DateTime>("Created")).ToString("HH:mm");
+                    loggedUser.Accepted = (ds.Tables[0].Rows[0].Field<DateTime>("Accepted")).ToString("HH:mm");
+                    loggedUser.StartLoad = (ds.Tables[0].Rows[0].Field<DateTime>("StartLoad")).ToString("HH:mm");
+                    loggedUser.StartDrive = (ds.Tables[0].Rows[0].Field<DateTime>("StartDrive")).ToString("HH:mm");
+                    loggedUser.StartUnload = (ds.Tables[0].Rows[0].Field<DateTime>("StartUnload")).ToString("HH:mm");
+                    loggedUser.EndOp = (ds.Tables[0].Rows[0].Field<DateTime>("EndOp")).ToString("HH:mm");
+                    if (loggedUser.Created != "00:00")
+                        operationStatus = 1;
+                    if (loggedUser.Accepted != "00:00")
+                        operationStatus = operationStatus + 1;
+                    if (loggedUser.StartLoad != "00:00")
+                        operationStatus = operationStatus + 1;
+                    if (loggedUser.StartDrive != "00:00")
+                        operationStatus = operationStatus + 1;
+                    if (loggedUser.StartUnload != "00:00")
+                        operationStatus = operationStatus + 1;
+                    if (loggedUser.EndOp != "00:00")
+                        operationStatus = 0;
 
-                        loggedUser.Operation = ds.Tables[0].Rows[0].Field<int>("Operation");
-                        loggedUser.FlightNb = ds.Tables[0].Rows[0].Field<string>("FlightNb");
-                        loggedUser.Pax = ds.Tables[0].Rows[0].Field<int>("Pax").ToString();
-                        loggedUser.AirPort = bl.GetAirPort(ds.Tables[0].Rows[0].Field<int>("AirPort"), ref shengen, ref portName, ref country);
-                        loggedUser.Pps = pps.Tables[0].Rows[0].Field<string>("StationNb");
-                        loggedUser.PpsLat = Convert.ToDouble(pps.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
-                        loggedUser.PpsLon = Convert.ToDouble(pps.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
-                        loggedUser.Gate = gate.Tables[0].Rows[0].Field<string>("GateNb");
-                        loggedUser.GateLat = Convert.ToDouble(gate.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
-                        loggedUser.GateLon = Convert.ToDouble(gate.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
-                        loggedUser.RadioGate = ds.Tables[0].Rows[0].Field<string>("RadioGate").ToString();
-                        loggedUser.RadioNeon = ds.Tables[0].Rows[0].Field<string>("RadioNeon").ToString();
-                        loggedUser.GodzinaRozkladowa = (ds.Tables[0].Rows[0].Field<DateTime>("GodzinaRozkladowa")).ToString("HH:mm");
-                        loggedUser.Shengen = shengen;
-                        loggedUser.PortName = portName;
-                        loggedUser.Country = country;
+                    loggedUser.Operation = ds.Tables[0].Rows[0].Field<int>("Operation");
+                    loggedUser.FlightNb = ds.Tables[0].Rows[0].Field<string>("FlightNb");
+                    loggedUser.Pax = ds.Tables[0].Rows[0].Field<int>("Pax").ToString();
+                    loggedUser.AirPort = bl.GetAirPort(ds.Tables[0].Rows[0].Field<int>("AirPort"), ref shengen, ref portName, ref country);
+                    loggedUser.Pps = pps.Tables[0].Rows[0].Field<string>("StationNb");
+                    loggedUser.PpsLat = Convert.ToDouble(pps.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
+                    loggedUser.PpsLon = Convert.ToDouble(pps.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
+                    loggedUser.Gate = gate.Tables[0].Rows[0].Field<string>("GateNb");
+                    loggedUser.GateLat = Convert.ToDouble(gate.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
+                    loggedUser.GateLon = Convert.ToDouble(gate.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
+                    loggedUser.RadioGate = ds.Tables[0].Rows[0].Field<string>("RadioGate").ToString();
+                    loggedUser.RadioNeon = ds.Tables[0].Rows[0].Field<string>("RadioNeon").ToString();
+                    loggedUser.GodzinaRozkladowa = (ds.Tables[0].Rows[0].Field<DateTime>("GodzinaRozkladowa")).ToString("HH:mm");
+                    loggedUser.Shengen = shengen;
+                    loggedUser.PortName = portName;
+                    loggedUser.Country = country;
 
-                        loggedUser.OperationStatus = operationStatus;
+                    loggedUser.OperationStatus = operationStatus;
 
-                        /* operationStatus wartości możliwe:
-                        * 0 - brak zlecenia       <-
-                        * 1 - zlecenie utworzone    |
-                        * 2 - zlecenie przyjete     |
-                        * 3 - rozpoczęty załadunek  |
-                        * 4 - dowóz pasażerów       |
-                        * 5 - rozpoczęty wyładunek >|
-                        */
+                    /* operationStatus wartości możliwe:
+                    * 0 - brak zlecenia       <-
+                    * 1 - zlecenie utworzone    |
+                    * 2 - zlecenie przyjete     |
+                    * 3 - rozpoczęty załadunek  |
+                    * 4 - dowóz pasażerów       |
+                    * 5 - rozpoczęty wyładunek >|
+                    */
 
-                        SetButtonsStatus(operationStatus);
-                        InWorkBusControls(operationStatus);
-                    }
-                    else
-                    {
-                        IddleBusControls();
-                    }
+                    SetButtonsStatus(operationStatus);
+                    InWorkBusControls(operationStatus);
+                }
+                else
+                {
+                    IddleBusControls();
+                }
             }
             // "buss" cookie nie istnieje, wiedz na wszelki wypadek koniec sesji i wylogowanie
             else
@@ -324,6 +331,8 @@ namespace Bus_Management_System
             Dr2C3.Text = "T: " + Math.Round(loggedUser.DistanceT, 2, MidpointRounding.AwayFromZero).ToString();
             Dr2C4.Text = "N: " + Math.Round(loggedUser.DistanceN, 2, MidpointRounding.AwayFromZero).ToString();
 
+            SaveUserFieldsValues();
+
             //lb_BusLatitude.Text = loggedUser.geoLat;
             //lb_BusLongitude.Text = loggedUser.geoLon;
             //lb_BusHorAcc.Text = loggedUser.geoAcc;
@@ -339,19 +348,19 @@ namespace Bus_Management_System
 
             switch (alert)
             {
-                    // dojechałeś na miejsce
+                // dojechałeś na miejsce
                 case 0:
                     audioAlert = "";
                     break;
-                    // odległość mniejsza niż 10m w złej strefie
+                // odległość mniejsza niż 10m w złej strefie
                 case 1:
                     audioAlert = "/audio/alert.mp3";
                     break;
-                    // autobus znajduje sie w strefie bezpieczeństwa Shengen "Alert - to strefa SHENGEN"
+                // autobus znajduje sie w strefie bezpieczeństwa Shengen "Alert - to strefa SHENGEN"
                 case 2:
                     audioAlert = "/audio/w_s_z.mp3";
                     break;
-                    // autobus znajduje sie w strefie bezpieczeństwa Non Shengen "Alert - to strefa NON SHENGEN"
+                // autobus znajduje sie w strefie bezpieczeństwa Non Shengen "Alert - to strefa NON SHENGEN"
                 case 3:
                     audioAlert = "/audio/w_ns_z.mp3";
                     break;
@@ -566,7 +575,7 @@ namespace Bus_Management_System
                     if (distanceT > 15.0d)
                     {
                         // jesli poprzedni dystans do celu byl wiekszy (mniejszy) to
-                        Dr3C3.Text = Math.Round(loggedUser.DistanceT - (loggedUser.Speed * 2), 2, MidpointRounding.AwayFromZero).ToString() + " m";
+                        Dr3C3.Text = Math.Round(loggedUser.DistanceT - (loggedUser.Speed * 3), 2, MidpointRounding.AwayFromZero).ToString() + " m";
                         Dr3C3.Style.Add("color", "Violet");
                     }
                     else
@@ -663,14 +672,25 @@ namespace Bus_Management_System
                         Dr3C3.Text = distanceT.ToString() + " m";
                     // a jeśli były
                     else
-                        Dr3C3.Text = Math.Round((distanceT - (loggedUser.Speed * 2)), 2, MidpointRounding.AwayFromZero).ToString() + " m";
+                        if (loggedUser.OldDistanceT > loggedUser.DistanceT)
+                    {
+
+                        loggedUser.PredictedDistance = distanceT - (loggedUser.Speed * 3);
+                    }
+
+                    else
+                    {
+                        loggedUser.PredictedDistance = distanceT + (loggedUser.Speed * 3);
+                    }
+
+                    Dr3C3.Text = Math.Round(loggedUser.PredictedDistance, 2, MidpointRounding.AwayFromZero).ToString() + " m";
 
 
 
                     // interakcja z użytkownikiem w zależności od odległości do punktów szczegulnych
                     bool danger = false;
 
-                    if (Math.Round((distanceT - (loggedUser.Speed * 2)), 2, MidpointRounding.AwayFromZero) > 100.0d)
+                    if (distanceT != 0.0d && Math.Round(loggedUser.PredictedDistance, 2, MidpointRounding.AwayFromZero) > 100.0d)
                     {
                         danger = CheckSecurityZone(loggedUser.Shengen);
 
@@ -720,13 +740,13 @@ namespace Bus_Management_System
 
 
                         // dojechano do strefy przeznaczenia
-                        if (Math.Round((distanceT - (loggedUser.Speed * 2)), 2, MidpointRounding.AwayFromZero) <= 15.0d)
+                        if (Math.Round(loggedUser.PredictedDistance, 2, MidpointRounding.AwayFromZero) <= 15.0d)
                         {
                             Dr3C3.Text = "OK!";
                         }
                         else
                         {
-                            Dr3C3.Text = Math.Round((distanceT - (loggedUser.Speed * 2)), 2, MidpointRounding.AwayFromZero).ToString() + " m";
+                            Dr3C3.Text = Math.Round(loggedUser.PredictedDistance, 2, MidpointRounding.AwayFromZero).ToString() + " m";
                         }
                     }
                 }
@@ -748,19 +768,17 @@ namespace Bus_Management_System
             {
                 case 0:
                     {
-                        if (loggedUser.OldDistanceN == 0.0d)
+                        if (loggedUser.OldDistanceN == loggedUser.DistanceN)
                             predictedDistance = Math.Round(loggedUser.DistanceN, 2, MidpointRounding.AwayFromZero);
                         else
                         if (loggedUser.OldDistanceN > loggedUser.DistanceN)
-                            predictedDistance = Math.Round((loggedUser.DistanceN - (loggedUser.Speed * 2)), 2, MidpointRounding.AwayFromZero);
+                            predictedDistance = Math.Round((loggedUser.DistanceN - (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);
                         else
                         if (loggedUser.OldDistanceN < loggedUser.DistanceN)
-                            predictedDistance = Math.Round((loggedUser.DistanceN + (loggedUser.Speed * 2)), 2, MidpointRounding.AwayFromZero);
-
-                        loggedUser.PredictedDistance = predictedDistance;
+                            predictedDistance = Math.Round((loggedUser.DistanceN + (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);
 
                         // jeśli pojazd jadąc do shengen jest w pobliżu non shengen
-                        if (predictedDistance < 75.0d  && predictedDistance  > 25.0d)
+                        if (predictedDistance < 75.0d && predictedDistance > 25.0d)
                         {
                             // w odległości mniejszej niż 75m 
                             loggedUser.Alert = 3;
@@ -768,7 +786,7 @@ namespace Bus_Management_System
                         }
                         else
                         // odległość mniejsza niż 25m, i prędkość mniejsza od 1,5 km/h
-                        if (predictedDistance <= 25.0d)
+                        if (predictedDistance <= 25.0d && predictedDistance >= 0.0d)
                         {
                             if (loggedUser.Speed <= 0.83d)
                             {
@@ -788,14 +806,14 @@ namespace Bus_Management_System
                     break;
                 case 1:
                     {
-                        if (loggedUser.OldDistanceS == 0.0d)
+                        if (loggedUser.OldDistanceS == loggedUser.DistanceS)
                             predictedDistance = Math.Round(loggedUser.DistanceS, 2, MidpointRounding.AwayFromZero);
                         else
                         if (loggedUser.OldDistanceS > loggedUser.DistanceS)
-                            predictedDistance = Math.Round((loggedUser.DistanceS - (loggedUser.Speed * 2)), 2, MidpointRounding.AwayFromZero);
+                            predictedDistance = Math.Round((loggedUser.DistanceS - (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);
                         else
                         if (loggedUser.OldDistanceS < loggedUser.DistanceS)
-                            predictedDistance = Math.Round((loggedUser.DistanceS + (loggedUser.Speed * 2)), 2, MidpointRounding.AwayFromZero);
+                            predictedDistance = Math.Round((loggedUser.DistanceS + (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);
 
                         // jeśli pojazd jadąc do NonShengen jest w pobliżu Shengen
                         if (predictedDistance < 75.0d && predictedDistance > 25.0d)
@@ -879,18 +897,18 @@ namespace Bus_Management_System
             cmd.Parameters.AddWithValue("@accepted", DateTime.Now);
             dal.QueryExecution(cmd);
 
-            cookie.Values["operationStatus"]  = "2";
+            cookie.Values["operationStatus"] = "2";
             Response.Cookies.Add(cookie);
 
             string lat = "";
             string lon = "";
-            
+
             TranslateColToDegree(ref lat, ref lon);
 
             int operation = loggedUser.Operation;
 
             // nie no - trzeba pobrac te współrzędne do ciasteczka podczas tworzenia OpCookie
-            switch(operation)
+            switch (operation)
             {
                 case 1:
                     {
@@ -969,8 +987,88 @@ namespace Bus_Management_System
             double minutyLon = ((longitude - Math.Truncate(longitude) / 1) * 60);
             double sekundyLon = ((minutyLon - Math.Truncate(minutyLon) / 1) * 60);
 
-            lat = String.Format(Convert.ToString(Math.Truncate(latitude) + "° " +  + Math.Truncate(minutyLat) + "' " + Math.Truncate(sekundyLat) + "'' " + latitude_Kierunek));
+            lat = String.Format(Convert.ToString(Math.Truncate(latitude) + "° " + +Math.Truncate(minutyLat) + "' " + Math.Truncate(sekundyLat) + "'' " + latitude_Kierunek));
             lon = String.Format(Convert.ToString(Math.Truncate(longitude) + "° " + Math.Truncate(minutyLon) + "' " + Math.Truncate(sekundyLon) + "'' " + longitude_Kierunek));
         }
+
+
+        // przygotowanie i obrobka pliku tekstowego z logami operacji
+        private void PrepareLogFile(string data)
+        {
+            // tworzymy nazwę pliku ktory bedzie uzupelniany danymi
+            string dataLogic = Server.MapPath("~/logi/" + loggedUser.FirstName + "_" + loggedUser.LastName + "__" + data + ".txt");
+
+            FileStream fs = null;
+
+            if (!File.Exists(dataLogic))
+            {
+                using (fs = File.Create(dataLogic))
+                {
+                }
+            }
+            else
+            {
+                Response.Write("<script> alert('Błąd - ścieżki lub pliku') </script>");
+            }
+            // i dodajemy nazwe pliku do zmiennej sesyjnej
+            loggedUser.LogFilePath = dataLogic;
+        }
+        
+
+
+        // dodajemy do pliku log sesji dane z kontrolek
+        private void SaveUserFieldsValues()
+        {
+            string newLine = Environment.NewLine;
+            newLine += loggedUser.CurrentLat.ToString() + ", ";
+            newLine += loggedUser.CurrentLon.ToString() + ", ";
+            newLine += loggedUser.Speed.ToString() + ", ";
+            newLine += loggedUser.Accuracy.ToString() + ", ";
+            newLine += loggedUser.OldDistanceT.ToString() + ", ";
+            newLine += loggedUser.DistanceT.ToString() + ", ";
+            newLine += loggedUser.OldDistanceS.ToString() + ", ";
+            newLine += loggedUser.DistanceS.ToString() + ", ";
+            newLine += loggedUser.OldDistanceN.ToString() + ", ";
+            newLine += loggedUser.DistanceN.ToString() + ", ";
+            newLine += loggedUser.PredictedDistance.ToString() + ", ";
+
+            string dataLogic = loggedUser.LogFilePath;
+
+            if (File.Exists(dataLogic))
+            {
+                using (StreamWriter writer = new StreamWriter(loggedUser.LogFilePath, true))
+                {
+                    writer.WriteLine(newLine);
+                    writer.Close();
+                }
+            }    
+        }
+
+
+
+
+        //private void LogError(Exception ex)
+        //{
+        //    string message = string.Format("Time: {0}", DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt"));
+        //    message += Environment.NewLine;
+        //    message += "-----------------------------------------------------------";
+        //    message += Environment.NewLine;
+        //    message += string.Format("Message: {0}", ex.Message);
+        //    message += Environment.NewLine;
+        //    message += string.Format("StackTrace: {0}", ex.StackTrace);
+        //    message += Environment.NewLine;
+        //    message += string.Format("Source: {0}", ex.Source);
+        //    message += Environment.NewLine;
+        //    message += string.Format("TargetSite: {0}", ex.TargetSite.ToString());
+        //    message += Environment.NewLine;
+        //    message += "-----------------------------------------------------------";
+        //    message += Environment.NewLine;
+        //    string path = Server.MapPath("~/ErrorLog/ErrorLog.txt");
+        //    using (StreamWriter writer = new StreamWriter(path, true))
+        //    {
+        //        writer.WriteLine(message);
+        //        writer.Close();
+        //    }
+        //}
     }
 }

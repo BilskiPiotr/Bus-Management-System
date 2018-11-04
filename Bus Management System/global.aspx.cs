@@ -125,12 +125,7 @@ namespace Bus_Management_System
             BusCookie.Values["userId"] = sessionName;
             BusCookie.Values["Id"] = iD.ToString();
             BusCookie.Values["loginTime"] = loginDate.ToString();
-            BusCookie.Values["busNb"] = "";
-            BusCookie.Values["operationStatus"] = "0";
-            BusCookie.Values["interval"] = "0";
-
             // domyslnie cookie zaniknie po wyłączeniu przeglądarki
-            //BusCookie.Expires = DateTime.Now.AddHours(8);
             Response.Cookies.Add(BusCookie);
         }
 
