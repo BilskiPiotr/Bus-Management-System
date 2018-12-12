@@ -148,57 +148,28 @@
         height: 200px;
     }
 
-    .busTable80 
-    {
-        height: 80px;
+    .busTable1Row1 {
+        height: 25px;
         padding: 0;
     }
 
-    .busTable70
-    {
-        height: 70px;
-        padding: 0;
-    }
-
-    .busTable60 
-    {
-        height: 60px;
-        padding: 0;
-    }
-
-    .busTable55 
-    {
-        height: 55px;
-        padding: 0;
-    }
-
-    .busTable50 
-    {
-        height: 50px;
-        padding: 0;
-    }
-
-    .busTable40 
-    {
+    .busTable1Row2 {
         height: 40px;
         padding: 0;
     }
 
-    .busTable30 
-    {
-        height: 30px;
+    .busTable1Row3 {
+        height: 65px;
         padding: 0;
     }
 
-    .busTable20 
-    {
-        height: 20px;
+    .busTable1Row4 {
+        height: 40px;
         padding: 0;
     }
 
-    .busTable15
-    {
-        height: 15px;
+    .busTable1Row5 {
+        height: 58px;
         padding: 0;
     }
 }

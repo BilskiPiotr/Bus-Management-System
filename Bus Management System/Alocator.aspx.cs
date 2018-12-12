@@ -56,6 +56,10 @@ namespace Bus_Management_System
                     break;
                 case "2":
                     {
+                        if (Request.Cookies["Bus"] != null)
+                        {
+                            Response.Cookies["Bus"].Expires = DateTime.Now.AddDays(-1);
+                        }
                         Session.Abandon();
                         Response.Redirect("global.aspx");
                     }
@@ -166,7 +170,7 @@ namespace Bus_Management_System
             }
             catch
             {
-                Response.Write("<script> alert('Libia 209 - Błąd ładowania listy typów operacji') </script>");
+                Response.Write("<script> alert('Linia 173 - Błąd ładowania listy typów operacji') </script>");
             }
 
 
@@ -464,7 +468,8 @@ namespace Bus_Management_System
 
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("INSERT INTO Operations (Employee_Id, Operation, GodzinaRozkladowa, FlightNb, AirPort, Pax, Gate, PPS, Bus, RadioGate, RadioNeon, Created, Accepted, StartLoad, StartDrive, StartUnload, EndOp) " +
+                    int finished = 0;
+                    SqlCommand cmd = new SqlCommand("INSERT INTO Operations (Employee_Id, Operation, GodzinaRozkladowa, FlightNb, AirPort, Pax, Gate, PPS, Bus, RadioGate, RadioNeon, Created, Accepted, StartLoad, StartDrive, StartUnload, EndOp, Finished) " +
                                 "VALUES (" + 2 + ", " +
                                 "" + ddl_OperationAdd.SelectedValue + ", " +
                                 "'" + dt + "', " +
@@ -476,7 +481,7 @@ namespace Bus_Management_System
                                 "" + ddl_BusAdd.SelectedValue + ", " +
                                 "'" + tb_RadioGateAdd.Text + "', " +
                                 "'" + tb_RadioNeonAdd.Text + "', getdate()," +
-                                "'" + zeroDate + "', '" + zeroDate + "', '" + zeroDate + "', '" + zeroDate + "', '" + zeroDate + "')");
+                                "'" + zeroDate + "', '" + zeroDate + "', '" + zeroDate + "', '" + zeroDate + "', '" + zeroDate + "', '" + finished + "')");
                     dal.QueryExecution(cmd);
 
                     SqlCommand cmd1 = new SqlCommand("UPDATE Vehicles SET Work_Status = 1 WHERE VehicleNb = '" + bus + "' ");

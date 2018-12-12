@@ -51,6 +51,7 @@
 
 
         public int Alert { get; set; }
+        public int LoopTime { get; set; }
 
 
 

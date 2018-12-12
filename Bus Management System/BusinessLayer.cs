@@ -258,8 +258,9 @@ namespace Bus_Management_System
 
         public DataSet GetOperations(string bus)
         {
-            SqlCommand cmd = new SqlCommand("SELECT * FROM Operations WHERE Bus=(SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)");
+            SqlCommand cmd = new SqlCommand("SELECT * FROM Operations WHERE Bus=(SELECT Id FROM Vehicles WHERE VehicleNb = @busNb) AND Finished = @finished");
             cmd.Parameters.AddWithValue("@busNb", bus);
+            cmd.Parameters.AddWithValue("@finished", 0);
             DataSet ds = new DataSet();
             ds = dal.GetDataSet(cmd);
 

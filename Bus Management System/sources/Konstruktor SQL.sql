@@ -1,5 +1,6 @@
 ﻿/* Employee_InWorkNow - InWork (1) / None (0) */
 /* Employee_Priv - Admin (0) / Alocator (1) / Driver (2) */
+CREATE DATABASE piotrbilski_sysbusmanagement;
 
 USE piotrbilski_sysbusmanagement;
 
@@ -100,7 +101,8 @@ CREATE TABLE [dbo].[Operations]
 	[StartLoad]					DATETIME						NULL,
 	[StartDrive]				DATETIME						NULL,
 	[StartUnload]				DATETIME						NULL,
-	[EndOp]						DATETIME						NULL
+	[EndOp]						DATETIME						NULL,
+	[Finished]					INT								NOT NULL
 );
 
 
@@ -140,8 +142,8 @@ ALTER TABLE Vehicles_Status ADD CONSTRAINT UC_Vehicle_Status UNIQUE (Id);
 
 
 
-INSERT INTO [dbo].[OperationType] ([OpValue], [Operation]) VALUES (0, 'Przylot');
-INSERT INTO [dbo].[OperationType] ([OpValue], [Operation]) VALUES (1, 'Odlot');
+INSERT INTO [dbo].[OperationType] ([OpValue], [Operation]) VALUES (1, 'Przylot');
+INSERT INTO [dbo].[OperationType] ([OpValue], [Operation]) VALUES (2, 'Odlot');
 
 
 INSERT INTO [dbo].[Employees_Basic] ([Employee_CompanyId], [Employee_PESEL], [Employee_Imie], [Employee_Nazwisko], [Employee_Priv]) VALUES ('12345', '11111111111', 'Imie1', 'Nazwisko1', 0);
@@ -382,6 +384,7 @@ INSERT INTO [dbo].[AirPorts] ([IATA_Name], [Full_Name], [Country_Id]) VALUES ('P
 INSERT INTO [dbo].[AirPorts] ([IATA_Name], [Full_Name], [Country_Id]) VALUES ('PLQ', 'Palanga', 37);
 INSERT INTO [dbo].[AirPorts] ([IATA_Name], [Full_Name], [Country_Id]) VALUES ('PMI', 'Palma De Majorka', 23);
 INSERT INTO [dbo].[AirPorts] ([IATA_Name], [Full_Name], [Country_Id]) VALUES ('PMO', 'Palermo', 64);
+INSERT INTO [dbo].[AirPorts] ([IATA_Name], [Full_Name], [Country_Id]) VALUES ('POZ', 'Poznań', 47);
 INSERT INTO [dbo].[AirPorts] ([IATA_Name], [Full_Name], [Country_Id]) VALUES ('PRG', 'Praga', 13);
 INSERT INTO [dbo].[AirPorts] ([IATA_Name], [Full_Name], [Country_Id]) VALUES ('PSA', 'Pisa', 64);
 INSERT INTO [dbo].[AirPorts] ([IATA_Name], [Full_Name], [Country_Id]) VALUES ('REG', 'Regio Di Calabria', 64);
@@ -437,81 +440,81 @@ INSERT INTO [dbo].[AirPorts] ([IATA_Name], [Full_Name], [Country_Id]) VALUES ('Z
 
 
 /* Gates - Gates (1 - 45) / Shengen 1-4 (S1 - S4)  / Non Shengen (N1) */
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('1', '52.17308333333334', '20.97014333333333');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('2', '52.17308333333334', '20.97014333333333');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('3', '52.173235', '20.97002166666667');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('4', '52.173235', '20.97002166666667');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('5', '52.17343500000005', '20.96979666666667');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('6', '52.17343500000005', '20.96979666666667');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('7', '52.17384666666667', '20.96930500000002');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('8', '52.17384666666667', '20.96930500000002');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('9', '52.174175', '20.96917999999998');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('10', '52.174175', '20.96917999999998');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('11', '52.17441166666667', '20.96901666666667');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('12', '52.17441166666667', '20.96901666666667');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('13', '52.174455', '20.96865000000004');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('14', '52.174455', '20.96865000000004');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('15', '52.174355', '20.96837333333336');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('16', '52.174355', '20.96837333333336');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('17', '52.17421833333334', '20.96833999999998');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('18', '52.17421833333334', '20.96833999999998');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('19', '52.17376166666667', '20.968845');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('20', '52.17376166666667', '20.968845');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('21', '52.17315833333334', '20.96926000000000');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('22', '52.17315833333334', '20.96926000000000');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('23', '52.17254666666666', '20.96973333333338');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('24', '52.17254666666666', '20.96973333333338');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('25', '52.17167333333334', '20.97035833333333');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('26', '52.17167333333334', '20.97035833333333');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('27', '52.17134333333333', '20.970725');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('28', '52.17134333333333', '20.970725');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('29', '52.17094333333333', '20.97113000000002');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('30', '52.17094333333333', '20.97113000000002');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('31', '52.17018166666664', '20.97182833333333');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('32', '52.17018166666664', '20.97182833333333');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('33', '52.17005333333335', '20.97214333333333');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('34', '52.17005000000001', '20.97214333333333');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('35', '52.17011666666667', '20.97199333333333');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('36', '52.17009500000001', '20.97189166666667');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('37', '52.17009500000001', '20.97189166666667');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('38', '52.16946166666666', '20.972348333333335');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('39', '52.16946166666666', '20.972348333333335');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('40', '52.16919166666666', '20.972688333333334');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('41', '52.16919166666666', '20.972688333333334');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('42', '52.16887666666666', '20.972845');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('43', '52.16887666666666', '20.972845');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('44', '52.16811333333333', '20.97388');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('45', '52.16811333333333', '20.97388');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('S1', '52.17021166666667', '20.971659999999996');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('S2', '52.17021166666667', '20.971659999999996');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('S3', '52.17039166666667', '20.971601666666667');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('S4', '52.17039166666667', '20.971601666666667');
-INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('N1', '52.17296666666667', '20.969999999999995');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('1', '52.17311', '20.97006');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('2', '52.17311', '20.97006');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('3', '52.17295', '20.96978');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('4', '52.17295', '20.96978');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('5', '52.17330', '20.96977');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('6', '52.17330', '20.96977');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('7', '52.17376', '20.96921');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('8', '52.17376', '20.96921');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('9', '52.17370', '20.96977');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('10', '52.17370', '20.96977');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('11', '52.17441', '20.96888');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('12', '52.17441', '20.96888');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('13', '52.17469', '20.96857');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('14', '52.17469', '20.96857');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('15', '52.17447', '20.96819');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('16', '52.17447', '20.96819');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('17', '52.17415', '20.96838');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('18', '52.17415', '20.96838');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('19', '52.17369', '20.96887');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('20', '52.17369', '20.96887');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('21', '52.17321', '20.96936');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('22', '52.17321', '20.96936');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('23', '52.17255', '20.96996');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('24', '52.17255', '20.96996');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('25', '52.17178', '20.97950');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('26', '52.17178', '20.97950');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('27', '52.17132', '20.97100');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('28', '52.17132', '20.97100');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('29', '52.17082', '20.97134');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('30', '52.17082', '20.97134');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('31', '52.17032', '20.97174');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('32', '52.17032', '20.97174');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('33', '52.17023', '20.97189');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('34', '52.17016', '20.97204');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('35', '52.17009', '20.97218');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('36', '52.16935', '20.97258');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('37', '52.16935', '20.97258');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('38', '52.16957', '20.97133');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('39', '52.16957', '20.97133');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('40', '52.16901', '20.97289');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('41', '52.16901', '20.97289');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('42', '52.16884', '20.97298');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('43', '52.16884', '20.97298');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('44', '52.16847', '20.97344');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('45', '52.16847', '20.97344');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('S1', '52.17035', '20.97174');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('S2', '52.17035', '20.97174');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('S3', '52.17050', '20.97148');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('S4', '52.17050', '20.97148');
+INSERT INTO [dbo].[Gates] ([GateNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('N1', '52.17224', '20.97006');
 
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('1','52.17301666666667','20.97113833333336');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('2','52.17346666666667','20.970875');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('3','52.17375166666675','20.97058833333332');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('4','52.17409999999996','20.97039166666668');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('5','52.17449833333333','20.96992000000002');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('6','52.174805','20.9696316666666');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('7','52.17513166666666','20.96932333333333');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('8','52.17535666666666','20.96904499999998');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('9','52.175043333333333','20.96830333333333');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('10','52.174491666666667','20.96743166666666');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('10L','52.174815','20.96766833333336');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('10R','52.174614999999996','20.96759333333337');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('11','52.173911666666666','20.96774000000003');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('12','52.173783333333326','20.96786000000005');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('13','52.173311666666666','20.96840833333333');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('13L','52.17345','20.96813166666668');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('13R','52.17318','20.96853666666667');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('14','52.172659999999999','20.96888666666667');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('14L','52.17279','20.96862166666664');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('14R','52.172546666666666','20.96899500000003');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('15','52.172083333333333','20.96953333333334');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('15L','52.172226666666667','20.96921833333334');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('15R','52.171988333333334','20.96966166666667');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('16','52.171450000000001','20.970035');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('1','52.17316','20.97120');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('2','52.17346','20.97100');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('3','52.1738','20.97071');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('4','52.17414','20.97036');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('5','52.17449','20.96997');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('6','52.17481','20.96971');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('7','52.17514','20.96943');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('8','52.17547','20.96925');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('9','52.17501','20.96815');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('10','52.17471','20.96739');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('10L','52.17483','20.96759');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('10R','52.17453','20.96724');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('11','52.17389','20.96759');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('12','52.17370','20.96774');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('13','52.17326','20.96821');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('13L','52.17333','20.96802');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('13R','52.17331','20.96873');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('14','52.17265','20.96882');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('14L','52.17281','20.96857');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('14R','52.17250','20.96890');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('15','52.17206','20.96945');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('15L','52.17217','20.96909');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('15R','52.17193','20.96959');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('16','52.17149','20.97000');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('17','52.170989999999996','20.97057166666668');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('18','52.1704','20.97112833333333');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('19','52.170048333333334','20.97128');
@@ -520,31 +523,39 @@ INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALU
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('22','52.168768333333334','20.97246833333333');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('23','52.168526666666667','20.972716666666663');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('24','52.168166666666667','20.973066666666668');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('31','52.173788333333334','20.965306666666667');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('31B','52.174031666666664','20.965166666666665');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('31A','52.17371','20.96538');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('31B','52.17377','20.96538');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('32','52.173388333333335','20.965510000000002');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('33','52.173101666666666','20.965756666666667');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('34','52.172836666666667','20.9660316666666662');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('35','52.172606666666666','20.9663366666666667');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('36','52.172029999999999','20.9668233333333333');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('36L','52.17218','20.9666199999999995');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('36R','52.171941666666666','20.966925');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('34','52.17282','20.96613');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('35','52.17283','20.96648');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('36','52.17206','20.96681');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('36L','52.17223','20.96640');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('36R','52.17196','20.96694');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('37','52.170809999999996','20.9678933333333336');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('37L','52.170944999999996','20.9678000000000004');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('37R','52.170668333333333','20.968');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('39','52.169999999999995','20.9685316666666664');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('40','52.169798333333333','20.9688116666666667');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('41','52.169380000000004','20.9691116666666663');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('41','52.16939','20.96907');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('42','52.169095','20.969373333333333');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('43','52.168826666666667','20.969636666666663');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('43B','52.168544999999995','20.969853333333337');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('44','52.168124999999996','20.970485');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('45','52.167314999999995','20.971368333333333');
 INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('46','52.166484999999994','20.973630000000004');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('46L','52.1666','20.973386666666667');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('46R','52.165445','20.973991666666667');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('47','52.166259999999994','20.974708333333336');
-INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('48','52.166145000000001','20.975101666666667');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('46L','52.16653','20.97346');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('46R','52.16650','20.97381');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('47','52.16624','20.97460');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('48','52.16605','20.97507');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('91','52.17650','20.96808');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('92','52.17718','20.96775');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('93','52.17746','20.96747');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('94','52.17776','20.96719');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('95','52.17683','20.96631');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('96','52.17661','20.96644');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('97','52.17616','20.96680');
+INSERT INTO [dbo].[Stations] ([StationNb], [GPS_Latitude], [GPS_Longitude]) VALUES ('98','52.17761','20.96633');
 
 INSERT INTO [dbo].[Operations] ([Employee_Id], [Operation], [FlightNb], [Pax], [AirPort], [PPS], [Gate], [Bus], [RadioGate], [RadioNeon], [Created]) VALUES (2, 1, 'EN671', '121', 65, 28, 13, 7, '612', '377', '2018-09-17 09:11:12');
 INSERT INTO [dbo].[Operations] ([Employee_Id], [Operation], [FlightNb], [Pax], [AirPort], [PPS], [Gate], [Bus], [RadioGate], [RadioNeon], [Created]) VALUES (3, 2, 'LO8991', '97', 26, 11, 17, 13, '891', '443', '2018-09-17 09:17:26');

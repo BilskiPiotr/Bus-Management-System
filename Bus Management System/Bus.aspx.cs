@@ -30,9 +30,13 @@ namespace Bus_Management_System
                 userId = Convert.ToString(Request.Cookies["Bus"].Values["userId"]);
             }
             else
+            {
                 Response.Redirect("global.aspx");
+            }
+                
 
             loggedUser = (User)Session[userId];
+            SetButtonsStatus(loggedUser.OperationStatus);
 
             if (!IsPostBack)
             {
@@ -138,7 +142,10 @@ namespace Bus_Management_System
                         HttpCookie cookie = Request.Cookies["Bus"];
                         if (cookie != null)
                         {
-                            bl.UserLogOut(cookie);
+                            if (Request.Cookies["Bus"] != null)
+                            {
+                                Response.Cookies["Bus"].Expires = DateTime.Now.AddDays(-1);
+                            }
                             Session.Abandon();
                             Response.Redirect("global.aspx");
                         }
@@ -242,101 +249,103 @@ namespace Bus_Management_System
                 //int interval = loggedUser.Interval;
                 string bus = cookie.Values["busNb"].ToString();
 
-                DataSet ds = bl.GetOperations(cookie.Values["busNb"].ToString());
 
-                // sprawdzenie, czy pojawiła się operacja
-                if (ds.Tables[0].Rows.Count > 0)
+                if (operationStatus == 0)
                 {
-                    int shengen = 0;
-                    string portName = "";
-                    string country = "";
+                    DataSet ds = bl.GetOperations(cookie.Values["busNb"].ToString());
 
-                    DataSet pps = bl.GetPPS(ds.Tables[0].Rows[0].Field<int>("PPS"));
-                    DataSet gate = bl.GetGate(ds.Tables[0].Rows[0].Field<int>("Gate"));
+                    // sprawdzenie, czy pojawiła się operacja
+                    if (ds.Tables[0].Rows.Count > 0)
+                    {
+                        int shengen = 0;
+                        string portName = "";
+                        string country = "";
 
-                    loggedUser.Created = (ds.Tables[0].Rows[0].Field<DateTime>("Created")).ToString("HH:mm");
-                    loggedUser.Accepted = (ds.Tables[0].Rows[0].Field<DateTime>("Accepted")).ToString("HH:mm");
-                    loggedUser.StartLoad = (ds.Tables[0].Rows[0].Field<DateTime>("StartLoad")).ToString("HH:mm");
-                    loggedUser.StartDrive = (ds.Tables[0].Rows[0].Field<DateTime>("StartDrive")).ToString("HH:mm");
-                    loggedUser.StartUnload = (ds.Tables[0].Rows[0].Field<DateTime>("StartUnload")).ToString("HH:mm");
-                    loggedUser.EndOp = (ds.Tables[0].Rows[0].Field<DateTime>("EndOp")).ToString("HH:mm");
-                    if (loggedUser.Created != "00:00")
-                        operationStatus = 1;
-                    if (loggedUser.Accepted != "00:00")
-                        operationStatus = operationStatus + 1;
-                    if (loggedUser.StartLoad != "00:00")
-                        operationStatus = operationStatus + 1;
-                    if (loggedUser.StartDrive != "00:00")
-                        operationStatus = operationStatus + 1;
-                    if (loggedUser.StartUnload != "00:00")
-                        operationStatus = operationStatus + 1;
-                    if (loggedUser.EndOp != "00:00")
-                        operationStatus = 0;
+                        DataSet pps = bl.GetPPS(ds.Tables[0].Rows[0].Field<int>("PPS"));
+                        DataSet gate = bl.GetGate(ds.Tables[0].Rows[0].Field<int>("Gate"));
 
-                    loggedUser.Operation = ds.Tables[0].Rows[0].Field<int>("Operation");
-                    loggedUser.FlightNb = ds.Tables[0].Rows[0].Field<string>("FlightNb");
-                    loggedUser.Pax = ds.Tables[0].Rows[0].Field<int>("Pax").ToString();
-                    loggedUser.AirPort = bl.GetAirPort(ds.Tables[0].Rows[0].Field<int>("AirPort"), ref shengen, ref portName, ref country);
-                    loggedUser.Pps = pps.Tables[0].Rows[0].Field<string>("StationNb");
-                    loggedUser.PpsLat = Convert.ToDouble(pps.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
-                    loggedUser.PpsLon = Convert.ToDouble(pps.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
-                    loggedUser.Gate = gate.Tables[0].Rows[0].Field<string>("GateNb");
-                    loggedUser.GateLat = Convert.ToDouble(gate.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
-                    loggedUser.GateLon = Convert.ToDouble(gate.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
-                    loggedUser.RadioGate = ds.Tables[0].Rows[0].Field<string>("RadioGate").ToString();
-                    loggedUser.RadioNeon = ds.Tables[0].Rows[0].Field<string>("RadioNeon").ToString();
-                    loggedUser.GodzinaRozkladowa = (ds.Tables[0].Rows[0].Field<DateTime>("GodzinaRozkladowa")).ToString("HH:mm");
-                    loggedUser.Shengen = shengen;
-                    loggedUser.PortName = portName;
-                    loggedUser.Country = country;
+                        loggedUser.Created = (ds.Tables[0].Rows[0].Field<DateTime>("Created")).ToString("HH:mm");
+                        loggedUser.Accepted = (ds.Tables[0].Rows[0].Field<DateTime>("Accepted")).ToString("HH:mm");
+                        loggedUser.StartLoad = (ds.Tables[0].Rows[0].Field<DateTime>("StartLoad")).ToString("HH:mm");
+                        loggedUser.StartDrive = (ds.Tables[0].Rows[0].Field<DateTime>("StartDrive")).ToString("HH:mm");
+                        loggedUser.StartUnload = (ds.Tables[0].Rows[0].Field<DateTime>("StartUnload")).ToString("HH:mm");
+                        loggedUser.EndOp = (ds.Tables[0].Rows[0].Field<DateTime>("EndOp")).ToString("HH:mm");
+                        if (loggedUser.Created != "00:00")
+                            operationStatus = 1;
+                        if (loggedUser.Accepted != "00:00")
+                            operationStatus = operationStatus + 1;
+                        if (loggedUser.StartLoad != "00:00")
+                            operationStatus = operationStatus + 1;
+                        if (loggedUser.StartDrive != "00:00")
+                            operationStatus = operationStatus + 1;
+                        if (loggedUser.StartUnload != "00:00")
+                            operationStatus = operationStatus + 1;
+                        if (loggedUser.EndOp != "00:00")
+                            operationStatus = 0;
 
-                    loggedUser.OperationStatus = operationStatus;
+                        loggedUser.Operation = ds.Tables[0].Rows[0].Field<int>("Operation");
+                        loggedUser.FlightNb = ds.Tables[0].Rows[0].Field<string>("FlightNb");
+                        loggedUser.Pax = ds.Tables[0].Rows[0].Field<int>("Pax").ToString();
+                        loggedUser.AirPort = bl.GetAirPort(ds.Tables[0].Rows[0].Field<int>("AirPort"), ref shengen, ref portName, ref country);
+                        loggedUser.Pps = pps.Tables[0].Rows[0].Field<string>("StationNb");
+                        loggedUser.PpsLat = Convert.ToDouble(pps.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
+                        loggedUser.PpsLon = Convert.ToDouble(pps.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
+                        loggedUser.Gate = gate.Tables[0].Rows[0].Field<string>("GateNb");
+                        loggedUser.GateLat = Convert.ToDouble(gate.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
+                        loggedUser.GateLon = Convert.ToDouble(gate.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
+                        loggedUser.RadioGate = ds.Tables[0].Rows[0].Field<string>("RadioGate").ToString();
+                        loggedUser.RadioNeon = ds.Tables[0].Rows[0].Field<string>("RadioNeon").ToString();
+                        loggedUser.GodzinaRozkladowa = (ds.Tables[0].Rows[0].Field<DateTime>("GodzinaRozkladowa")).ToString("HH:mm");
+                        loggedUser.Shengen = shengen;
+                        loggedUser.PortName = portName;
+                        loggedUser.Country = country;
 
-                    /* operationStatus wartości możliwe:
-                    * 0 - brak zlecenia       <-
-                    * 1 - zlecenie utworzone    |
-                    * 2 - zlecenie przyjete     |
-                    * 3 - rozpoczęty załadunek  |
-                    * 4 - dowóz pasażerów       |
-                    * 5 - rozpoczęty wyładunek >|
-                    */
+                        loggedUser.OperationStatus = operationStatus;
 
-                    SetButtonsStatus(operationStatus);
-                    InWorkBusControls(operationStatus);
+                        /* operationStatus wartości możliwe:
+                        * 0 - brak zlecenia       <-
+                        * 1 - zlecenie utworzone    |
+                        * 2 - zlecenie przyjete     |
+                        * 3 - rozpoczęty załadunek  |
+                        * 4 - dowóz pasażerów       |
+                        * 5 - rozpoczęty wyładunek >|
+                        */
+
+                        /*SetButtonsStatus(operationStatus)*/
+                        
+                    }
+                    else
+                    {
+                        IddleBusControls();
+                    }
                 }
-                else
-                {
-                    IddleBusControls();
-                }
+                //else
+                InWorkBusControls(operationStatus);
             }
             // "buss" cookie nie istnieje, wiedz na wszelki wypadek koniec sesji i wylogowanie
             else
             {
                 // wylogować użytkownika zapisanego w sesji oraz zwolnic BUS
+                if (Request.Cookies["Bus"] != null)
+                {
+                    Response.Cookies["Bus"].Expires = DateTime.Now.AddDays(-1);
+                }
                 Session.Abandon();
                 Response.Redirect("global.aspx");
             }
 
-
-            // narazie na stałe wybranie dzwieku nr 1 dla alert
-            //loggedUser.Alert = 1;
             // sprawdzenie stanu alertu, i ewentualne odtworzenie go
             BusAlert(loggedUser.Alert);
 
             stop = Environment.TickCount & Int32.MaxValue;
 
-            int czas = stop - start;
+            loggedUser.LoopTime = stop - start;
 
-            Dr2C2.Text = "S: " + Math.Round(loggedUser.DistanceS, 2, MidpointRounding.AwayFromZero).ToString();
-            Dr2C3.Text = "T: " + Math.Round(loggedUser.DistanceT, 2, MidpointRounding.AwayFromZero).ToString();
-            Dr2C4.Text = "N: " + Math.Round(loggedUser.DistanceN, 2, MidpointRounding.AwayFromZero).ToString();
+            //Dr2C2.Text = "S: " + Math.Round(loggedUser.DistanceS, 2, MidpointRounding.AwayFromZero).ToString();
+            //Dr2C3.Text = "T: " + Math.Round(loggedUser.DistanceT, 2, MidpointRounding.AwayFromZero).ToString();
+            //Dr2C4.Text = "N: " + Math.Round(loggedUser.DistanceN, 2, MidpointRounding.AwayFromZero).ToString();
 
             SaveUserFieldsValues();
-
-            //lb_BusLatitude.Text = loggedUser.geoLat;
-            //lb_BusLongitude.Text = loggedUser.geoLon;
-            //lb_BusHorAcc.Text = loggedUser.geoAcc;
-            //lb_BusSpeed.Text = loggedUser.geoSpee;
         }
 
 
@@ -352,7 +361,7 @@ namespace Bus_Management_System
                 case 0:
                     audioAlert = "";
                     break;
-                // odległość mniejsza niż 10m w złej strefie
+                // odległość mniejsza niż 20m dla non shengen i 40m dla shengen w złej strefie
                 case 1:
                     audioAlert = "/audio/alert.mp3";
                     break;
@@ -378,21 +387,31 @@ namespace Bus_Management_System
         // ustawienie kolorów aktywnych dla wszystrkich przycisków na stronie bus
         private void InWorkBusControls(int operationStatus)
         {
-            int operation = bl.GetOperations(loggedUser.Operation);
-            int shengen = loggedUser.Shengen;
-
-            if (operationStatus == 1)
-                GreyScreen(operation, shengen);
-            else
+            if (operationStatus !=0)
             {
-                switch (operation)
+                //int operation = bl.GetOperations(loggedUser.Operation);
+                int shengen = loggedUser.Shengen;
+
+                if (operationStatus == 1)
                 {
-                    case 0:
-                        Przylot(shengen);
-                        break;
-                    case 1:
-                        Odlot(shengen);
-                        break;
+                    GreyScreen(loggedUser.Operation, shengen);
+                }
+                else
+                //    if (operationStatus == 3)
+                //{
+                //    DisplayWork(operation, shengen);
+                //}
+                //else
+                {
+                    switch (loggedUser.Operation)
+                    {
+                        case 1:
+                            Przylot(shengen);
+                            break;
+                        case 2:
+                            Odlot(shengen);
+                            break;
+                    }
                 }
             }
         }
@@ -401,68 +420,159 @@ namespace Bus_Management_System
 
         private void SetButtonsStatus(int operationStatus)
         {
+            switch (operationStatus)
+            {
+                case 0:
+                    break;
+                case 1:
+                    {
+                        busAccept.Style.Add("background-color", "#1a993d");
+                        busAccept.Click += new EventHandler(BusAccept_Click);
+                    }
+                    break;
+                case 2:
+                    {
+                        busAccept.Style.Add("background-color", "#a63d40");
+                        busAccept.Click -= new EventHandler(BusAccept_Click);
+                        busStartLoad.Style.Add("background-color", "#1a993d");
+                        busStartLoad.Click += new EventHandler(BusStartLoad_Click);
+                        busMINEtable.Visible = false;
+                        busDriveTable.Visible = true;
+                    }
+                    break;
+                case 3:
+                    {
+                        busAccept.Style.Add("background-color", "#a63d40");
+                        busStartLoad.Style.Add("background-color", "#a63d40");
+                        busStartLoad.Click -= new EventHandler(BusStartLoad_Click);
+                        busStartDrive.Style.Add("background-color", "#1a993d");
+                        busStartDrive.Click += new EventHandler(BusStartDrive_Click);
+                        busMINEtable.Visible = true;
+                        busDriveTable.Visible = false;
+                    }
+                    break;
+                case 4:
+                    {
+                        busAccept.Style.Add("background-color", "#a63d40");
+                        busStartLoad.Style.Add("background-color", "#a63d40");
+                        busStartDrive.Style.Add("background-color", "#a63d40");
+                        busStartDrive.Click -= new EventHandler(BusStartDrive_Click);
+                        busStartUnload.Style.Add("background-color", "#1a993d");
+                        busStartUnload.Click += new EventHandler(BusStartUnload_Click);
+                        busMINEtable.Visible = false;
+                        busDriveTable.Visible = true;
+                    }
+                    break;
+                case 5:
+                    {
+                        busAccept.Style.Add("background-color", "#a63d40");
+                        busStartLoad.Style.Add("background-color", "#a63d40");
+                        busStartDrive.Style.Add("background-color", "#a63d40");
+                        busStartUnload.Style.Add("background-color", "#a63d40");
+                        busStartUnload.Click -= new EventHandler(BusStartUnload_Click);
+                        busEndOp.Style.Add("background-color", "#1a993d");
+                        busEndOp.Click += new EventHandler(BusEndOp_Click);
+                        busMINEtable.Visible = true;
+                        busDriveTable.Visible = false;
+                    }
+                    break;
+                case 6:
+                    {
+                        loggedUser.OperationStatus = 0;
+                        busEndOp.Click -= new EventHandler(BusEndOp_Click);
+                        busAccept.Style.Add("background-color", "Silver");
+                        busStartLoad.Style.Add("background-color", "Silver");
+                        busStartDrive.Style.Add("background-color", "Silver");
+                        busStartUnload.Style.Add("background-color", "Silver");
+                        busEndOp.Style.Add("background-color", "Silver");
+                    }
+                    break;
+                default:
+                    break;
+            }
 
-            if (operationStatus == 1)
-            {
-                busAccept.Style.Add("background-color", "#1a993d");
-                busAccept.Enabled = true;
-            }
-            else
-                if (operationStatus == 2)
-            {
-                busAccept.Style.Add("background-color", "#a63d40");
-                busAccept.Enabled = false;
-                busStartLoad.Style.Add("background-color", "#1a993d");
-                busStartLoad.Enabled = true;
-                busMINEtable.Visible = false;
-                busDriveTable.Visible = true;
+            // operacja utworzona i przyznana, ale jeszcze nie zaakceptowana
+            //if (operationStatus == 1)
+            //{
+            //    busAccept.Style.Add("background-color", "#1a993d");
+            //    //busAccept.Attributes.Add("OnClick", "return BusAccept_Click(this);");
+            //    busAccept.Click += new EventHandler(BusAccept_Click);
+            //    //busAccept.Enabled = true;
+            //}
+            //else
+            //    if (operationStatus == 2)
+            //{
+            //    busAccept.Style.Add("background-color", "#a63d40");
+            //    busAccept.Click -= new EventHandler(BusAccept_Click);
+            //    //busAccept.Enabled = false;
+            //    busStartLoad.Style.Add("background-color", "#1a993d");
+            //    busStartLoad.Click += new EventHandler(BusStartLoad_Click);
+            //    //busStartLoad.Enabled = true;
+            //    busMINEtable.Visible = false;
+            //    busDriveTable.Visible = true;
 
-            }
-            else
-                if (operationStatus == 3)
-            {
-                busStartLoad.Style.Add("background-color", "#a63d40");
-                busStartLoad.Enabled = false;
-                busStartDrive.Style.Add("background-color", "#1a993d");
-                busStartDrive.Enabled = true;
-                busMINEtable.Visible = true;
-                busDriveTable.Visible = false;
-            }
-            else
-                if (operationStatus == 4)
-            {
-                busStartDrive.Style.Add("background-color", "#a63d40");
-                busStartDrive.Enabled = false;
-                busStartUnload.Style.Add("background-color", "#1a993d");
-                busStartUnload.Enabled = true;
-                busMINEtable.Visible = false;
-                busDriveTable.Visible = true;
-            }
-            else
-                if (operationStatus == 5)
-            {
-                busStartUnload.Style.Add("background-color", "#a63d40");
-                busStartUnload.Enabled = false;
-                busEndOp.Style.Add("background-color", "#1a993d");
-                busEndOp.Enabled = true;
-                busMINEtable.Visible = true;
-                busDriveTable.Visible = false;
-            }
-            else
-            {
-                busAccept.Style.Add("background-color", "#a63d40");
-                busAccept.Enabled = false;
-                busStartLoad.Style.Add("background-color", "#a63d40");
-                busStartLoad.Enabled = false;
-                busStartDrive.Style.Add("background-color", "#a63d40");
-                busStartDrive.Enabled = false;
-                busStartUnload.Style.Add("background-color", "#a63d40");
-                busStartUnload.Enabled = false;
-                busEndOp.Style.Add("background-color", "#a63d40");
-                busEndOp.Enabled = false;
-                busMINEtable.Visible = true;
-                busDriveTable.Visible = false;
-            }
+            //}
+            //else
+            //    if (operationStatus == 3)
+            //{
+            //    busAccept.Style.Add("background-color", "#a63d40");
+            //    //busAccept.Enabled = false;
+            //    busStartLoad.Style.Add("background-color", "#a63d40");
+            //    busStartLoad.Click -= new EventHandler(BusStartLoad_Click);
+            //    //busStartLoad.Enabled = false;
+            //    busStartDrive.Style.Add("background-color", "#1a993d");
+            //    busStartDrive.Click += new EventHandler(BusStartDrive_Click);
+            //    //busStartDrive.Enabled = true;
+            //    busMINEtable.Visible = true;
+            //    busDriveTable.Visible = false;
+            //}
+            //else
+            //    if (operationStatus == 4)
+            //{
+                //busAccept.Style.Add("background-color", "#a63d40");
+                //busStartLoad.Style.Add("background-color", "#a63d40");
+                //busStartDrive.Style.Add("background-color", "#a63d40");
+                //busStartDrive.Click -= new EventHandler(BusStartDrive_Click);
+                ////busStartDrive.Enabled = false;
+                //busStartUnload.Style.Add("background-color", "#1a993d");
+                //busStartUnload.Click += new EventHandler(BusStartUnload_Click);
+                ////busStartUnload.Enabled = true;
+                //busMINEtable.Visible = false;
+                //busDriveTable.Visible = true;
+            //}
+            //else
+            //    if (operationStatus == 5)
+            //{
+            //    busAccept.Style.Add("background-color", "#a63d40");
+            //    busStartLoad.Style.Add("background-color", "#a63d40");
+            //    busStartDrive.Style.Add("background-color", "#a63d40");
+            //    busStartUnload.Style.Add("background-color", "#a63d40");
+            //    busStartUnload.Click -= new EventHandler(BusStartUnload_Click);
+            //    //busStartUnload.Enabled = false;
+            //    busEndOp.Style.Add("background-color", "#1a993d");
+            //    busEndOp.Click += new EventHandler(BusEndOp_Click);
+            //    //busEndOp.Enabled = true;
+            //    busMINEtable.Visible = true;
+            //    busDriveTable.Visible = false;
+            //}
+            //else
+            //if (operationStatus == 0)
+            //    return;
+            //else
+            //{
+            //    busAccept.Style.Add("background-color", "#a63d40");
+            //    busAccept.Enabled = false;
+            //    busStartLoad.Style.Add("background-color", "#a63d40");
+            //    busStartLoad.Enabled = false;
+            //    busStartDrive.Style.Add("background-color", "#a63d40");
+            //    busStartDrive.Enabled = false;
+            //    busStartUnload.Style.Add("background-color", "#a63d40");
+            //    busStartUnload.Enabled = false;
+            //    busEndOp.Style.Add("background-color", "#a63d40");
+            //    busEndOp.Enabled = false;
+            //    busMINEtable.Visible = true;
+            //    busDriveTable.Visible = false;
+            //}
         }
 
 
@@ -520,23 +630,58 @@ namespace Bus_Management_System
             R5C3.Style.Add("color", "Grey");
         }
 
-        private void Odlot(int shengen)
-        {
-            HttpCookie cookie = Request.Cookies["Bus"];
 
-            if (busMINEtable.Visible == true)
+        private void DisplayWork(int operation, int shengen)
+        {
+            if (operation == 1)
             {
                 R1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sn.png");
-                R1C2.Style.Add("background-repeat", "no-repeat");
-                R1C2.Style.Add("background-size", "100% 100%");
                 R1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sn.png");
-                R1C4.Style.Add("background-repeat", "no-repeat");
-                R1C4.Style.Add("background-size", "100% 100%");
-                R4C2.Text = "WAW";
-                R4C4.Text = "";
-                R5C3.Text = "";
+                R4C2.Text = loggedUser.Gate;
+                R4C4.Text = loggedUser.Pps;
+                R1C3.Style.Add("color", "DarkBlue");
+                R5C3.Style.Add("color", "DarkBlue");
             }
             else
+            {
+                if (shengen == 0)
+                {
+                    R1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sz.png");
+                    R1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sz.png");
+                    R1C3.Style.Add("color", "Green");
+                    R5C3.Style.Add("color", "Green");
+                    R5C3.Text = "SHENGEN";
+                }
+                else
+                {
+                    R1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sc.png");
+                    R1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sc.png");
+                    R1C3.Style.Add("color", "Red");
+                    R5C3.Style.Add("color", "Red");
+                    R5C3.Text = "NON SHENGEN";
+                }
+                R4C2.Text = loggedUser.Pps;
+                R4C4.Text = loggedUser.Gate;
+            }
+
+            R1C3.Text = loggedUser.AirPort;
+
+
+            R1C2.Style.Add("background-repeat", "no-repeat");
+            R1C4.Style.Add("background-repeat", "no-repeat");
+            R1C2.Style.Add("background-size", "100% 100%");
+            R1C4.Style.Add("background-size", "100% 100%");
+            R3C2.Text = loggedUser.FlightNb;
+            R3C3.Text = loggedUser.GodzinaRozkladowa;
+            R3C4.Text = loggedUser.Pax;
+
+        }
+
+        private void Odlot(int shengen)
+        {
+            //HttpCookie cookie = Request.Cookies["Bus"];
+
+            if (busMINEtable.Visible == false)
             {
                 Dr1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/3snl.png");
                 Dr1C2.Style.Add("background-repeat", "no-repeat");
@@ -571,6 +716,8 @@ namespace Bus_Management_System
                         distanceT = CheckDistance(loggedUser.CurrentLat, loggedUser.CurrentLon, loggedUser.PpsLat, loggedUser.PpsLon);
 
                     }
+
+                    /*  to jest niedorobiona metoda POPRAWIC */
 
                     if (distanceT > 15.0d)
                     {
@@ -628,11 +775,7 @@ namespace Bus_Management_System
 
 
             // ustalenie zawartości pozostałych komurek tabeli w zależności od postępu zadania
-            if (busMINEtable.Visible == true)
-            {
-
-            }
-            else
+            if (busMINEtable.Visible == false)
             {
                 if (loggedUser.OperationStatus == 2 || loggedUser.OperationStatus == 4)
                 {
@@ -657,7 +800,7 @@ namespace Bus_Management_System
                         Dr5C3.Text = loggedUser.Pps;
                     }
                     else
-                    if (loggedUser.OperationStatus == 4)
+                    //if (loggedUser.OperationStatus == 4)
                     {
                         distanceT = CheckDistance(loggedUser.CurrentLat, loggedUser.CurrentLon, loggedUser.GateLat, loggedUser.GateLon);
                         Dr5C3.Text = loggedUser.Gate;
@@ -668,16 +811,14 @@ namespace Bus_Management_System
                     Dr2C4.Text = loggedUser.StartLocLonDegree;
 
                     // jeśli nie było wcześniejszych wartości pomiarowych odległości
-                    if (loggedUser.OldDistanceT == 0.0d)
-                        Dr3C3.Text = distanceT.ToString() + " m";
+                    //if (loggedUser.OldDistanceT != distanceT/*0.0d*/)
+                    //    Dr3C3.Text = distanceT.ToString() + " m";
                     // a jeśli były
-                    else
-                        if (loggedUser.OldDistanceT > loggedUser.DistanceT)
+                    //else
+                    if (loggedUser.OldDistanceT > loggedUser.DistanceT)
                     {
-
                         loggedUser.PredictedDistance = distanceT - (loggedUser.Speed * 3);
                     }
-
                     else
                     {
                         loggedUser.PredictedDistance = distanceT + (loggedUser.Speed * 3);
@@ -693,33 +834,6 @@ namespace Bus_Management_System
                     if (distanceT != 0.0d && Math.Round(loggedUser.PredictedDistance, 2, MidpointRounding.AwayFromZero) > 100.0d)
                     {
                         danger = CheckSecurityZone(loggedUser.Shengen);
-
-                        if (!danger)
-                        {
-                            // metoda normalne kolory 
-                            Dr3C3.Style.Add("background-color", "#FFFFCC");
-                            Dr4C3.Style.Add("background-color", "#FFFFCC");
-                            Dr5C3.Style.Add("background-color", "#FFFFCC");
-                            Dr3C3.Style.Add("color", "Violet");
-                            Dr4C3.Style.Add("color", "Black");
-
-                            // metoda dojazd do strefy przeznaczenia
-                            if (shengen == 0)
-                                Dr5C3.Style.Add("color", "Green");
-                            else
-                            if (shengen == 1)
-                                Dr5C3.Style.Add("color", "Red");
-                        }
-                        else
-                        {
-                            // metoda kolory alarmowe
-                            Dr3C3.Style.Add("background-color", "Red");
-                            Dr4C3.Style.Add("background-color", "Red");
-                            Dr5C3.Style.Add("background-color", "Red");
-                            Dr3C3.Style.Add("color", "White");
-                            Dr4C3.Style.Add("color", "Black");
-                            Dr5C3.Style.Add("color", "Black");
-                        }
                     }
                     else
                     {
@@ -748,6 +862,33 @@ namespace Bus_Management_System
                         {
                             Dr3C3.Text = Math.Round(loggedUser.PredictedDistance, 2, MidpointRounding.AwayFromZero).ToString() + " m";
                         }
+                    }
+
+                    if (!danger)
+                    {
+                        // metoda normalne kolory 
+                        Dr3C3.Style.Add("background-color", "#FFFFCC");
+                        Dr4C3.Style.Add("background-color", "#FFFFCC");
+                        Dr5C3.Style.Add("background-color", "#FFFFCC");
+                        Dr3C3.Style.Add("color", "Violet");
+                        Dr4C3.Style.Add("color", "Black");
+
+                        // metoda dojazd do strefy przeznaczenia
+                        if (shengen == 0)
+                            Dr5C3.Style.Add("color", "Green");
+                        else
+                        if (shengen == 1)
+                            Dr5C3.Style.Add("color", "Red");
+                    }
+                    else
+                    {
+                        // metoda kolory alarmowe
+                        Dr3C3.Style.Add("background-color", "Red");
+                        Dr4C3.Style.Add("background-color", "Red");
+                        Dr5C3.Style.Add("background-color", "Red");
+                        Dr3C3.Style.Add("color", "White");
+                        Dr4C3.Style.Add("color", "Black");
+                        Dr5C3.Style.Add("color", "Black");
                     }
                 }
                 else
@@ -897,8 +1038,7 @@ namespace Bus_Management_System
             cmd.Parameters.AddWithValue("@accepted", DateTime.Now);
             dal.QueryExecution(cmd);
 
-            cookie.Values["operationStatus"] = "2";
-            Response.Cookies.Add(cookie);
+            loggedUser.OperationStatus = 2;
 
             string lat = "";
             string lon = "";
@@ -908,18 +1048,18 @@ namespace Bus_Management_System
             int operation = loggedUser.Operation;
 
             // nie no - trzeba pobrac te współrzędne do ciasteczka podczas tworzenia OpCookie
-            switch (operation)
-            {
-                case 1:
-                    {
-                        cmd = new SqlCommand("SELECT GPS_Latitude, GPS_Longitude FROM Stations WHERE StationNb = @pps");
-                        cmd.Parameters.AddWithValue("@pps", loggedUser.Pps);
-                        DataSet ds = dal.GetDataSet(cmd);
-                    }
-                    break;
-                case 2:
-                    break;
-            }
+            //switch (operation)
+            //{
+            //    case 1:
+            //        {
+            //            cmd = new SqlCommand("SELECT GPS_Latitude, GPS_Longitude FROM Stations WHERE StationNb = @pps");
+            //            cmd.Parameters.AddWithValue("@pps", loggedUser.Pps);
+            //            DataSet ds = dal.GetDataSet(cmd);
+            //        }
+            //        break;
+            //    case 2:
+            //        break;
+            //}
             loggedUser.StartLocLatDegree = lat;
             loggedUser.StartLocLonDegree = lon;
         }
@@ -933,6 +1073,7 @@ namespace Bus_Management_System
             cmd.Parameters.AddWithValue("@busNb", bus);
             cmd.Parameters.AddWithValue("@startLoad", DateTime.Now);
             dal.QueryExecution(cmd);
+            loggedUser.OperationStatus = 3;
         }
 
         protected void BusStartDrive_Click(object sender, EventArgs e)
@@ -943,6 +1084,7 @@ namespace Bus_Management_System
             cmd.Parameters.AddWithValue("@busNb", bus);
             cmd.Parameters.AddWithValue("@startDrive", DateTime.Now);
             dal.QueryExecution(cmd);
+            loggedUser.OperationStatus = 4;
         }
 
         protected void BusStartUnload_Click(object sender, EventArgs e)
@@ -953,16 +1095,20 @@ namespace Bus_Management_System
             cmd.Parameters.AddWithValue("@busNb", bus);
             cmd.Parameters.AddWithValue("@startUnload", DateTime.Now);
             dal.QueryExecution(cmd);
+            loggedUser.OperationStatus = 5;
         }
 
         protected void BusEndOp_Click(object sender, EventArgs e)
         {
             HttpCookie cookie = Request.Cookies["Bus"];
             string bus = cookie.Values["busNb"].ToString();
-            SqlCommand cmd = new SqlCommand("UPDATE Operations SET EndOp = @endOp WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)");
+            SqlCommand cmd = new SqlCommand("UPDATE Operations SET EndOp = @endOp, Finished = @finished WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)");
             cmd.Parameters.AddWithValue("@busNb", bus);
             cmd.Parameters.AddWithValue("@endOp", DateTime.Now);
+            cmd.Parameters.AddWithValue("@finished", 1);
             dal.QueryExecution(cmd);
+            loggedUser.OperationStatus = 6;
+            ClearFields();
         }
 
         protected void BusPause_Click(object sender, EventArgs e)
@@ -971,6 +1117,15 @@ namespace Bus_Management_System
         }
 
 
+
+        private void ClearFields()
+        {
+            // wyczyszczenie wszystkich wartości i zakończenie wgrywania danych
+        }
+
+
+
+        // przeliczenie współrzędnych pobranych z urządzenia GPS do czytelnych współrzędnych w stopniach
         private void TranslateColToDegree(ref string lat, ref string lon)
         {
             double latitude = loggedUser.CurrentLat;
@@ -1004,7 +1159,42 @@ namespace Bus_Management_System
             {
                 using (fs = File.Create(dataLogic))
                 {
+
                 }
+                fs.Close();
+
+                string newLine = Environment.NewLine;
+                newLine += "Operation; ";
+                newLine += "Operation Status; ";
+                newLine += "Created; ";
+                newLine += "Accepted; ";
+                newLine += "Start Load; ";
+                newLine += "Start Drive; ";
+                newLine += "Start Unload; ";
+                newLine += "End Operation; ";
+                newLine += "Start Latitude; ";
+                newLine += "Start Longitude; ";
+                newLine += "Current Latitude; ";
+                newLine += "Current Longitude; ";
+                newLine += "Speed; ";
+                newLine += "Accuracy; ";
+                newLine += "Old Distance to Target; ";
+                newLine += "Distance to Target; ";
+                newLine += "Old Distance to Shengen; ";
+                newLine += "Distance to Shengen; ";
+                newLine += "Old Distance to NonShengen; ";
+                newLine += "Distance to NonShengen; ";
+                newLine += "Predicted Distance; ";
+                newLine += "Alert Nb; ";
+                newLine += "Loop Time; ";
+                newLine += "Measurement Time";
+
+                using (StreamWriter writer = new StreamWriter(dataLogic, true))
+                {
+                    writer.WriteLine(newLine);
+                    writer.Close();
+                }
+
             }
             else
             {
@@ -1020,17 +1210,30 @@ namespace Bus_Management_System
         private void SaveUserFieldsValues()
         {
             string newLine = Environment.NewLine;
-            newLine += loggedUser.CurrentLat.ToString() + ", ";
-            newLine += loggedUser.CurrentLon.ToString() + ", ";
-            newLine += loggedUser.Speed.ToString() + ", ";
-            newLine += loggedUser.Accuracy.ToString() + ", ";
-            newLine += loggedUser.OldDistanceT.ToString() + ", ";
-            newLine += loggedUser.DistanceT.ToString() + ", ";
-            newLine += loggedUser.OldDistanceS.ToString() + ", ";
-            newLine += loggedUser.DistanceS.ToString() + ", ";
-            newLine += loggedUser.OldDistanceN.ToString() + ", ";
-            newLine += loggedUser.DistanceN.ToString() + ", ";
-            newLine += loggedUser.PredictedDistance.ToString() + ", ";
+            newLine += loggedUser.Operation.ToString() + "; ";
+            newLine += loggedUser.OperationStatus.ToString() + "; ";
+            newLine += loggedUser.Created + "; ";
+            newLine += loggedUser.Accepted + "; ";
+            newLine += loggedUser.StartLoad + "; ";
+            newLine += loggedUser.StartDrive + "; ";
+            newLine += loggedUser.StartUnload + "; ";
+            newLine += loggedUser.EndOp + "; ";
+            newLine += loggedUser.StartLat.ToString() + "; ";
+            newLine += loggedUser.StartLon.ToString() + "; ";
+            newLine += loggedUser.CurrentLat.ToString() + "; ";
+            newLine += loggedUser.CurrentLon.ToString() + "; ";
+            newLine += loggedUser.Speed.ToString() + "; ";
+            newLine += loggedUser.Accuracy.ToString() + "; ";
+            newLine += loggedUser.OldDistanceT.ToString() + "; ";
+            newLine += loggedUser.DistanceT.ToString() + "; ";
+            newLine += loggedUser.OldDistanceS.ToString() + "; ";
+            newLine += loggedUser.DistanceS.ToString() + "; ";
+            newLine += loggedUser.OldDistanceN.ToString() + "; ";
+            newLine += loggedUser.DistanceN.ToString() + "; ";
+            newLine += loggedUser.PredictedDistance.ToString() + "; ";
+            newLine += loggedUser.Alert.ToString() + "; ";
+            newLine += loggedUser.LoopTime.ToString() + "; ";
+            newLine += DateTime.Now.ToString("HH:mm:ss");
 
             string dataLogic = loggedUser.LogFilePath;
 
@@ -1043,32 +1246,5 @@ namespace Bus_Management_System
                 }
             }    
         }
-
-
-
-
-        //private void LogError(Exception ex)
-        //{
-        //    string message = string.Format("Time: {0}", DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt"));
-        //    message += Environment.NewLine;
-        //    message += "-----------------------------------------------------------";
-        //    message += Environment.NewLine;
-        //    message += string.Format("Message: {0}", ex.Message);
-        //    message += Environment.NewLine;
-        //    message += string.Format("StackTrace: {0}", ex.StackTrace);
-        //    message += Environment.NewLine;
-        //    message += string.Format("Source: {0}", ex.Source);
-        //    message += Environment.NewLine;
-        //    message += string.Format("TargetSite: {0}", ex.TargetSite.ToString());
-        //    message += Environment.NewLine;
-        //    message += "-----------------------------------------------------------";
-        //    message += Environment.NewLine;
-        //    string path = Server.MapPath("~/ErrorLog/ErrorLog.txt");
-        //    using (StreamWriter writer = new StreamWriter(path, true))
-        //    {
-        //        writer.WriteLine(message);
-        //        writer.Close();
-        //    }
-        //}
     }
 }

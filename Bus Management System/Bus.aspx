@@ -24,13 +24,14 @@
         var error = "";
         var dane = new Array();
 
-        setInterval(getLocation, 5000);
+        setInterval(getLocation, 1000);
 
         function getLocation() 
         {
             if (navigator.geolocation)
             {
-                navigator.geolocation.getCurrentPosition(KonstruujArray, function () { }, { enableHighAccuracy: true });
+                //navigator.geolocation.getCurrentPosition(KonstruujArray, function () { }, { enableHighAccuracy: true });
+                navigator.geolocation.watchPosition(KonstruujArray, function () { }, { enableHighAccuracy: true });
             }
             else 
             {
@@ -56,10 +57,6 @@
         }
         function OnSuccess(response, userContext, methodName)
         {
-            <%--var predkosc = "";
-            predkosc += "<p>Prędkość :  " + response;
-            document.getElementById("<%=Dr4C3.ClientID %>").innerHTML = predkosc;--%>
-
             lat = "";
             lon = "";
             acc = "";
@@ -120,7 +117,7 @@
                 <asp:View ID="Home" runat="server">
                     <asp:UpdatePanel runat="server" Id="BusHomeUP" >
                         <ContentTemplate>
-                            <asp:Timer runat="server" Id="BusHomeTimer" Interval="3000" OnTick="BusHomeTimer_Tick"></asp:Timer>
+                            <asp:Timer runat="server" Id="BusHomeTimer" Interval="2000" OnTick="BusHomeTimer_Tick"></asp:Timer>
                                 <div class="bus-row">
                                     <div class="bus-left">
 
@@ -182,14 +179,14 @@
                                     </div>
                                     <div class="bus-right">
                                         <div class="bus-1stLine">
-                                            <asp:Button Id="busAccept" CssClass="bus-Buttons" runat="server" Text="ACCEPT" Enabled="false" OnClick="BusAccept_Click"/>
-                                            <asp:Button Id="busStartLoad" CssClass="bus-Buttons" runat="server" Text="LOAD" Enabled="false" OnClick="BusStartLoad_Click"/>
-                                            <asp:Button Id="busStartDrive" CssClass="bus-Buttons" runat="server" Text="DRIVE" Enabled="false" OnClick="BusStartDrive_Click"/>
+                                            <asp:Button Id="busAccept" CssClass="bus-Buttons" runat="server" Text="ACCEPT" BackColor="Silver" />
+                                            <asp:Button Id="busStartLoad" CssClass="bus-Buttons" runat="server" Text="LOAD" BackColor="Silver" />
+                                            <asp:Button Id="busStartDrive" CssClass="bus-Buttons" runat="server" Text="DRIVE" BackColor="Silver"/>
                                         </div>
                                         <div class="bus-2ndLine">
-                                            <asp:Button Id="busStartUnload" CssClass="bus-Buttons" runat="server" Text="UNLOAD" Enabled="false" OnClick="BusStartUnload_Click"/>
-                                            <asp:Button Id="busEndOp" CssClass="bus-Buttons" runat="server" Text="END" Enabled="false" OnClick="BusEndOp_Click"/>
-                                            <asp:Button Id="busPause" CssClass="bus-Buttons" runat="server" Text="PAUSE" Enabled="false" OnClick="BusPause_Click"/>
+                                            <asp:Button Id="busStartUnload" CssClass="bus-Buttons" runat="server" Text="UNLOAD" BackColor="Silver"/>
+                                            <asp:Button Id="busEndOp" CssClass="bus-Buttons" runat="server" Text="END" BackColor="Silver"/>
+                                            <asp:Button Id="busPause" CssClass="bus-Buttons" runat="server" Text="PAUSE" BackColor="Silver"/>
                                         </div>
                                     </div>
                                 </div>

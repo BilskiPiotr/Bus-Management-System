@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Data;
-using System.Data.SqlClient;
-using System.Globalization;
 using System.Web;
-using System.Web.UI.WebControls;
 
 namespace Bus_Management_System
 {
@@ -60,7 +57,7 @@ namespace Bus_Management_System
                 // Konstruktor obiektu SESJA
                 if (loggedUserData.Rows.Count > 0)
                 {
-                    User user = new User
+                    User loggedUser = new User
                     {
                         EmployeeId = iD,
                         CompanyId = Convert.ToInt32(loggedUserData.Rows[0][0]),
@@ -72,7 +69,7 @@ namespace Bus_Management_System
                         OperationStatus = 0
                     };
                     string sessionName = (string)loggedUserData.Rows[0][0];
-                    Session[sessionName] = user;
+                    Session[sessionName] = loggedUser;
 
 
                     // tworzenie ciasteczka z danymi aktualnie zalogowanego operatora
@@ -87,9 +84,11 @@ namespace Bus_Management_System
                     CreateNewBusCookie(sessionName, iD, loginDate);
 
                     // wprowadzenie danych o zalogowaniu operatora do bazy i wywołanie odpowiedniego panelu
-                    // to jeszcze trzeba przekonfigurować, żeby całkowicie pominąć busPanel
                     if (bl.UserLogIn(iD, loginDate))
-                        Response.Redirect("busPanel.aspx");
+                    {
+                            HomeView(loggedUser);
+                    }
+                        
                     // w przypadku błędu dodania do bazy informacji o zalogowaniu użytkownika 
                     // skasowanie ciasteczka i zamknięcie sesji - co jest jednoznaczne z wylogowaniem
                     else
@@ -107,6 +106,25 @@ namespace Bus_Management_System
                     ClearTextbox();
                     Response.Write("<script> alert('Błąd - proszę wprowadzić inne poświadczenia' ) </script>");
                 }
+            }
+        }
+
+        private void HomeView(User loggedUser)
+        {
+            if (loggedUser.AdminPrivileges == 1)
+                Response.Redirect("Alocator.aspx");
+            else
+            if (loggedUser.AdminPrivileges == 2)
+                Response.Redirect("Bus.aspx");
+            else
+            {
+                if (Request.Cookies["Bus"] != null)
+                {
+                    Response.Cookies["Bus"].Expires = DateTime.Now.AddDays(-1);
+                }
+                Session.Abandon();
+                // i skasowac ciasteczko
+                Response.Redirect("Global.aspx");
             }
         }
 

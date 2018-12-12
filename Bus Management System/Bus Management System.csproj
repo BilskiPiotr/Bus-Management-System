@@ -88,7 +88,6 @@
   <ItemGroup>
     <Content Include="Alocator.aspx" />
     <Content Include="Bus.aspx" />
-    <Content Include="BusPanel.aspx" />
     <Content Include="css\alocator.css" />
     <Content Include="css\bus-baza.css" />
     <Content Include="css\bus.css" />
@@ -96,7 +95,6 @@
     <Content Include="css\style.css" />
     <Content Include="global.aspx" />
     <Content Include="js\get_location.js" />
-    <Content Include="LogOut.aspx" />
     <Content Include="pictures\3snl.png" />
     <Content Include="pictures\3snp.png" />
     <Content Include="pictures\sc.png" />
@@ -123,13 +121,6 @@
       <DependentUpon>Bus.aspx</DependentUpon>
     </Compile>
     <Compile Include="BusinessLayer.cs" />
-    <Compile Include="BusPanel.aspx.cs">
-      <DependentUpon>BusPanel.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="BusPanel.aspx.designer.cs">
-      <DependentUpon>BusPanel.aspx</DependentUpon>
-    </Compile>
     <Compile Include="DataAccessLayer.cs" />
     <Compile Include="global.aspx.cs">
       <DependentUpon>global.aspx</DependentUpon>
@@ -137,13 +128,6 @@
     </Compile>
     <Compile Include="global.aspx.designer.cs">
       <DependentUpon>global.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="LogOut.aspx.cs">
-      <DependentUpon>LogOut.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="LogOut.aspx.designer.cs">
-      <DependentUpon>LogOut.aspx</DependentUpon>
     </Compile>
     <Compile Include="NewOperation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

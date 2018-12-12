@@ -11,12 +11,12 @@
     <meta name="SysBus_Management" content:"" />
 	<link rel="stylesheet" href="css/alocator.css" />
 
-    <script type="text/javascript">
+<%--    <script type="text/javascript">
     
       function pageLoad() {
       }
     
-    </script>
+    </script>--%>
 
 </head>
 <body>
@@ -83,7 +83,7 @@
             </div>
             <div class="alocator-Panel">
 
-                <asp:ScriptManager ID="ScriptManager1" runat="server" />
+<%--                <asp:ScriptManager ID="ScriptManager1" runat="server" />--%>
 
                 <asp:GridView ID="gv_Alocator" runat="server"   AutoGenerateColumns ="False"
                                                                 ShowHeaderWhenEmpty="True"

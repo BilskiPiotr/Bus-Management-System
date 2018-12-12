@@ -265,15 +265,6 @@ namespace Bus_Management_System {
         protected global::System.Web.UI.WebControls.Label lb_Vehicle24;
         
         /// <summary>
-        /// Kontrolka ScriptManager1.
-        /// </summary>
-        /// <remarks>
-        /// Pole generowane automatycznie.
-        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
-        /// </remarks>
-        protected global::System.Web.UI.ScriptManager ScriptManager1;
-        
-        /// <summary>
         /// Kontrolka gv_Alocator.
         /// </summary>
         /// <remarks>
