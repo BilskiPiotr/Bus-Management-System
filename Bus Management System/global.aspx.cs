@@ -31,9 +31,9 @@ namespace Bus_Management_System
         {
             VerifyLayer vl = new VerifyLayer
             {
-                imię = inp_name.Text,
-                nazwisko = inp_2ndName.Text,
-                pesel = inp_pesel.Text
+                imię = inp_name.Text.Trim(),
+                nazwisko = inp_2ndName.Text.Trim(),
+                pesel = inp_pesel.Text.Trim()
             };
             bool istnieje = false;
             int iD = 0;
@@ -73,7 +73,7 @@ namespace Bus_Management_System
 
 
                     // tworzenie ciasteczka z danymi aktualnie zalogowanego operatora
-                    // sprawdzenie, czy ptzypadkiem takie ciasteczko już nie zostało stworzone, 
+                    // sprawdzenie, czy przypadkiem takie ciasteczko już nie zostało stworzone, 
                     // bo jeśli tak - to kasujemy je!
                     if (Request.Cookies["Bus"] != null)
                     {
@@ -144,6 +144,7 @@ namespace Bus_Management_System
             BusCookie.Values["Id"] = iD.ToString();
             BusCookie.Values["loginTime"] = loginDate.ToString();
             // domyslnie cookie zaniknie po wyłączeniu przeglądarki
+            BusCookie.Expires = loginDate.AddHours(8);
             Response.Cookies.Add(BusCookie);
         }
 

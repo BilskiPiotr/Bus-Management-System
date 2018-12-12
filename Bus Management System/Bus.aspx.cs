@@ -99,27 +99,8 @@ namespace Bus_Management_System
             //if (currentLon != 0.0d)
             currentLon = longitude;
 
-            //HttpContext.Current.Session["CurrentLat"] = currentLat;
-            //HttpContext.Current.Session["CurrentLon"] = currentLon;
-            //HttpContext.Current.Session["Accuracy"] = accuracy;
-            //HttpContext.Current.Session["Speed"] = speed;
-
             return currentSpeed.ToString();
         }
-
-
-
-        // obsługa GeoCoordinate Watcher
-        //private void watcher_PositionChanged(object sender, GeoPositionChangedEventArgs<GeoCoordinate> e)
-        //{
-        //    loggedUser.geoLat = e.Position.Location.Latitude.ToString();
-        //    loggedUser.geoLon = e.Position.Location.Longitude.ToString();
-        //    loggedUser.geoAcc = e.Position.Location.HorizontalAccuracy.ToString();
-        //    loggedUser.geoSpee = e.Position.Location.Speed.ToString();
-        //}
-
-
-
 
         protected void MineMenu_MenuItemClick(object sender, MenuEventArgs e)
         {
@@ -309,10 +290,7 @@ namespace Bus_Management_System
                         * 3 - rozpoczęty załadunek  |
                         * 4 - dowóz pasażerów       |
                         * 5 - rozpoczęty wyładunek >|
-                        */
-
-                        /*SetButtonsStatus(operationStatus)*/
-                        
+                        */                        
                     }
                     else
                     {
@@ -340,10 +318,6 @@ namespace Bus_Management_System
             stop = Environment.TickCount & Int32.MaxValue;
 
             loggedUser.LoopTime = stop - start;
-
-            //Dr2C2.Text = "S: " + Math.Round(loggedUser.DistanceS, 2, MidpointRounding.AwayFromZero).ToString();
-            //Dr2C3.Text = "T: " + Math.Round(loggedUser.DistanceT, 2, MidpointRounding.AwayFromZero).ToString();
-            //Dr2C4.Text = "N: " + Math.Round(loggedUser.DistanceN, 2, MidpointRounding.AwayFromZero).ToString();
 
             SaveUserFieldsValues();
         }
@@ -490,89 +464,6 @@ namespace Bus_Management_System
                 default:
                     break;
             }
-
-            // operacja utworzona i przyznana, ale jeszcze nie zaakceptowana
-            //if (operationStatus == 1)
-            //{
-            //    busAccept.Style.Add("background-color", "#1a993d");
-            //    //busAccept.Attributes.Add("OnClick", "return BusAccept_Click(this);");
-            //    busAccept.Click += new EventHandler(BusAccept_Click);
-            //    //busAccept.Enabled = true;
-            //}
-            //else
-            //    if (operationStatus == 2)
-            //{
-            //    busAccept.Style.Add("background-color", "#a63d40");
-            //    busAccept.Click -= new EventHandler(BusAccept_Click);
-            //    //busAccept.Enabled = false;
-            //    busStartLoad.Style.Add("background-color", "#1a993d");
-            //    busStartLoad.Click += new EventHandler(BusStartLoad_Click);
-            //    //busStartLoad.Enabled = true;
-            //    busMINEtable.Visible = false;
-            //    busDriveTable.Visible = true;
-
-            //}
-            //else
-            //    if (operationStatus == 3)
-            //{
-            //    busAccept.Style.Add("background-color", "#a63d40");
-            //    //busAccept.Enabled = false;
-            //    busStartLoad.Style.Add("background-color", "#a63d40");
-            //    busStartLoad.Click -= new EventHandler(BusStartLoad_Click);
-            //    //busStartLoad.Enabled = false;
-            //    busStartDrive.Style.Add("background-color", "#1a993d");
-            //    busStartDrive.Click += new EventHandler(BusStartDrive_Click);
-            //    //busStartDrive.Enabled = true;
-            //    busMINEtable.Visible = true;
-            //    busDriveTable.Visible = false;
-            //}
-            //else
-            //    if (operationStatus == 4)
-            //{
-                //busAccept.Style.Add("background-color", "#a63d40");
-                //busStartLoad.Style.Add("background-color", "#a63d40");
-                //busStartDrive.Style.Add("background-color", "#a63d40");
-                //busStartDrive.Click -= new EventHandler(BusStartDrive_Click);
-                ////busStartDrive.Enabled = false;
-                //busStartUnload.Style.Add("background-color", "#1a993d");
-                //busStartUnload.Click += new EventHandler(BusStartUnload_Click);
-                ////busStartUnload.Enabled = true;
-                //busMINEtable.Visible = false;
-                //busDriveTable.Visible = true;
-            //}
-            //else
-            //    if (operationStatus == 5)
-            //{
-            //    busAccept.Style.Add("background-color", "#a63d40");
-            //    busStartLoad.Style.Add("background-color", "#a63d40");
-            //    busStartDrive.Style.Add("background-color", "#a63d40");
-            //    busStartUnload.Style.Add("background-color", "#a63d40");
-            //    busStartUnload.Click -= new EventHandler(BusStartUnload_Click);
-            //    //busStartUnload.Enabled = false;
-            //    busEndOp.Style.Add("background-color", "#1a993d");
-            //    busEndOp.Click += new EventHandler(BusEndOp_Click);
-            //    //busEndOp.Enabled = true;
-            //    busMINEtable.Visible = true;
-            //    busDriveTable.Visible = false;
-            //}
-            //else
-            //if (operationStatus == 0)
-            //    return;
-            //else
-            //{
-            //    busAccept.Style.Add("background-color", "#a63d40");
-            //    busAccept.Enabled = false;
-            //    busStartLoad.Style.Add("background-color", "#a63d40");
-            //    busStartLoad.Enabled = false;
-            //    busStartDrive.Style.Add("background-color", "#a63d40");
-            //    busStartDrive.Enabled = false;
-            //    busStartUnload.Style.Add("background-color", "#a63d40");
-            //    busStartUnload.Enabled = false;
-            //    busEndOp.Style.Add("background-color", "#a63d40");
-            //    busEndOp.Enabled = false;
-            //    busMINEtable.Visible = true;
-            //    busDriveTable.Visible = false;
-            //}
         }
 
 
@@ -679,8 +570,6 @@ namespace Bus_Management_System
 
         private void Odlot(int shengen)
         {
-            //HttpCookie cookie = Request.Cookies["Bus"];
-
             if (busMINEtable.Visible == false)
             {
                 Dr1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/3snl.png");
@@ -717,7 +606,7 @@ namespace Bus_Management_System
 
                     }
 
-                    /*  to jest niedorobiona metoda POPRAWIC */
+                    /*  to jest niedorobiona metoda MUSZĘ TO KIEDYŚ POPRAWIC!!! */
 
                     if (distanceT > 15.0d)
                     {
@@ -800,7 +689,6 @@ namespace Bus_Management_System
                         Dr5C3.Text = loggedUser.Pps;
                     }
                     else
-                    //if (loggedUser.OperationStatus == 4)
                     {
                         distanceT = CheckDistance(loggedUser.CurrentLat, loggedUser.CurrentLon, loggedUser.GateLat, loggedUser.GateLon);
                         Dr5C3.Text = loggedUser.Gate;
@@ -810,11 +698,6 @@ namespace Bus_Management_System
                     Dr2C3.Text = "";
                     Dr2C4.Text = loggedUser.StartLocLonDegree;
 
-                    // jeśli nie było wcześniejszych wartości pomiarowych odległości
-                    //if (loggedUser.OldDistanceT != distanceT/*0.0d*/)
-                    //    Dr3C3.Text = distanceT.ToString() + " m";
-                    // a jeśli były
-                    //else
                     if (loggedUser.OldDistanceT > loggedUser.DistanceT)
                     {
                         loggedUser.PredictedDistance = distanceT - (loggedUser.Speed * 3);
@@ -1047,19 +930,6 @@ namespace Bus_Management_System
 
             int operation = loggedUser.Operation;
 
-            // nie no - trzeba pobrac te współrzędne do ciasteczka podczas tworzenia OpCookie
-            //switch (operation)
-            //{
-            //    case 1:
-            //        {
-            //            cmd = new SqlCommand("SELECT GPS_Latitude, GPS_Longitude FROM Stations WHERE StationNb = @pps");
-            //            cmd.Parameters.AddWithValue("@pps", loggedUser.Pps);
-            //            DataSet ds = dal.GetDataSet(cmd);
-            //        }
-            //        break;
-            //    case 2:
-            //        break;
-            //}
             loggedUser.StartLocLatDegree = lat;
             loggedUser.StartLocLonDegree = lon;
         }

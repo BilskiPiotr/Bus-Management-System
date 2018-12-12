@@ -77,6 +77,5 @@
 
 
         public string LogFilePath { get; set; }
-
     }
 }
