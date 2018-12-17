@@ -363,7 +363,6 @@ namespace Bus_Management_System
         {
             if (operationStatus !=0)
             {
-                //int operation = bl.GetOperations(loggedUser.Operation);
                 int shengen = loggedUser.Shengen;
 
                 if (operationStatus == 1)
@@ -371,11 +370,6 @@ namespace Bus_Management_System
                     GreyScreen(loggedUser.Operation, shengen);
                 }
                 else
-                //    if (operationStatus == 3)
-                //{
-                //    DisplayWork(operation, shengen);
-                //}
-                //else
                 {
                     switch (loggedUser.Operation)
                     {

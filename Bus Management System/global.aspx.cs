@@ -17,11 +17,10 @@ namespace Bus_Management_System
             Server.ClearError();
         }
 
+        // zresetowanie kontrolek na panelu logowania
         protected void Bt_resetLogin_Click(object sender, EventArgs e)
         {
-            inp_name.Text = "";
-            inp_2ndName.Text = "";
-            inp_pesel.Text = "";
+            ClearTextbox();
             inp_name.Focus();
         }
 
@@ -31,24 +30,20 @@ namespace Bus_Management_System
         {
             VerifyLayer vl = new VerifyLayer
             {
-                imię = inp_name.Text.Trim(),
-                nazwisko = inp_2ndName.Text.Trim(),
-                pesel = inp_pesel.Text.Trim()
+                Imię = inp_name.Text.Trim(),
+                Nazwisko = inp_2ndName.Text.Trim(),
+                Pesel = inp_pesel.Text.Trim()
             };
-            bool istnieje = false;
             int iD = 0;
 
-            // sprawdzenie poświadczeń
-            istnieje = vl.VerifyUser(ref iD);
-
-
             // user nie istnieje, albo wprowadzono dane z błedem
-            if (!istnieje)
+            if (!bl.VerifyUser(vl, ref iD))
             {
                 ClearTextbox();
                 lb_errorMsg.Visible = true;
                 lb_errorMsg.Text = "Błędny Login lub Hasło! ";
             }
+
             // user istnieje - wiedz tworzenie danych sesji
             else
             {
@@ -86,7 +81,7 @@ namespace Bus_Management_System
                     // wprowadzenie danych o zalogowaniu operatora do bazy i wywołanie odpowiedniego panelu
                     if (bl.UserLogIn(iD, loginDate))
                     {
-                            HomeView(loggedUser);
+                        HomeView(loggedUser);
                     }
                         
                     // w przypadku błędu dodania do bazy informacji o zalogowaniu użytkownika 
@@ -109,6 +104,7 @@ namespace Bus_Management_System
             }
         }
 
+        // ustalenie który panel należy wyświetlić i przekierowanie
         private void HomeView(User loggedUser)
         {
             if (loggedUser.AdminPrivileges == 1)
@@ -118,17 +114,17 @@ namespace Bus_Management_System
                 Response.Redirect("Bus.aspx");
             else
             {
+                // odczytano nieznane poświadczenia
                 if (Request.Cookies["Bus"] != null)
                 {
                     Response.Cookies["Bus"].Expires = DateTime.Now.AddDays(-1);
                 }
                 Session.Abandon();
-                // i skasowac ciasteczko
                 Response.Redirect("Global.aspx");
             }
         }
 
-
+        // wyczyszczenie textboxów na panelu logowania
         private void ClearTextbox()
         {
             inp_name.Text = "";
@@ -136,19 +132,16 @@ namespace Bus_Management_System
             inp_pesel.Text = "";
         }
 
-
+        // utworzenie ciasteczka o zalogowanym użytkowniku
         private void CreateNewBusCookie(string sessionName, int iD, DateTime loginDate)
         {
             HttpCookie BusCookie = new HttpCookie("Bus");
             BusCookie.Values["userId"] = sessionName;
             BusCookie.Values["Id"] = iD.ToString();
             BusCookie.Values["loginTime"] = loginDate.ToString();
-            // domyslnie cookie zaniknie po wyłączeniu przeglądarki
+            // domyslnie cookie zaniknie po wyłączeniu przeglądarki, ae ustawiamy na 8h ze względu na kodeks pracy
             BusCookie.Expires = loginDate.AddHours(8);
             Response.Cookies.Add(BusCookie);
         }
-
-
-
     }
 }

@@ -83,7 +83,7 @@
             </div>
             <div class="alocator-Panel">
 
-<%--                <asp:ScriptManager ID="ScriptManager1" runat="server" />--%>
+                <asp:ScriptManager ID="ScriptManager1" runat="server" />
 
                 <asp:GridView ID="gv_Alocator" runat="server"   AutoGenerateColumns ="False"
                                                                 ShowHeaderWhenEmpty="True"
