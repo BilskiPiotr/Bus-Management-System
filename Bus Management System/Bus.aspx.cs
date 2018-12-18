@@ -107,7 +107,7 @@ namespace Bus_Management_System
                         HttpCookie cookie = Request.Cookies["Bus"];
                         if (cookie != null)
                         {
-                            bool result = bl.UserLogOut(cookie);
+                            bool result = bl.UserLogOut(loggedUser);
 
                             if (Request.Cookies["Bus"] != null)
                             {
@@ -165,14 +165,10 @@ namespace Bus_Management_System
             if (cookie != null)
             {
                 // dodanie wybranewgo autobusu do ciasteczka z operatorem
-                string bus = ddl_busSelect.SelectedItem.ToString();
-                loggedUser.Bus = bus;
-                cookie.Values["busNb"] = bus;
-                // i nadpisujemy ciasteczko
-                Response.Cookies.Add(cookie);
+                loggedUser.Bus = ddl_busSelect.SelectedItem.ToString();
 
                 // naniesienie zmiany statusu wybranego pojazdu
-                bl.UpdateVehicleStatus(2, cookie);
+                bl.UpdateVehicleStatus(2, loggedUser);
 
                 // na koniec pobranie informacji czy operator ma jakieś zlecenie
                 CheckOperations();
@@ -180,7 +176,7 @@ namespace Bus_Management_System
             else
             {
                 // użytkownik nie jest zalogowany, albo ciasteczko z jakiegos powodu znikło
-                // dopisać zamykanie sesji
+                //bl.UserLogOut(loggedUser.CompanyId);
                 Response.Redirect("global.aspx");
             }
             // dodać do zalogowanego usera wybrany autobus
@@ -204,9 +200,11 @@ namespace Bus_Management_System
                 GetPPSData(ds.Tables[0].Rows[0].Field<int>("PPS"));
                 GetGateData(ds.Tables[0].Rows[0].Field<int>("Gate"));
                 SetOperationStatus(ds);
+                SetButtonsStatus(loggedUser.OperationStatus);
                 UpdateGPSData();
-                GetSpecyficAirPortData(ds.Tables[0].Rows[0].Field<int>("AirPort"));
-
+                GetOperationData(ds);
+                TranslateColToDegree();
+                InWorkBusControls(loggedUser.OperationStatus);
             }
         }
 
@@ -298,6 +296,8 @@ namespace Bus_Management_System
 
         protected void BusHomeTimer_Tick(object sender, EventArgs e)
         {
+            DataSet ds = new DataSet();
+
             // pomiar czasu wykonywania timera
             int start, stop;
             start = Environment.TickCount & Int32.MaxValue;
@@ -310,31 +310,47 @@ namespace Bus_Management_System
                 loggedUser.Alert = 0;
                 UpdateGPSData();
 
-                int operationStatus = loggedUser.OperationStatus;
-
-                if (operationStatus == 0)
+                // jeśli nie ma zlecenia
+                if (loggedUser.Operation == 0)
                 {
-                    DataSet ds = bl.GetOperations(loggedUser.Bus);
-
                     // sprawdzenie, czy pojawiła się operacja
+                    ds = bl.GetOperations(loggedUser.Bus);
+
+                    // jeśli pojawiło sie zlecenie
                     if (ds.Tables[0].Rows.Count > 0)
                     {
-                        int shengen = 0;
-                        string portName = "";
-                        string country = "";
-
                         GetPPSData(ds.Tables[0].Rows[0].Field<int>("PPS"));
                         GetGateData(ds.Tables[0].Rows[0].Field<int>("Gate"));
                         SetOperationStatus(ds);
-                        GetSpecyficAirPortData(ds.Tables[0].Rows[0].Field<int>("AirPort"));
+                        SetButtonsStatus(loggedUser.OperationStatus);
+                        GetOperationData(ds);
+                        InWorkBusControls(loggedUser.OperationStatus);
                     }
                     else
                     {
                         IddleBusControls();
                     }
                 }
-                //else
-                InWorkBusControls(operationStatus);
+                else
+                {
+                    loggedUser.Interval = loggedUser.Interval + 1;
+                    // żeby nie zapychać łącza, odświeżanie danych co 10s
+                    if (loggedUser.Interval == 5)
+                    {
+                        ds = bl.GetOperations(loggedUser.Bus);
+                        GetPPSData(ds.Tables[0].Rows[0].Field<int>("PPS"));
+                        GetGateData(ds.Tables[0].Rows[0].Field<int>("Gate"));
+                        GetOperationData(ds);
+                        SetOperationStatus(ds);
+                        SetButtonsStatus(loggedUser.OperationStatus);
+                        InWorkBusControls(loggedUser.OperationStatus);
+                        loggedUser.Interval = 0;
+                    }
+                    else
+                    {
+                        InWorkBusControls(loggedUser.OperationStatus);
+                    }
+                }
             }
             // "buss" cookie nie istnieje, wiedz na wszelki wypadek koniec sesji i wylogowanie
             else
@@ -344,6 +360,7 @@ namespace Bus_Management_System
                 {
                     Response.Cookies["Bus"].Expires = DateTime.Now.AddDays(-1);
                 }
+                bl.UserLogOut(loggedUser);
                 Session.Abandon();
                 Response.Redirect("global.aspx");
             }
@@ -397,27 +414,18 @@ namespace Bus_Management_System
         // ustawienie kolorów aktywnych dla wszystrkich przycisków na stronie bus
         private void InWorkBusControls(int operationStatus)
         {
-            if (operationStatus !=0)
-            {
-                int shengen = loggedUser.Shengen;
-
-                if (operationStatus == 1)
-                {
-                    GreyScreen(loggedUser.Operation, shengen);
-                }
-                else
-                {
-                    switch (loggedUser.Operation)
-                    {
-                        case 1:
-                            Przylot(shengen);
-                            break;
-                        case 2:
-                            Odlot(shengen);
-                            break;
-                    }
-                }
-            }
+            SetGraficElements();
+            SetColorControls();
+            SetDataControls();
+            //switch (loggedUser.Operation)
+            //{
+            //    case 1:
+            //        Przylot(loggedUser.Shengen);
+            //        break;
+            //    case 2:
+            //        Odlot(loggedUser.Shengen);
+            //        break;
+            //}
         }
 
 
@@ -497,7 +505,7 @@ namespace Bus_Management_System
         }
 
 
-
+        // pojazd nie ma zadań, oczekuje
         private void IddleBusControls()
         {
             R1C2.Style.Add("background-color", "#FFFFCC");
@@ -511,92 +519,277 @@ namespace Bus_Management_System
             R5C3.Text = "oczekiwanie...";
         }
 
-
-        private void GreyScreen(int operation, int shengen)
+        // ustawienie grafik w zależności od operacji i strefy
+        private void SetGraficElements()
         {
-            if (operation == 1)
+            if (loggedUser.OperationStatus == 1)            // jest zadanie, ale jeszcze nie zaakceptowane
             {
-                R1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sso.png");
-                R1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sso.png");
-                R1C3.Text = loggedUser.AirPort;
-                R4C2.Text = loggedUser.Gate;
-                R4C4.Text = loggedUser.Pps;
-                R5C3.Text = "WAW";
-            }
-            else
-            {
-                R1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/ssp.png");
-                R1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/ssp.png");
-                R1C3.Text = "WAW";
-                R4C2.Text = loggedUser.Pps;
-                R4C4.Text = loggedUser.Gate;
-                R5C3.Text = loggedUser.AirPort;
-            }
-
-            R1C2.Style.Add("background-repeat", "no-repeat");
-            R1C4.Style.Add("background-repeat", "no-repeat");
-            R1C2.Style.Add("background-size", "100% 100%");
-            R1C4.Style.Add("background-size", "100% 100%");
-
-            R1C3.Style.Add("color", "Grey");
-            R3C2.Text = loggedUser.FlightNb;
-            R3C2.Style.Add("color", "Grey");
-            R3C3.Text = loggedUser.GodzinaRozkladowa;
-            R3C3.Style.Add("color", "Grey");
-            R3C4.Text = loggedUser.Pax;
-            R3C4.Style.Add("color", "Grey");
-            R4C2.Style.Add("color", "Grey");
-            R4C3.Style.Add("color", "Grey");
-            R4C4.Style.Add("color", "Grey");
-            R5C3.Style.Add("color", "Grey");
-        }
-
-
-        private void DisplayWork(int operation, int shengen)
-        {
-            if (operation == 1)
-            {
-                R1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sn.png");
-                R1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sn.png");
-                R4C2.Text = loggedUser.Gate;
-                R4C4.Text = loggedUser.Pps;
-                R1C3.Style.Add("color", "DarkBlue");
-                R5C3.Style.Add("color", "DarkBlue");
-            }
-            else
-            {
-                if (shengen == 0)
+                if (loggedUser.Operation == 1)              // przylot
                 {
-                    R1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sz.png");
-                    R1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sz.png");
-                    R1C3.Style.Add("color", "Green");
-                    R5C3.Style.Add("color", "Green");
-                    R5C3.Text = "SHENGEN";
+                    R1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/ssp.png");
+                    R1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/ssp.png");
                 }
                 else
+                if (loggedUser.Operation == 2)              // odlot
                 {
-                    R1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sc.png");
-                    R1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sc.png");
-                    R1C3.Style.Add("color", "Red");
-                    R5C3.Style.Add("color", "Red");
-                    R5C3.Text = "NON SHENGEN";
+                    R1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sso.png");
+                    R1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sso.png");
                 }
-                R4C2.Text = loggedUser.Pps;
-                R4C4.Text = loggedUser.Gate;
+                R1C2.Style.Add("background-repeat", "no-repeat");
+                R1C4.Style.Add("background-repeat", "no-repeat");
+                R1C2.Style.Add("background-size", "100% 100%");
+                R1C4.Style.Add("background-size", "100% 100%");
+            }
+            else
+            if (loggedUser.OperationStatus > 1)             // zaakceptowana operacja
+            {
+                switch (loggedUser.Operation)
+                {
+                    case 1:                                 // przylot
+                        {
+                            if (loggedUser.Shengen == 0)    // shengen
+                            {
+                                Dr1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sz.png");
+                                Dr1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sz.png");
+                            }
+                            else                            // non shengen
+                            {
+                                Dr1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sc.png");
+                                Dr1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sc.png");
+                            }
+                        }
+                        break;
+                    case 2:                                 // odlot
+                        {
+                            Dr1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sn.png");
+                            Dr1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sn.png");
+                        }
+                        break;
+                }
+                Dr1C2.Style.Add("background-repeat", "no-repeat");
+                Dr1C4.Style.Add("background-repeat", "no-repeat");
+                Dr1C2.Style.Add("background-size", "100% 100%");
+                Dr1C4.Style.Add("background-size", "100% 100%");
+            }
+            else
+            if (loggedUser.OperationStatus == 0)            // nie ma żadnej operacji 
+            {
+                            
+            }
+        }
+
+        // ustawienie kolorystyki kontrolek w zależności od operacji i strefy
+        private void SetColorControls()
+        {
+            switch (loggedUser.OperationStatus)
+            {
+                case 0:
+                    {
+
+                    }
+                    break;
+                case 1:
+                    {
+                        R1C3.Style.Add("color", "Grey");
+                        R3C2.Style.Add("color", "Grey");
+                        R3C3.Style.Add("color", "Grey");
+                        R3C4.Style.Add("color", "Grey");
+                        R4C2.Style.Add("color", "Grey");
+                        R4C3.Style.Add("color", "Grey");
+                        R4C4.Style.Add("color", "Grey");
+                        R5C3.Style.Add("color", "Grey");
+                    }
+                    break;
+                case 2:
+                    {
+                        if (loggedUser.Operation == 1)
+                        {
+                            if (loggedUser.Shengen == 0)
+                            {
+                                Dr5C3.Style.Add("color", "Green");
+                            }
+                            else
+                            {
+                                Dr5C3.Style.Add("color", "Red");
+                            }
+                        }
+                        else
+                        {
+                            Dr5C3.Style.Add("color", "DarkBlue");
+                        }
+                        Dr1C3.Style.Add("color", "Black");
+                        Dr2C2.Style.Add("Color", "DarkBlue");
+                        Dr2C4.Style.Add("Color", "DarkBlue");
+                        Dr4C3.Style.Add("color", "Black");
+                    }
+                    break;
+                case 3:
+                    {
+                        if (loggedUser.Operation == 1)
+                        {
+
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                    break;
+                case 4:
+                    {
+                        if (loggedUser.Operation == 1)
+                        {
+                            if (loggedUser.Shengen == 0)
+                            {
+                                Dr5C3.Style.Add("color", "Green");
+                            }
+                            else
+                            {
+                                Dr5C3.Style.Add("color", "Red");
+                            }
+                        }
+                        else
+                        {
+                            Dr5C3.Style.Add("color", "DarkBlue");
+                        }
+                        Dr1C3.Style.Add("color", "Black");
+                        Dr2C2.Style.Add("Color", "DarkBlue");
+                        Dr2C4.Style.Add("Color", "DarkBlue");
+                        Dr4C3.Style.Add("color", "Black");
+                    }
+                    break;
+                case 5:
+                    {
+                        if (loggedUser.Operation == 1)
+                        {
+
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                    break;
             }
 
-            R1C3.Text = loggedUser.AirPort;
+        }
 
+        // ustawienie wyświetlania odpowiednich danych w zależności od operacji i strefy
+        private void SetDataControls()
+        {
+            switch (loggedUser.OperationStatus)
+            {
+                case 0:
+                    {
 
-            R1C2.Style.Add("background-repeat", "no-repeat");
-            R1C4.Style.Add("background-repeat", "no-repeat");
-            R1C2.Style.Add("background-size", "100% 100%");
-            R1C4.Style.Add("background-size", "100% 100%");
-            R3C2.Text = loggedUser.FlightNb;
-            R3C3.Text = loggedUser.GodzinaRozkladowa;
-            R3C4.Text = loggedUser.Pax;
+                    }
+                    break;
+                case 1:
+                    {
+                        if (loggedUser.Operation == 0)
+                        {
+                            R4C2.Text = loggedUser.Pps;
+                            R4C4.Text = loggedUser.Gate;
+                        }
+                        else
+                        {
+                            R4C2.Text = loggedUser.Gate;
+                            R4C4.Text = loggedUser.Pps;
+                        }
+                        R1C3.Text = loggedUser.AirPort;
+                        R3C2.Text = loggedUser.FlightNb;
+                        R3C3.Text = loggedUser.GodzinaRozkladowa;
+                        R3C4.Text = loggedUser.Pax;
+                        R5C3.Text = "WAW";
+                    }
+                    break;
+                case 2:
+                    {
+                        if (loggedUser.Operation == 1)
+                        {
+                            if (loggedUser.Shengen == 0)
+                            {
+                                Dr5C3.Text = "SHENGEN";
+                            }
+                            else
+                            {
+                                Dr5C3.Text = "NON SHENGEN";
+                            }
+                        }
+                        else
+                        {
+                            
+                        }
+                        Dr2C2.Text = loggedUser.StartLocLatDegree;
+                        Dr2C3.Text = "";
+                        Dr2C4.Text = loggedUser.StartLocLonDegree;
+                        Dr3C3.Text = Math.Round(loggedUser.PredictedDistance, 2, MidpointRounding.AwayFromZero).ToString() + " m";
+                        Dr5C3.Text = loggedUser.Gate;
+                    }
+                    break;
+                case 3:
+                    {
+                        if (loggedUser.Operation == 1)
+                        {
+
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                    break;
+                case 4:
+                    {
+                        if (loggedUser.Operation == 1)
+                        {
+                            if (loggedUser.Shengen == 0)
+                            {
+                                R5C3.Text = "SHENGEN";
+                            }
+                            else
+                            {
+                                R5C3.Text = "NON SHENGEN";
+                            }
+                        }
+                        else
+                        {
+                            
+                        }
+                        Dr2C2.Text = loggedUser.StartLocLatDegree;
+                        Dr2C3.Text = "";
+                        Dr2C4.Text = loggedUser.StartLocLonDegree;
+                        Dr3C3.Text = Math.Round(loggedUser.PredictedDistance, 2, MidpointRounding.AwayFromZero).ToString() + " m";
+                        Dr5C3.Text = loggedUser.Pps;
+                    }
+                    break;
+                case 5:
+                    {
+                        if (loggedUser.Operation == 1)
+                        {
+
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                    break;
+            }
 
         }
+
+
+        //private void GreyScreen(int operation, int shengen)
+        //{
+
+        //}
+
+
+        //private void DisplayWork(int operation, int shengen)
+        //{
+
+        //}
 
         private void Odlot(int shengen)
         {
@@ -613,11 +806,7 @@ namespace Bus_Management_System
                 {
                     if (loggedUser.StartLocLatDegree == null || loggedUser.StartLocLonDegree == null)
                     {
-                        string lat = "";
-                        string lon = "";
-                        TranslateColToDegree(ref lat, ref lon);
-                        loggedUser.StartLocLatDegree = lat;
-                        loggedUser.StartLocLonDegree = lon;
+                        TranslateColToDegree();
                     }
                     Dr2C2.Text = loggedUser.StartLocLatDegree;
                     Dr2C3.Text = "";
@@ -705,11 +894,7 @@ namespace Bus_Management_System
                     // ustalenie, gdzie operacja została przyjęta
                     if (loggedUser.StartLocLatDegree == "0° 0' 0'' N" || loggedUser.StartLocLonDegree == "0° 0' 0'' E")
                     {
-                        string lat = "";
-                        string lon = "";
-                        TranslateColToDegree(ref lat, ref lon);
-                        loggedUser.StartLocLatDegree = lat;
-                        loggedUser.StartLocLonDegree = lon;
+                        TranslateColToDegree();
                     }
 
                     // sprawdzenie wszystkich odległości w zależności od celu
@@ -944,72 +1129,38 @@ namespace Bus_Management_System
         // operacja została zaakceptowana
         protected void BusAccept_Click(object sender, EventArgs e)
         {
-            HttpCookie cookie = Request.Cookies["Bus"];
-            string bus = cookie.Values["busNb"].ToString();
-            SqlCommand cmd = new SqlCommand("UPDATE Operations SET Accepted = @accepted WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)");
-            cmd.Parameters.AddWithValue("@busNb", bus);
-            cmd.Parameters.AddWithValue("@accepted", DateTime.Now);
-            dal.QueryExecution(cmd);
-
+            bl.BusOperationAction(loggedUser, 1);
             loggedUser.OperationStatus = 2;
-
-            string lat = "";
-            string lon = "";
-
-            TranslateColToDegree(ref lat, ref lon);
-
-            int operation = loggedUser.Operation;
-
-            loggedUser.StartLocLatDegree = lat;
-            loggedUser.StartLocLonDegree = lon;
+            TranslateColToDegree();
         }
 
         // zaznaczenie początku operacji odbioru pasażerów z samolotu lub Gate
         protected void BusStartLoad_Click(object sender, EventArgs e)
         {
-            HttpCookie cookie = Request.Cookies["Bus"];
-            string bus = cookie.Values["busNb"].ToString();
-            SqlCommand cmd = new SqlCommand("UPDATE Operations SET StartLoad = @startLoad WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)");
-            cmd.Parameters.AddWithValue("@busNb", bus);
-            cmd.Parameters.AddWithValue("@startLoad", DateTime.Now);
-            dal.QueryExecution(cmd);
-            cmd.Parameters.Clear();
+            bl.BusOperationAction(loggedUser, 2);
             loggedUser.OperationStatus = 3;
+            TranslateColToDegree();
         }
 
         protected void BusStartDrive_Click(object sender, EventArgs e)
         {
-            HttpCookie cookie = Request.Cookies["Bus"];
-            string bus = cookie.Values["busNb"].ToString();
-            SqlCommand cmd = new SqlCommand("UPDATE Operations SET StartDrive = @startDrive WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)");
-            cmd.Parameters.AddWithValue("@busNb", bus);
-            cmd.Parameters.AddWithValue("@startDrive", DateTime.Now);
-            dal.QueryExecution(cmd);
+            bl.BusOperationAction(loggedUser, 3);
             loggedUser.OperationStatus = 4;
+            TranslateColToDegree();
         }
 
         protected void BusStartUnload_Click(object sender, EventArgs e)
         {
-            HttpCookie cookie = Request.Cookies["Bus"];
-            string bus = cookie.Values["busNb"].ToString();
-            SqlCommand cmd = new SqlCommand("UPDATE Operations SET StartUnload = @startUnload WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)");
-            cmd.Parameters.AddWithValue("@busNb", bus);
-            cmd.Parameters.AddWithValue("@startUnload", DateTime.Now);
-            dal.QueryExecution(cmd);
+            bl.BusOperationAction(loggedUser, 4);
             loggedUser.OperationStatus = 5;
+            TranslateColToDegree();
         }
 
         protected void BusEndOp_Click(object sender, EventArgs e)
         {
-            HttpCookie cookie = Request.Cookies["Bus"];
-            string bus = cookie.Values["busNb"].ToString();
-            SqlCommand cmd = new SqlCommand("UPDATE Operations SET EndOp = @endOp, Finished = @finished WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)");
-            cmd.Parameters.AddWithValue("@busNb", bus);
-            cmd.Parameters.AddWithValue("@endOp", DateTime.Now);
-            cmd.Parameters.AddWithValue("@finished", 1);
-            dal.QueryExecution(cmd);
-            loggedUser.OperationStatus = 6;
-            ClearFields();
+            bl.BusOperationAction(loggedUser, 5);
+            loggedUser.OperationStatus = 0;
+            TranslateColToDegree();
         }
 
         protected void BusPause_Click(object sender, EventArgs e)
@@ -1027,7 +1178,7 @@ namespace Bus_Management_System
 
 
         // przeliczenie współrzędnych pobranych z urządzenia GPS do czytelnych współrzędnych w stopniach
-        private void TranslateColToDegree(ref string lat, ref string lon)
+        private void TranslateColToDegree()
         {
             double latitude = loggedUser.CurrentLat;
             double longitude = loggedUser.CurrentLon;
@@ -1043,8 +1194,8 @@ namespace Bus_Management_System
             double minutyLon = ((longitude - Math.Truncate(longitude) / 1) * 60);
             double sekundyLon = ((minutyLon - Math.Truncate(minutyLon) / 1) * 60);
 
-            lat = String.Format(Convert.ToString(Math.Truncate(latitude) + "° " + +Math.Truncate(minutyLat) + "' " + Math.Truncate(sekundyLat) + "'' " + latitude_Kierunek));
-            lon = String.Format(Convert.ToString(Math.Truncate(longitude) + "° " + Math.Truncate(minutyLon) + "' " + Math.Truncate(sekundyLon) + "'' " + longitude_Kierunek));
+            loggedUser.StartLocLatDegree = String.Format(Convert.ToString(Math.Truncate(latitude) + "° " + +Math.Truncate(minutyLat) + "' " + Math.Truncate(sekundyLat) + "'' " + latitude_Kierunek));
+            loggedUser.StartLocLonDegree = String.Format(Convert.ToString(Math.Truncate(longitude) + "° " + Math.Truncate(minutyLon) + "' " + Math.Truncate(sekundyLon) + "'' " + longitude_Kierunek));
         }
 
 

@@ -35,6 +35,7 @@ namespace Bus_Management_System
                 Pesel = inp_pesel.Text.Trim()
             };
             int iD = 0;
+            int CompanyId = 0;
 
             // user nie istnieje, albo wprowadzono dane z błedem
             if (!bl.VerifyUser(vl, ref iD))
@@ -54,7 +55,7 @@ namespace Bus_Management_System
                 {
                     User loggedUser = new User
                     {
-                        EmployeeId = iD,
+                        Id = iD,
                         CompanyId = Convert.ToInt32(loggedUserData.Rows[0][0]),
                         FirstName = (string)loggedUserData.Rows[0][1],
                         LastName = (string)loggedUserData.Rows[0][2],

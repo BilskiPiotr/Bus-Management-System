@@ -7,6 +7,7 @@ namespace Bus_Management_System
         public string StrSessionID { get; }
 
 
+        public int Id { get; set; }
         public int EmployeeId { get; set; }
         public int CompanyId { get; set; }
         public string FirstName { get; set; }

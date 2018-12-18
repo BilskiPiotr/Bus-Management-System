@@ -50,12 +50,12 @@ namespace Bus_Management_System
         }
 
         // wylogowanie użytkownika
-        public bool UserLogOut(HttpCookie cookie)
+        public bool UserLogOut(User loggedUser)
         {
             SqlCommand sqlCmd = new SqlCommand();
             bool result = false;
             sqlCmd.CommandText = "INSERT INTO Employees_Status (Employee_Id, Employee_Logout) VALUES (@userId, @logOut)";
-            sqlCmd.Parameters.AddWithValue("@userId", Convert.ToInt32(cookie.Values["Id"]));
+            sqlCmd.Parameters.AddWithValue("@userId", loggedUser.Id);
             sqlCmd.Parameters.AddWithValue("@logOut", DateTime.Now);
             try
             {
@@ -71,18 +71,18 @@ namespace Bus_Management_System
 
             if (result)
             {
-                UpdateVehicleStatus(1, cookie);
+                UpdateVehicleStatus(1, loggedUser);
             }
             return result;
         }
 
         // naniesieniesienie statusu dla wybranego pojazdu
-        public void UpdateVehicleStatus(int status, HttpCookie cookie)
+        public void UpdateVehicleStatus(int status, User loggedUser)
         {
             SqlCommand sqlCmd = new SqlCommand();
             sqlCmd.CommandText = "UPDATE VEHICLES SET Bus_Status = @busStatus WHERE VehicleNb = @busNb";
             sqlCmd.Parameters.AddWithValue("@busStatus", status);
-            sqlCmd.Parameters.AddWithValue("@busNb", cookie.Values["busNb"].ToString());
+            sqlCmd.Parameters.AddWithValue("@busNb", loggedUser.Bus);
             try
             {
                 dal.QueryExecution(sqlCmd);
@@ -524,6 +524,62 @@ namespace Bus_Management_System
                     result = false;
                 }
             }
+            return result;
+        }
+
+        // nanoszenie na bazę danych informacji o kolejnych etapach wykonania operacji
+        public bool BusOperationAction(User loggedUser, int command)
+        {
+            SqlCommand sqlCmd = new SqlCommand();
+            bool result = false;
+
+            switch (command)
+            {
+                case 1:
+                    {
+                        sqlCmd.CommandText = "UPDATE Operations SET Accepted = @ActionTime WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)";
+                    }
+                    break;
+                case 2:
+                    {
+                        sqlCmd.CommandText = "UPDATE Operations SET StartLoad = @ActionTime WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)";
+                    }
+                    break;
+                case 3:
+                    {
+                        sqlCmd.CommandText = "UPDATE Operations SET StartDrive = @ActionTime WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)";
+                    }
+                    break;
+                case 4:
+                    {
+                        sqlCmd.CommandText = "UPDATE Operations SET StartUnload = @ActionTime WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)";
+                    }
+                    break;
+                case 5:
+                    {
+                        sqlCmd.CommandText = "UPDATE Operations SET EndOp = @ActionTime, Finished = @finished WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)";
+                        sqlCmd.Parameters.AddWithValue("@finished", 1);
+                    }
+                    break;
+                case 6:
+                    {
+
+                    }
+                    break;
+            }
+            try
+            {
+                sqlCmd.Parameters.AddWithValue("@busNb", loggedUser.Bus);
+                sqlCmd.Parameters.Add("@ActionTime", SqlDbType.DateTime).Value = DateTime.Now;
+                dal.QueryExecution(sqlCmd);
+                result = true;
+            }
+            catch (Exception BusOperationAction_Ex)
+            {
+
+            }
+            sqlCmd.Parameters.Clear();
+            sqlCmd.Dispose();
             return result;
         }
     }
