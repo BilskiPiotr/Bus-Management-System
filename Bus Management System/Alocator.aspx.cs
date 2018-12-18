@@ -13,7 +13,6 @@ namespace Bus_Management_System
         private static BusinessLayer bl = new BusinessLayer();
         DataAccessLayer dal = new DataAccessLayer();
         private AlocatorData ad = new AlocatorData();
-        SqlCommand sqlCmd = new SqlCommand();
         //private static DataAccessLayer dal = new DataAccessLayer();
 
         protected void Page_Load(object sender, EventArgs e)
@@ -73,29 +72,23 @@ namespace Bus_Management_System
         // pobranie aktualnych danych
         private void BindGrid()
         {
-            
             DataSet ds = new DataSet();
-            try
-            {
-                ds = bl.GetGridData();
+
+            ds = bl.GetGridData();
              
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    gv_Alocator.DataSource = ds;
-                    gv_Alocator.DataBind();
-                }
-                else
-                {
-                    DataTable dt = GridViewStructCreate();
-                    gv_Alocator.DataSource = dt;
-                    gv_Alocator.DataBind();
-                }
-                SetBusStatus();
-            }
-            catch (Exception ex)
+            if (ds.Tables[0].Rows.Count > 0)
             {
-                Response.Write("<script> alert('Linia 72 - Błąd pobierania listy operacji') </script>");
+                gv_Alocator.DataSource = null;
+                gv_Alocator.DataSource = ds;
+                gv_Alocator.DataBind();
             }
+            else
+            {
+                DataTable dt = GridViewStructCreate();
+                gv_Alocator.DataSource = dt;
+                gv_Alocator.DataBind();
+            }
+            SetBusStatus();
         }
 
         // wypełnienie kontrolek DropDownList wewnątrz GridView
@@ -282,53 +275,44 @@ namespace Bus_Management_System
         {
             bool success = false;
             DataSet ds = new DataSet();
+            DropDownList ddl = new DropDownList();
+
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                ddl = (DropDownList)e.Row.FindControl("ddl_busEdit");
+            }
+            if (e.Row.RowType == DataControlRowType.Footer)
+            {
+                ddl = (DropDownList)e.Row.FindControl("ddl_busAdd");
+            }
             try
             {
-                DropDownList ddl_busEdit = (DropDownList)e.Row.FindControl("ddl_busEdit");
                 ds = bl.GetIdleBusList(1, ad.Bus);
-                if (ddl_busEdit != null && ds.Tables[0].Rows.Count == 0)
+                if (ds.Tables[0].Rows.Count == 0 && ad.Bus != null)
                 {
                     ds = bl.GetIdleBusList(2, ad.Bus);
-                    ddl_busEdit.DataSource = ds;
-                    ddl_busEdit.DataValueField = "Id";
-                    ddl_busEdit.DataTextField = "VehicleNb";
-                    ddl_busEdit.DataBind();
+                    ddl.DataSource = ds;
+                    ddl.DataValueField = "Id";
+                    ddl.DataTextField = "VehicleNb";
+                    ddl.DataBind();
                     success = true;
                 }
                 else
                 {
-                    if (ddl_busEdit != null)
-                    {
-                        if (ds.Tables[0].Rows.Count > 0)
-                        {
-                            ddl_busEdit.DataSource = ds;
-                            ddl_busEdit.DataValueField = "Id";
-                            ddl_busEdit.DataTextField = "VehicleNb";
-                            ddl_busEdit.DataBind();
-
-                            // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
-                            ddl_busEdit.SelectedIndex = ddl_busEdit.Items.IndexOf(ddl_busEdit.Items.FindByText(ad.Bus));
-                            ddl_busEdit.Dispose();
-                            success = true;
-                        }
-                    }
-                    if (e.Row.RowType == DataControlRowType.Footer)
-                    {
-                        DropDownList ddl_busAdd = (DropDownList)e.Row.FindControl("ddl_busAdd");
-                        ddl_busAdd.DataSource = ds;
-                        ddl_busAdd.DataValueField = "Id";
-                        ddl_busAdd.DataTextField = "VehicleNb";
-                        ddl_busAdd.DataBind();
-                        ddl_busAdd.Dispose();
-                        success = true;
-                    }
-                    ds.Dispose();
+                    ddl.DataSource = ds;
+                    ddl.DataValueField = "Id";
+                    ddl.DataTextField = "VehicleNb";
+                    ddl.DataBind();
+                    // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
+                    ddl.SelectedIndex = ddl.Items.IndexOf(ddl.Items.FindByText(ad.Bus));
+                    success = true;
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                Response.Write("<script> alert('Linia 285 - Błąd ładowania listy Autobusów') </script>");
+
             }
+            ddl.Dispose();
             return success;
         }
 
@@ -341,20 +325,20 @@ namespace Bus_Management_System
                 Label lb_Zone = (Label)gv_Alocator.Rows[i].FindControl("lb_zone");
                 Label lb_Operation = (Label)gv_Alocator.Rows[i].FindControl("lb_operation");
 
-                if (lb_Operation.Text == "Odlot")
+                if (lb_Operation != null && lb_Operation.Text == "Odlot")
                 {
                     gv_Alocator.Rows[i].Cells[3].BackColor = Color.Blue;
                     gv_Alocator.Rows[i].Cells[3].ForeColor = Color.White;
                 }
                 else
                 {
-                    if (lb_Zone.Text == "0")
+                    if (lb_Zone != null && lb_Zone.Text == "0")
                     {
                         gv_Alocator.Rows[i].Cells[3].BackColor = Color.Green;
                         gv_Alocator.Rows[i].Cells[3].ForeColor = Color.White;
                     }
                     else
-                    if (lb_Zone.Text == "1")
+                    if (lb_Zone != null && lb_Zone.Text == "1")
                     {
                         gv_Alocator.Rows[i].Cells[3].BackColor = Color.Red;
                         gv_Alocator.Rows[i].Cells[3].ForeColor = Color.White;
@@ -367,26 +351,22 @@ namespace Bus_Management_System
         // usunięcie błędnego wpisu do rozważenia, czy to na pewno jest potrzebne
         protected void Gv_Alocator_RowDeleting(object sender, GridViewDeleteEventArgs e)
         {
-            int Id = Convert.ToInt32(gv_Alocator.DataKeys[e.RowIndex].Value);
+            int iD = Convert.ToInt32(gv_Alocator.DataKeys[e.RowIndex].Value);
             GridViewRow row = gv_Alocator.Rows[e.RowIndex];
             Label bus = (Label)row.FindControl("lb_bus");
 
-            SqlCommand cmd1 = new SqlCommand("UPDATE Vehicles SET Work_Status = @work_status WHERE VehicleNb = @vehicleNb");
-            cmd1.Parameters.AddWithValue("@work_status", 0);
-            cmd1.Parameters.AddWithValue("@vehicleNb", bus.Text);
-            dal.QueryExecution(cmd1);
+            bool result = bl.DeleteOperation(bus.Text, iD);
 
-            SqlCommand cmd = new SqlCommand("DELETE FROM Operations WHERE Id=@Id");
-            cmd.Parameters.AddWithValue("@Id", Id);
-            dal.QueryExecution(cmd);
-
+            row.Dispose();
             bus.Dispose();
             BindGrid();
+
+            if (!result)
+                Response.Write("<script> alert('Linia 368 - kasowania operacji z bazy') </script>");
         }
 
 
-        // wywołanie edycji istniejącej operacji
-        // poprawić tak, żeby po uruchomieniu w kontrolkach wyświetliły się dane przed poprawkami a nie defaultowe
+        // Edycja istniejącej operacji
         protected void Gv_Alocator_RowEditing(object sender, GridViewEditEventArgs e)
         {
             btn_addNewOperation.Enabled = false;
@@ -404,6 +384,8 @@ namespace Bus_Management_System
                 ad.PPS = ppsNb.Text;
                 Label busNb = (Label)row.FindControl("lb_bus");
                 ad.Bus = busNb.Text;
+
+                Session.Add()
             }
             catch (Exception ex)
             {
@@ -477,7 +459,6 @@ namespace Bus_Management_System
                 gv_Alocator.ShowFooter = false;
                 BindGrid();
             }
-            SetBusStatus();
         }
 
 
@@ -528,28 +509,32 @@ namespace Bus_Management_System
             {
                 dal.QueryExecution(cmd);
                 gv_Alocator.EditIndex = -1;
-                BindGrid();
+                cmd.Parameters.Clear();
+                cmd.Dispose();
             }
             catch
             {
                 Response.Write("<script> alert('Błąd - nie udało się poprawić istniejącej operacji') </script>");
             }
+            
 
             try
             {
-                dal.QueryExecution(cmd);
-
-                SqlCommand cmd1 = new SqlCommand("UPDATE Vehicles SET Work_Status = 1 WHERE Id = '" + bus + "' ");
+                SqlCommand cmd1 = new SqlCommand("UPDATE Vehicles SET Work_Status = 1 WHERE Id = @bus ");
+                cmd.Parameters.AddWithValue("@bus", bus);
                 dal.QueryExecution(cmd1);
 
                 gv_Alocator.EditIndex = -1;
                 btn_addNewOperation.Enabled = true;
-                BindGrid();
+                cmd1.Parameters.Clear();
+                cmd1.Dispose();
             }
             catch
             {
                 Response.Write("<script> alert('Błąd - nie udało się poprawić istniejącej operacji') </script>");
             }
+
+            BindGrid();
         }
 
 
@@ -586,12 +571,12 @@ namespace Bus_Management_System
         {
             //Bus status: 0 - Not Available, 1 - Empty, 2 - Free, 3 - In Work
 
-            DataSet ds = bl.GetBus();
+            DataSet ds = bl.GetBuses();
             string numer = "";
             string str = "";
             int status = -1;
             int work_Status = -1;
-            if (ds != null)
+            if (ds.Tables[0] != null)
             {
                 for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                 {

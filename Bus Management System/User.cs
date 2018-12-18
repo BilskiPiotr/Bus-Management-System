@@ -77,5 +77,6 @@
 
 
         public string LogFilePath { get; set; }
+        public AlocatorData AD { get; set; }
     }
 }

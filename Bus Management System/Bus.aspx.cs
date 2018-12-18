@@ -187,6 +187,7 @@ namespace Bus_Management_System
                 cmd.Parameters.AddWithValue("@busStatus", 2);
                 cmd.Parameters.AddWithValue("@busNb", bus);
                 dal.QueryExecution(cmd);
+                cmd.Parameters.Clear();
             }
             else
             {
@@ -937,6 +938,7 @@ namespace Bus_Management_System
             cmd.Parameters.AddWithValue("@busNb", bus);
             cmd.Parameters.AddWithValue("@startLoad", DateTime.Now);
             dal.QueryExecution(cmd);
+            cmd.Parameters.Clear();
             loggedUser.OperationStatus = 3;
         }
 

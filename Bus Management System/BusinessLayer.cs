@@ -9,16 +9,18 @@ namespace Bus_Management_System
     public class BusinessLayer
     {
         private DataAccessLayer dal = new DataAccessLayer();
-        private SqlCommand sqlCmd = new SqlCommand();
 
 
         public DataTable GetUserData(int iD)
         {
+            SqlCommand sqlCmd = new SqlCommand();
             sqlCmd.CommandText = "SELECT Employee_CompanyId, Employee_Imie, Employee_Nazwisko, Employee_Priv FROM Employees_Basic WHERE Id = @userId";
             sqlCmd.Parameters.AddWithValue("@userId", iD);
             try
             {
                 DataTable dt = dal.GetDataTable(sqlCmd);
+                sqlCmd.Parameters.Clear();
+                sqlCmd.Dispose();
                 return dt;
             }
             catch (Exception ex)
@@ -30,12 +32,15 @@ namespace Bus_Management_System
         // zapisanie w systemie informacji o zalogowaniu użytykownika
         public bool UserLogIn(int iD, DateTime loginDate)
         {
+            SqlCommand sqlCmd = new SqlCommand();
             sqlCmd.CommandText = "INSERT INTO Employees_Status (Employee_Id, Employee_Login) VALUES (@iD, @loginDate)";
             sqlCmd.Parameters.AddWithValue("@iD", iD);
             sqlCmd.Parameters.AddWithValue("@loginDate", loginDate);
             try
             {
                 dal.QueryExecution(sqlCmd);
+                sqlCmd.Parameters.Clear();
+                sqlCmd.Dispose();
                 return true;
             }
             catch (Exception ex)
@@ -47,6 +52,7 @@ namespace Bus_Management_System
 
         public bool UserLogOut(HttpCookie cookie)
         {
+            SqlCommand sqlCmd = new SqlCommand();
             bool result = false;
             sqlCmd.CommandText = "INSERT INTO Employees_Status (Employee_Id, Employee_Logout) VALUES (@userId, @logOut)";
             sqlCmd.Parameters.AddWithValue("@userId", Convert.ToInt32(cookie.Values["Id"]));
@@ -54,6 +60,8 @@ namespace Bus_Management_System
             try
             {
                 dal.QueryExecution(sqlCmd);
+                sqlCmd.CommandText = "";
+                sqlCmd.Parameters.Clear();
                 result = true;
             }
             catch (Exception ex)
@@ -69,8 +77,8 @@ namespace Bus_Management_System
                 try
                 {
                     dal.QueryExecution(sqlCmd);
-                    sqlCmd.CommandText = "";
                     sqlCmd.Parameters.Clear();
+                    sqlCmd.Dispose();
                     return true;
                 }
                 catch (Exception ex)
@@ -84,11 +92,13 @@ namespace Bus_Management_System
         // pobranie listy zdefiniowanych bramek pasażerskich
         public DataSet GetGates()
         {
+            SqlCommand sqlCmd = new SqlCommand();
             DataSet ds = new DataSet();
             sqlCmd.CommandText = "SELECT Id, GateNb FROM Gates";
             try
             {
                 ds = dal.GetDataSet(sqlCmd);
+                sqlCmd.Dispose();
             }
             catch (Exception ex)
             {
@@ -100,11 +110,14 @@ namespace Bus_Management_System
         // pobranie informacji specyficznych o wyjściu pasażerskim dla panelu Operatora
         public DataSet GetGate(int gate)
         {
+            SqlCommand sqlCmd = new SqlCommand();
             sqlCmd.CommandText = "SELECT * FROM Gates WHERE Id = @gateId";
             sqlCmd.Parameters.AddWithValue("@gateId", gate);
             try
             {
                 DataSet ds = dal.GetDataSet(sqlCmd);
+                sqlCmd.Parameters.Clear();
+                sqlCmd.Dispose();
                 return ds;
             }
             catch (Exception ex)
@@ -116,11 +129,13 @@ namespace Bus_Management_System
         // pobranie listy zdefiniowanych stanowisk postojowych samolotów
         public DataSet GetStations()
         {
+            SqlCommand sqlCmd = new SqlCommand();
             DataSet ds = new DataSet();
             sqlCmd.CommandText = "SELECT Id, StationNb FROM Stations";
             try
             {
                 ds = dal.GetDataSet(sqlCmd);
+                sqlCmd.Dispose();
             }
             catch (Exception ex)
             {
@@ -131,11 +146,13 @@ namespace Bus_Management_System
         // pobranie listy zdefiniowanych portów lotniczych
         public DataSet GetAirPort()
         {
+            SqlCommand sqlCmd = new SqlCommand();
             DataSet ds = new DataSet();
             sqlCmd.CommandText = "SELECT Id, IATA_Name FROM AirPorts";
             try
             {
                 ds = dal.GetDataSet(sqlCmd);
+                sqlCmd.Dispose();
             }
             catch (Exception ex)
             {
@@ -144,13 +161,15 @@ namespace Bus_Management_System
         }
 
         // pobranie listy zdefiniowanych autobusów
-        public DataSet GetBus()
+        public DataSet GetBuses()
         {
+            SqlCommand sqlCmd = new SqlCommand();
             DataSet ds = new DataSet();
             sqlCmd.CommandText = "SELECT * FROM Vehicles";
             try
             {
                 ds = dal.GetDataSet(sqlCmd);
+                sqlCmd.Dispose();
             }
             catch (Exception ex)
             {
@@ -161,6 +180,7 @@ namespace Bus_Management_System
         // pobieranie listy dostępnych autobusów
         public DataSet GetIdleBusList(int commandTextNumber, string bus)
         {
+            SqlCommand sqlCmd = new SqlCommand();
             DataSet ds = new DataSet();
             switch (commandTextNumber)
             {
@@ -181,8 +201,8 @@ namespace Bus_Management_System
             try
             {
                 ds = dal.GetDataSet(sqlCmd);
-                sqlCmd.CommandText = "";
                 sqlCmd.Parameters.Clear();
+                sqlCmd.Dispose();
             }
             catch (Exception ex)
             {
@@ -193,6 +213,7 @@ namespace Bus_Management_System
         // pobranie informacji o zleceniu dla panelu Operator
         public DataSet GetOperations(string bus)
         {
+            SqlCommand sqlCmd = new SqlCommand();
             DataSet ds = new DataSet();
             sqlCmd.CommandText = "SELECT * FROM Operations WHERE Bus=(SELECT Id FROM Vehicles WHERE VehicleNb = @busNb) AND Finished = @finished";
             sqlCmd.Parameters.AddWithValue("@busNb", bus);
@@ -200,6 +221,8 @@ namespace Bus_Management_System
             try
             {
                 ds = dal.GetDataSet(sqlCmd);
+                sqlCmd.Parameters.Clear();
+                sqlCmd.Dispose();
                 return ds;
             }
             catch(Exception ex)
@@ -211,6 +234,7 @@ namespace Bus_Management_System
         // dodanie nowej operacji
         public Boolean AddNewOperation(NewOperation newOp)
         {
+            SqlCommand sqlCmd = new SqlCommand();
             DateTime addOpDate = DateTime.Now;
             DateTime zeroDate = new DateTime(1999, 01, 01);
 
@@ -244,6 +268,8 @@ namespace Bus_Management_System
             try
             {
                 dal.QueryExecution(sqlCmd);
+                sqlCmd.CommandText = "";
+                sqlCmd.Parameters.Clear();
             }
             catch (Exception ex)
             {
@@ -257,6 +283,8 @@ namespace Bus_Management_System
                 try
                 {
                     dal.QueryExecution(sqlCmd);
+                    sqlCmd.Parameters.Clear();
+                    sqlCmd.Dispose();
                     return true;
                 }
                 catch (Exception ex)
@@ -270,12 +298,15 @@ namespace Bus_Management_System
         // pobranie danych specyficznych o stanowisku postojowym dla panelu Operatora
         public DataSet GetPPS(int pps)
         {
+            SqlCommand sqlCmd = new SqlCommand();
             DataSet ds = new DataSet();
             sqlCmd.CommandText = "SELECT * FROM Stations WHERE Id = @ppsNb";
             sqlCmd.Parameters.AddWithValue("@ppsNb", pps);
             try
             {
                 ds = dal.GetDataSet(sqlCmd);
+                sqlCmd.Parameters.Clear();
+                sqlCmd.Dispose();
                 return ds;
             }
             catch (Exception ex)
@@ -287,6 +318,7 @@ namespace Bus_Management_System
         // pobranie informacji o porcie lotniczym do panelu Operatora
         public string GetAirPort(int airPort, ref int shengen, ref string fullName, ref string country)
         {
+            SqlCommand sqlCmd = new SqlCommand();
             sqlCmd.CommandText = "SELECT a.IATA_Name, a.Full_Name, b.Country_name, b.Shengen FROM AirPorts AS a " +
                                  "INNER JOIN Countries AS b ON a.Country_Id=b.Id WHERE a.Id = @airPortNb ";
             sqlCmd.Parameters.AddWithValue("@airPortNb", airPort);
@@ -294,6 +326,8 @@ namespace Bus_Management_System
             {
                 DataSet ds = dal.GetDataSet(sqlCmd);
                 shengen = Convert.ToInt32(GetCountry(ds.Tables[0].Rows[0].Field<int>("Shengen")));
+                sqlCmd.Parameters.Clear();
+                sqlCmd.Dispose();
                 return ds.Tables[0].Rows[0].Field<string>("IATA_Name");
             }
             catch (Exception ex)
@@ -305,11 +339,14 @@ namespace Bus_Management_System
         // ustalenie strefy bezpieczeństwa
         public int GetCountry(int country)
         {
+            SqlCommand sqlCmd = new SqlCommand();
             sqlCmd.CommandText = "SELECT Shengen FROM Countries WHERE Id = @countryId";
             sqlCmd.Parameters.AddWithValue("@countryId", country);
             try
             {
                 DataSet ds = dal.GetDataSet(sqlCmd);
+                sqlCmd.Parameters.Clear();
+                sqlCmd.Dispose();
                 return ds.Tables[0].Rows[0].Field<int>("Shengen");
             }
             catch (Exception ex)
@@ -321,6 +358,7 @@ namespace Bus_Management_System
         // sprawdzenie poświadczeń wprowadzonych przez użytkownika
         public Boolean VerifyUser(VerifyLayer vl, ref int iD)
         {
+            SqlCommand sqlCmd = new SqlCommand();
             sqlCmd.CommandText = "SELECT Id FROM Employees_Basic WHERE Employee_Imie = @userName AND Employee_Nazwisko = @user2ndName AND Employee_PESEL = @userPESEL";
             sqlCmd.Parameters.AddWithValue("@userName", vl.Imię);
             sqlCmd.Parameters.AddWithValue("@user2ndName", vl.Nazwisko);
@@ -328,6 +366,8 @@ namespace Bus_Management_System
             try
             {
                 DataTable dt = dal.GetDataTable(sqlCmd);
+                sqlCmd.Parameters.Clear();
+                sqlCmd.Dispose();
                 if (dt.Rows.Count > 0)
                 {
                     iD = (int)dt.Rows[0][0];
@@ -348,6 +388,7 @@ namespace Bus_Management_System
         // pobranie danych dokontrolki GridView na paneli Alokatora
         public DataSet GetGridData()
         {
+            SqlCommand sqlCmd = new SqlCommand();
             DataSet ds = new DataSet();
             sqlCmd.CommandText = "SELECT a.Id, a.RadioGate, a.Created, a.GodzinaRozkladowa, a.FlightNb, a.Pax, a.RadioNeon, " +
                                  "a.Accepted, a.StartLoad, a.StartDrive, a.StartUnload, a.EndOp, " +
@@ -362,6 +403,7 @@ namespace Bus_Management_System
             try
             {
                 ds = dal.GetDataSet(sqlCmd);
+                sqlCmd.Dispose();
                 return ds;
             }
             catch(Exception ex)
@@ -373,16 +415,56 @@ namespace Bus_Management_System
         // pobranie informacji do ddl OperationList panelu Alokator
         public DataSet GetOperationList()
         {
+            SqlCommand sqlCmd = new SqlCommand();
             DataSet ds = new DataSet();
             sqlCmd.CommandText = "SELECT * FROM OperationType";
             try
             {
-                return ds = dal.GetDataSet(sqlCmd);
+                ds = dal.GetDataSet(sqlCmd);
+                sqlCmd.Dispose();
+                return ds;
             }
             catch (Exception ex)
             {
                 return ds;
             }
+        }
+
+        public bool DeleteOperation(string bus, int opId)
+        {
+            SqlCommand sqlCmd = new SqlCommand();
+            bool result = false;
+            sqlCmd.CommandText = "UPDATE Vehicles SET Work_Status = @work_status WHERE VehicleNb = @vehicleNb";
+            sqlCmd.Parameters.AddWithValue("@work_status", 0);
+            sqlCmd.Parameters.AddWithValue("@vehicleNb", bus);
+            try
+            {
+                dal.QueryExecution(sqlCmd);
+                sqlCmd.CommandText = "";
+                sqlCmd.Parameters.Clear();
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                sqlCmd.Dispose();
+            }
+            if (result)
+            {
+                sqlCmd.CommandText = "DELETE FROM Operations WHERE Id=@Id";
+                sqlCmd.Parameters.AddWithValue("@Id", opId);
+                try
+                {
+                    dal.QueryExecution(sqlCmd);
+                    sqlCmd.Parameters.Clear();
+                    sqlCmd.Dispose();
+                }
+                catch
+                {
+                    sqlCmd.Dispose();
+                    result = false;
+                }
+            }
+            return result;
         }
     }
 }
