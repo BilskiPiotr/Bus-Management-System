@@ -49,7 +49,7 @@ namespace Bus_Management_System
             }
         }
 
-
+        // wylogowanie użytkownika
         public bool UserLogOut(HttpCookie cookie)
         {
             SqlCommand sqlCmd = new SqlCommand();
@@ -60,33 +60,39 @@ namespace Bus_Management_System
             try
             {
                 dal.QueryExecution(sqlCmd);
-                sqlCmd.CommandText = "";
                 sqlCmd.Parameters.Clear();
+                sqlCmd.Dispose();
                 result = true;
             }
             catch (Exception ex)
             {
-                return false;
+                result = false;
             }
 
             if (result)
             {
-                sqlCmd.CommandText = "UPDATE VEHICLES SET Bus_Status = @busStatus WHERE VehicleNb = @busNb";
-                sqlCmd.Parameters.AddWithValue("@busStatus", 1);
-                sqlCmd.Parameters.AddWithValue("@busNb", cookie.Values["busNb"].ToString());
-                try
-                {
-                    dal.QueryExecution(sqlCmd);
-                    sqlCmd.Parameters.Clear();
-                    sqlCmd.Dispose();
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    return false;
-                }
+                UpdateVehicleStatus(1, cookie);
             }
-            return true;
+            return result;
+        }
+
+        // naniesieniesienie statusu dla wybranego pojazdu
+        public void UpdateVehicleStatus(int status, HttpCookie cookie)
+        {
+            SqlCommand sqlCmd = new SqlCommand();
+            sqlCmd.CommandText = "UPDATE VEHICLES SET Bus_Status = @busStatus WHERE VehicleNb = @busNb";
+            sqlCmd.Parameters.AddWithValue("@busStatus", status);
+            sqlCmd.Parameters.AddWithValue("@busNb", cookie.Values["busNb"].ToString());
+            try
+            {
+                dal.QueryExecution(sqlCmd);
+                sqlCmd.Parameters.Clear();
+                sqlCmd.Dispose();
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         // pobranie listy zdefiniowanych bramek pasażerskich
@@ -160,25 +166,8 @@ namespace Bus_Management_System
             return ds;
         }
 
-        // pobranie listy zdefiniowanych autobusów
-        public DataSet GetBuses()
-        {
-            SqlCommand sqlCmd = new SqlCommand();
-            DataSet ds = new DataSet();
-            sqlCmd.CommandText = "SELECT * FROM Vehicles";
-            try
-            {
-                ds = dal.GetDataSet(sqlCmd);
-                sqlCmd.Dispose();
-            }
-            catch (Exception ex)
-            {
-            }
-            return ds;
-        }
-
         // pobieranie listy dostępnych autobusów
-        public DataSet GetIdleBusList(int commandTextNumber, string bus)
+        public DataSet GetBus(int commandTextNumber, string bus)
         {
             SqlCommand sqlCmd = new SqlCommand();
             DataSet ds = new DataSet();
@@ -195,6 +184,17 @@ namespace Bus_Management_System
                     {
                         sqlCmd.CommandText = "SELECT Id, VehicleNb FROM Vehicles WHERE VehicleNb = @bus";
                         sqlCmd.Parameters.AddWithValue("@bus", bus);
+                    }
+                    break;
+                case 3:
+                    {
+                        sqlCmd.CommandText = "SELECT Id, VehicleNb FROM Vehicles WHERE Bus_Status = @busStatus";
+                        sqlCmd.Parameters.AddWithValue("@busStatus", 1);
+                    }
+                    break;
+                case 4:
+                    {
+                        sqlCmd.CommandText = "SELECT * FROM Vehicles";
                     }
                     break;
             }
@@ -316,7 +316,7 @@ namespace Bus_Management_System
         }
 
         // pobranie informacji o porcie lotniczym do panelu Operatora
-        public string GetAirPort(int airPort, ref int shengen, ref string fullName, ref string country)
+        public DataSet GetAirPort(int airPort)
         {
             SqlCommand sqlCmd = new SqlCommand();
             sqlCmd.CommandText = "SELECT a.IATA_Name, a.Full_Name, b.Country_name, b.Shengen FROM AirPorts AS a " +
@@ -325,15 +325,15 @@ namespace Bus_Management_System
             try
             {
                 DataSet ds = dal.GetDataSet(sqlCmd);
-                shengen = Convert.ToInt32(GetCountry(ds.Tables[0].Rows[0].Field<int>("Shengen")));
                 sqlCmd.Parameters.Clear();
                 sqlCmd.Dispose();
-                return ds.Tables[0].Rows[0].Field<string>("IATA_Name");
+                return ds;
             }
             catch (Exception ex)
             {
-                return "";
+
             }
+            return null;
         }
 
         // ustalenie strefy bezpieczeństwa

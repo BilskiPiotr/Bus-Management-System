@@ -283,10 +283,10 @@ namespace Bus_Management_System
             }
             try
             {
-                ds = bl.GetIdleBusList(1, loggedUser.Al_Bu);
+                ds = bl.GetBus(1, loggedUser.Al_Bu);
                 if (ds.Tables[0].Rows.Count == 0 && loggedUser.Al_Bu != null)
                 {
-                    ds = bl.GetIdleBusList(2, loggedUser.Al_Bu);
+                    ds = bl.GetBus(2, loggedUser.Al_Bu);
                     ddl.DataSource = ds;
                     ddl.DataValueField = "Id";
                     ddl.DataTextField = "VehicleNb";
@@ -528,7 +528,7 @@ namespace Bus_Management_System
         {
             //Bus status: 0 - Not Available, 1 - Empty, 2 - Free, 3 - In Work
 
-            DataSet ds = bl.GetBuses();
+            DataSet ds = bl.GetBus(4, loggedUser.Al_Bu);
             string numer = "";
             string str = "";
             int status = -1;

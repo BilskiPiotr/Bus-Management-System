@@ -24,7 +24,6 @@ namespace Bus_Management_System
         protected void Page_Load(object sender, EventArgs e)
         {
             string userId = "";
-
             if (Request.Cookies["Bus"] != null)
             {
                 userId = Convert.ToString(Request.Cookies["Bus"].Values["userId"]);
@@ -33,27 +32,22 @@ namespace Bus_Management_System
             {
                 Response.Redirect("global.aspx");
             }
-                
-
             loggedUser = (User)Session[userId];
             SetButtonsStatus(loggedUser.OperationStatus);
 
             if (!IsPostBack)
             {
-
                 ScriptManager.RegisterClientScriptBlock(this, GetType(), "przeliczOdleglosc", "getLocation();", true);
 
                 MenuItemCollection menuItems = busMenu.Items;
-
-                
 
                 if (loggedUser != null)
                 {
                     lb_loggedUser.Text = "";
                     lb_loggedUser.Text += (string)loggedUser.FirstName + " " + (string)loggedUser.LastName + "       ID: " + ((int)loggedUser.CompanyId).ToString();
 
-                    // załadowanie danych do psnelu Operatora
-                    BindDdlData();
+                    // załadowanie listy dostępnych pojazdów do listy
+                    BindBusDDL();
 
                     PrepareLogFile(DateTime.Now.ToString("yyyyMMdd_HH_mm_ss"));
                 }
@@ -64,13 +58,10 @@ namespace Bus_Management_System
         [System.Web.Services.WebMethod/*(EnableSession = true)*/]
         public static string PrzeliczArray(string[] arrayIn)
         {
-
             double currentSpeed = 0.0d;
             double currentAccuracy = 0.0d;
-
             double latitude = double.Parse(arrayIn[0], CultureInfo.InvariantCulture);
             double longitude = double.Parse(arrayIn[1], CultureInfo.InvariantCulture);
-
             if (arrayIn[2] != "")
             {
                 currentAccuracy = double.Parse(arrayIn[2], CultureInfo.InvariantCulture);
@@ -79,8 +70,6 @@ namespace Bus_Management_System
             {
                 currentAccuracy = 0.0d;
             }
-
-
             if (arrayIn[3] != "")
             {
                 currentSpeed = double.Parse(arrayIn[3], CultureInfo.InvariantCulture);
@@ -89,23 +78,18 @@ namespace Bus_Management_System
             {
                 currentSpeed = 0.0d;
             }
-
-            //if (currentSpeed != 0.0d)
             speed = currentSpeed;
-            //if (currentAccuracy != 0.0d)
             accuracy = currentAccuracy;
-            //if (currentLat != 0.0d)
             currentLat = latitude;
-            //if (currentLon != 0.0d)
             currentLon = longitude;
 
             return currentSpeed.ToString();
         }
 
+        // obsługa zdażeń menu Operatora
         protected void MineMenu_MenuItemClick(object sender, MenuEventArgs e)
         {
             MenuItem mnu = (MenuItem)e.Item;
-
             switch (mnu.Value)
             {
                 case "1":
@@ -123,12 +107,18 @@ namespace Bus_Management_System
                         HttpCookie cookie = Request.Cookies["Bus"];
                         if (cookie != null)
                         {
+                            bool result = bl.UserLogOut(cookie);
+
                             if (Request.Cookies["Bus"] != null)
                             {
                                 Response.Cookies["Bus"].Expires = DateTime.Now.AddDays(-1);
                             }
-                            Session.Abandon();
-                            Response.Redirect("global.aspx");
+                            
+                            if(result)
+                            {
+                                Session.Abandon();
+                                Response.Redirect("global.aspx");
+                            }
                         }
                         else
                         {
@@ -144,13 +134,12 @@ namespace Bus_Management_System
             }
         }
 
-
-        private void BindDdlData()
+        // pobranie listy dostępnych autobusów
+        private void BindBusDDL()
         {
             if (Request.Cookies["Bus"] != null)
             {
-                SqlCommand cmd = new SqlCommand("SELECT Id, VehicleNb FROM Vehicles");
-                DataSet ds = dal.GetDataSet(cmd);
+                DataSet ds = bl.GetBus(3, loggedUser.Al_Bu);
                 if (ddl_busSelect != null)
                 {
                     ddl_busSelect.DataSource = ds;
@@ -166,6 +155,7 @@ namespace Bus_Management_System
             BusManagement.SetActiveView(BusSelection);
         }
 
+        // zatwierdzenie wyboru pojazdu
         protected void Bt_busSelect_Click(object sender, EventArgs e)
         {
             this.busMenu.Items[0].Selectable = true;
@@ -181,13 +171,11 @@ namespace Bus_Management_System
                 // i nadpisujemy ciasteczko
                 Response.Cookies.Add(cookie);
 
-                // zmiana tekstu dla menu Home na numer zalogowanego autobusu
-                this.busMenu.Items[0].Text = bus;
-                SqlCommand cmd = new SqlCommand("UPDATE Vehicles SET Bus_Status = @busStatus WHERE VehicleNb = @busNb");
-                cmd.Parameters.AddWithValue("@busStatus", 2);
-                cmd.Parameters.AddWithValue("@busNb", bus);
-                dal.QueryExecution(cmd);
-                cmd.Parameters.Clear();
+                // naniesienie zmiany statusu wybranego pojazdu
+                bl.UpdateVehicleStatus(2, cookie);
+
+                // na koniec pobranie informacji czy operator ma jakieś zlecenie
+                CheckOperations();
             }
             else
             {
@@ -207,34 +195,126 @@ namespace Bus_Management_System
                 bt_busSelect.Enabled = false;
         }
 
+        // Sprawdzenie stanu zleceń w bazie
+        private void CheckOperations()
+        {
+            DataSet ds = bl.GetOperations(loggedUser.Bus);
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                GetPPSData(ds.Tables[0].Rows[0].Field<int>("PPS"));
+                GetGateData(ds.Tables[0].Rows[0].Field<int>("Gate"));
+                SetOperationStatus(ds);
+                UpdateGPSData();
+                GetSpecyficAirPortData(ds.Tables[0].Rows[0].Field<int>("AirPort"));
+
+            }
+        }
+
+        // pobranie danych lokalizacyjnych stanowiska postojowego samolotu
+        private void GetPPSData(int ppsId)
+        {
+            DataSet pps = bl.GetPPS(ppsId);
+            loggedUser.Pps = pps.Tables[0].Rows[0].Field<string>("StationNb");
+            loggedUser.PpsLat = Convert.ToDouble(pps.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
+            loggedUser.PpsLon = Convert.ToDouble(pps.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
+            pps.Dispose();
+        }
+
+        // pobranie danych lokalizacyjnych wyjścia pasażerskiego
+        private void GetGateData(int gateId)
+        {
+            DataSet gate = bl.GetGate(gateId);
+            loggedUser.Gate = gate.Tables[0].Rows[0].Field<string>("GateNb");
+            loggedUser.GateLat = Convert.ToDouble(gate.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
+            loggedUser.GateLon = Convert.ToDouble(gate.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
+            gate.Dispose();
+        }
+
+        //ustawienie wartości aktualnej operacji w zmiennej sesyjnej
+        private void GetOperationData(DataSet ds)
+        {
+            loggedUser.Operation = ds.Tables[0].Rows[0].Field<int>("Operation");
+            loggedUser.FlightNb = ds.Tables[0].Rows[0].Field<string>("FlightNb");
+            loggedUser.Pax = ds.Tables[0].Rows[0].Field<int>("Pax").ToString();
+            loggedUser.RadioGate = ds.Tables[0].Rows[0].Field<string>("RadioGate").ToString();
+            loggedUser.RadioNeon = ds.Tables[0].Rows[0].Field<string>("RadioNeon").ToString();
+            loggedUser.GodzinaRozkladowa = (ds.Tables[0].Rows[0].Field<DateTime>("GodzinaRozkladowa")).ToString("HH:mm");
+
+            GetSpecyficAirPortData(ds.Tables[0].Rows[0].Field<int>("AirPort"));
+        }
+
+        // ustalenie stref bezpieczeństwa dla obsługiwanego portu
+        private void GetSpecyficAirPortData(int airPort)
+        {
+            DataSet ds = bl.GetAirPort(airPort);
+            loggedUser.AirPort = ds.Tables[0].Rows[0].Field<string>("IATA_Name");
+            loggedUser.Shengen = Convert.ToInt32(bl.GetCountry(ds.Tables[0].Rows[0].Field<int>("Shengen")));
+            loggedUser.PortName = ds.Tables[0].Rows[0].Field<string>("Full_Name");
+            loggedUser.Country = ds.Tables[0].Rows[0].Field<string>("Country_name");
+        }
+
+        // Ustalenie na jakim etapie jest aktualna operacja
+        private void SetOperationStatus(DataSet ds)
+        {
+            /* operationStatus wartości możliwe:
+             * 0 - brak zlecenia       <-
+             * 1 - zlecenie utworzone    |
+             * 2 - zlecenie przyjete     |
+             * 3 - rozpoczęty załadunek  |
+             * 4 - dowóz pasażerów       |
+             * 5 - rozpoczęty wyładunek >|
+             */
+            int operationStatus = 0;
+            loggedUser.Created = (ds.Tables[0].Rows[0].Field<DateTime>("Created")).ToString("HH:mm");
+            loggedUser.Accepted = (ds.Tables[0].Rows[0].Field<DateTime>("Accepted")).ToString("HH:mm");
+            loggedUser.StartLoad = (ds.Tables[0].Rows[0].Field<DateTime>("StartLoad")).ToString("HH:mm");
+            loggedUser.StartDrive = (ds.Tables[0].Rows[0].Field<DateTime>("StartDrive")).ToString("HH:mm");
+            loggedUser.StartUnload = (ds.Tables[0].Rows[0].Field<DateTime>("StartUnload")).ToString("HH:mm");
+            loggedUser.EndOp = (ds.Tables[0].Rows[0].Field<DateTime>("EndOp")).ToString("HH:mm");
+            if (loggedUser.Created != "00:00")
+                operationStatus = 1;
+            if (loggedUser.Accepted != "00:00")
+                operationStatus = operationStatus + 1;
+            if (loggedUser.StartLoad != "00:00")
+                operationStatus = operationStatus + 1;
+            if (loggedUser.StartDrive != "00:00")
+                operationStatus = operationStatus + 1;
+            if (loggedUser.StartUnload != "00:00")
+                operationStatus = operationStatus + 1;
+            if (loggedUser.EndOp != "00:00")
+                operationStatus = 0;
+
+            loggedUser.OperationStatus = operationStatus;
+        }
+
+        // naniesienie aktualnych danych lokalizacyjnych
+        private void UpdateGPSData()
+        {
+            loggedUser.Speed = speed;
+            loggedUser.Accuracy = accuracy;
+            loggedUser.CurrentLat = currentLat;
+            loggedUser.CurrentLon = currentLon;
+        }
+
         protected void BusHomeTimer_Tick(object sender, EventArgs e)
         {
             // pomiar czasu wykonywania timera
             int start, stop;
             start = Environment.TickCount & Int32.MaxValue;
 
-
-            // zerowanie potęcjalnego komunikatu głosowego
-            loggedUser.Alert = 0;
-
-            loggedUser.Speed = speed;
-            loggedUser.Accuracy = accuracy;
-            loggedUser.CurrentLat = currentLat;
-            loggedUser.CurrentLon = currentLon;
-
+            // sprawdzenie, czy użytkownik jest poprawnie zalogowany
             HttpCookie cookie = Request.Cookies["Bus"];
-
             if (cookie != null)
             {
+                // zerowanie potęcjalnego komunikatu głosowego
+                loggedUser.Alert = 0;
+                UpdateGPSData();
 
                 int operationStatus = loggedUser.OperationStatus;
-                //int interval = loggedUser.Interval;
-                string bus = cookie.Values["busNb"].ToString();
-
 
                 if (operationStatus == 0)
                 {
-                    DataSet ds = bl.GetOperations(cookie.Values["busNb"].ToString());
+                    DataSet ds = bl.GetOperations(loggedUser.Bus);
 
                     // sprawdzenie, czy pojawiła się operacja
                     if (ds.Tables[0].Rows.Count > 0)
@@ -243,55 +323,10 @@ namespace Bus_Management_System
                         string portName = "";
                         string country = "";
 
-                        DataSet pps = bl.GetPPS(ds.Tables[0].Rows[0].Field<int>("PPS"));
-                        DataSet gate = bl.GetGate(ds.Tables[0].Rows[0].Field<int>("Gate"));
-
-                        loggedUser.Created = (ds.Tables[0].Rows[0].Field<DateTime>("Created")).ToString("HH:mm");
-                        loggedUser.Accepted = (ds.Tables[0].Rows[0].Field<DateTime>("Accepted")).ToString("HH:mm");
-                        loggedUser.StartLoad = (ds.Tables[0].Rows[0].Field<DateTime>("StartLoad")).ToString("HH:mm");
-                        loggedUser.StartDrive = (ds.Tables[0].Rows[0].Field<DateTime>("StartDrive")).ToString("HH:mm");
-                        loggedUser.StartUnload = (ds.Tables[0].Rows[0].Field<DateTime>("StartUnload")).ToString("HH:mm");
-                        loggedUser.EndOp = (ds.Tables[0].Rows[0].Field<DateTime>("EndOp")).ToString("HH:mm");
-                        if (loggedUser.Created != "00:00")
-                            operationStatus = 1;
-                        if (loggedUser.Accepted != "00:00")
-                            operationStatus = operationStatus + 1;
-                        if (loggedUser.StartLoad != "00:00")
-                            operationStatus = operationStatus + 1;
-                        if (loggedUser.StartDrive != "00:00")
-                            operationStatus = operationStatus + 1;
-                        if (loggedUser.StartUnload != "00:00")
-                            operationStatus = operationStatus + 1;
-                        if (loggedUser.EndOp != "00:00")
-                            operationStatus = 0;
-
-                        loggedUser.Operation = ds.Tables[0].Rows[0].Field<int>("Operation");
-                        loggedUser.FlightNb = ds.Tables[0].Rows[0].Field<string>("FlightNb");
-                        loggedUser.Pax = ds.Tables[0].Rows[0].Field<int>("Pax").ToString();
-                        loggedUser.AirPort = bl.GetAirPort(ds.Tables[0].Rows[0].Field<int>("AirPort"), ref shengen, ref portName, ref country);
-                        loggedUser.Pps = pps.Tables[0].Rows[0].Field<string>("StationNb");
-                        loggedUser.PpsLat = Convert.ToDouble(pps.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
-                        loggedUser.PpsLon = Convert.ToDouble(pps.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
-                        loggedUser.Gate = gate.Tables[0].Rows[0].Field<string>("GateNb");
-                        loggedUser.GateLat = Convert.ToDouble(gate.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
-                        loggedUser.GateLon = Convert.ToDouble(gate.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
-                        loggedUser.RadioGate = ds.Tables[0].Rows[0].Field<string>("RadioGate").ToString();
-                        loggedUser.RadioNeon = ds.Tables[0].Rows[0].Field<string>("RadioNeon").ToString();
-                        loggedUser.GodzinaRozkladowa = (ds.Tables[0].Rows[0].Field<DateTime>("GodzinaRozkladowa")).ToString("HH:mm");
-                        loggedUser.Shengen = shengen;
-                        loggedUser.PortName = portName;
-                        loggedUser.Country = country;
-
-                        loggedUser.OperationStatus = operationStatus;
-
-                        /* operationStatus wartości możliwe:
-                        * 0 - brak zlecenia       <-
-                        * 1 - zlecenie utworzone    |
-                        * 2 - zlecenie przyjete     |
-                        * 3 - rozpoczęty załadunek  |
-                        * 4 - dowóz pasażerów       |
-                        * 5 - rozpoczęty wyładunek >|
-                        */                        
+                        GetPPSData(ds.Tables[0].Rows[0].Field<int>("PPS"));
+                        GetGateData(ds.Tables[0].Rows[0].Field<int>("Gate"));
+                        SetOperationStatus(ds);
+                        GetSpecyficAirPortData(ds.Tables[0].Rows[0].Field<int>("AirPort"));
                     }
                     else
                     {
