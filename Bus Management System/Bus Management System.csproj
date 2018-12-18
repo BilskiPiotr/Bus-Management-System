@@ -113,7 +113,6 @@
     <Compile Include="Alocator.aspx.designer.cs">
       <DependentUpon>Alocator.aspx</DependentUpon>
     </Compile>
-    <Compile Include="AlocatorData.cs" />
     <Compile Include="Bus.aspx.cs">
       <DependentUpon>Bus.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

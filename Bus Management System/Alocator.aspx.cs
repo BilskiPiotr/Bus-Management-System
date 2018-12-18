@@ -11,24 +11,26 @@ namespace Bus_Management_System
     public partial class Alocator : System.Web.UI.Page
     {
         private static BusinessLayer bl = new BusinessLayer();
-        DataAccessLayer dal = new DataAccessLayer();
-        private AlocatorData ad = new AlocatorData();
-        //private static DataAccessLayer dal = new DataAccessLayer();
+        private User loggedUser;
+
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            string userId = "";
+
+            if (Request.Cookies["Bus"] != null)
+            {
+                userId = Convert.ToString(Request.Cookies["Bus"].Values["userId"]);
+            }
+            else
+            {
+                Response.Redirect("global.aspx");
+            }
+
+            loggedUser = (User)Session[userId];
+
             if (!IsPostBack)
             {
-                string userId = "";
-
-                if (Request.Cookies["Bus"] != null)
-                {
-                    userId = Convert.ToString(Request.Cookies["Bus"].Values["userId"]);
-                }
-
-                // dodać sprawdzenie, czy taka sesja już istnieje, a jeśli nie - to dodać
-                User loggedUser = (User)Session[userId];
-
                 MenuItemCollection menuItems = alocatorMenu.Items;
 
                 if (loggedUser != null)
@@ -95,29 +97,23 @@ namespace Bus_Management_System
         protected void Gv_Alocator_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             bool success;
-            try
+
+            success = FillOperationDDL(sender, e);
+            if (success)
             {
-                success = FillOperationDDL(sender, e);
-                if (success)
-                {
-                    success = FillPPSDDL(sender, e);
-                }
-                if (success)
-                {
-                    success = FillAirPortDDL(sender, e);
-                }
-                if (success)
-                {
-                    success = FillGateDDL(sender, e);
-                }
-                if (success)
-                {
-                    success = FillBusDDL(sender, e);
-                }
+                success = FillPPSDDL(sender, e);
             }
-            catch (Exception ex)
+            if (success)
             {
-                Response.Write("<script> alert('Linia 101 - Błąd podczas twożenia tablicy danych alokatora') </script>");
+                success = FillAirPortDDL(sender, e);
+            }
+            if (success)
+            {
+                success = FillGateDDL(sender, e);
+            }
+            if (success)
+            {
+                success = FillBusDDL(sender, e);
             }
         }
 
@@ -137,7 +133,7 @@ namespace Bus_Management_System
                     ddl_operationEdit.DataBind();
 
                     // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
-                    ddl_operationEdit.SelectedIndex = ddl_operationEdit.Items.IndexOf(ddl_operationEdit.Items.FindByText(ad.Operation));
+                    ddl_operationEdit.SelectedIndex = ddl_operationEdit.Items.IndexOf(ddl_operationEdit.Items.FindByText(loggedUser.Al_Op));
                     ddl_operationEdit.Dispose();
                     success = true;
                 }
@@ -152,9 +148,9 @@ namespace Bus_Management_System
                     success = true;
                 }
             }
-            catch
+            catch (Exception FillOperationDDL_ex)
             {
-                Response.Write("<script> alert('Linia 137 - Błąd ładowania listy typów operacji do kontrolki DDL') </script>");
+                Response.Write("<script> alert('Błąd - FillOperationDDL()') </script>");
             }
             return success;
         }
@@ -174,7 +170,7 @@ namespace Bus_Management_System
                     ddl_ppsEdit.DataBind();
 
                     // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
-                    ddl_ppsEdit.SelectedIndex = ddl_ppsEdit.Items.IndexOf(ddl_ppsEdit.Items.FindByText(ad.PPS));
+                    ddl_ppsEdit.SelectedIndex = ddl_ppsEdit.Items.IndexOf(ddl_ppsEdit.Items.FindByText(loggedUser.Al_Pp));
                     ddl_ppsEdit.Dispose();
                     success = true;
                 }
@@ -189,9 +185,9 @@ namespace Bus_Management_System
                     success = true;
                 }
             }
-            catch
+            catch (Exception FillPPSDDL_ex)
             {
-                Response.Write("<script> alert('Linia 174 - Błąd ładowania listy stanowisk postojowych do kontrolki DDL') </script>");
+                Response.Write("<script> alert('Błąd - FillPPSDDL()') </script>");
             }
             return success;
         }
@@ -211,7 +207,7 @@ namespace Bus_Management_System
                     ddl_airPortEdit.DataBind();
 
                     // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
-                    ddl_airPortEdit.SelectedIndex = ddl_airPortEdit.Items.IndexOf(ddl_airPortEdit.Items.FindByText(ad.AirPort));
+                    ddl_airPortEdit.SelectedIndex = ddl_airPortEdit.Items.IndexOf(ddl_airPortEdit.Items.FindByText(loggedUser.Al_Ai));
                     ddl_airPortEdit.Dispose();
                     success = true;
                 }
@@ -226,9 +222,9 @@ namespace Bus_Management_System
                     success = true;
                 }
             }
-            catch
+            catch (Exception FillAirPortDDL_ex)
             {
-                Response.Write("<script> alert('Linia 211 - Błąd ładowania listy obsługiwanych portów lotniczych') </script>");
+                Response.Write("<script> alert('Błąd - FillAirPortDDL()') </script>");
             }
             return success;
         }
@@ -248,7 +244,7 @@ namespace Bus_Management_System
                     ddl_gateEdit.DataBind();
 
                     // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
-                    ddl_gateEdit.SelectedIndex = ddl_gateEdit.Items.IndexOf(ddl_gateEdit.Items.FindByText(ad.Gate));
+                    ddl_gateEdit.SelectedIndex = ddl_gateEdit.Items.IndexOf(ddl_gateEdit.Items.FindByText(loggedUser.Al_Ga));
                     ddl_gateEdit.Dispose();
                     success = true;
                 }
@@ -263,9 +259,9 @@ namespace Bus_Management_System
                     success = true;
                 }
             }
-            catch
+            catch (Exception FillGateDDL_ex)
             {
-                Response.Write("<script> alert('Linia 248 - Błąd ładowania listy gate') </script>");
+                Response.Write("<script> alert('Błąd - FillGateDDL()') </script>");
             }
             return success;
         }
@@ -287,10 +283,10 @@ namespace Bus_Management_System
             }
             try
             {
-                ds = bl.GetIdleBusList(1, ad.Bus);
-                if (ds.Tables[0].Rows.Count == 0 && ad.Bus != null)
+                ds = bl.GetIdleBusList(1, loggedUser.Al_Bu);
+                if (ds.Tables[0].Rows.Count == 0 && loggedUser.Al_Bu != null)
                 {
-                    ds = bl.GetIdleBusList(2, ad.Bus);
+                    ds = bl.GetIdleBusList(2, loggedUser.Al_Bu);
                     ddl.DataSource = ds;
                     ddl.DataValueField = "Id";
                     ddl.DataTextField = "VehicleNb";
@@ -304,13 +300,13 @@ namespace Bus_Management_System
                     ddl.DataTextField = "VehicleNb";
                     ddl.DataBind();
                     // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
-                    ddl.SelectedIndex = ddl.Items.IndexOf(ddl.Items.FindByText(ad.Bus));
+                    ddl.SelectedIndex = ddl.Items.IndexOf(ddl.Items.FindByText(loggedUser.Al_Bu));
                     success = true;
                 }
             }
-            catch (Exception ex)
+            catch (Exception FillBusDDL_ex)
             {
-
+                Response.Write("<script> alert('Błąd - FillBusDDL()') </script>");
             }
             ddl.Dispose();
             return success;
@@ -362,7 +358,7 @@ namespace Bus_Management_System
             BindGrid();
 
             if (!result)
-                Response.Write("<script> alert('Linia 368 - kasowania operacji z bazy') </script>");
+                Response.Write("<script> alert('Błąd - Gv_Alocator_RowDeleting()') </script>");
         }
 
 
@@ -375,21 +371,21 @@ namespace Bus_Management_System
             {
                 GridViewRow row = gv_Alocator.Rows[e.NewEditIndex];
                 Label oper = (Label)row.FindControl("lb_operation");
-                ad.Operation = oper.Text;
-                Label iataName = (Label)row.FindControl("lb_airPort");
-                ad.AirPort = iataName.Text;
-                Label gateNb = (Label)row.FindControl("lb_gate");
-                ad.Gate = gateNb.Text;
-                Label ppsNb = (Label)row.FindControl("lb_pps");
-                ad.PPS = ppsNb.Text;
-                Label busNb = (Label)row.FindControl("lb_bus");
-                ad.Bus = busNb.Text;
+                loggedUser.Al_Op = oper.Text;
 
-                Session.Add()
+                Label iataName = (Label)row.FindControl("lb_airPort");
+                loggedUser.Al_Ai = iataName.Text;
+                Label gateNb = (Label)row.FindControl("lb_gate");
+                loggedUser.Al_Ga = gateNb.Text;
+                Label ppsNb = (Label)row.FindControl("lb_pps");
+                loggedUser.Al_Pp = ppsNb.Text;
+                Label busNb = (Label)row.FindControl("lb_bus");
+                loggedUser.Al_Bu = busNb.Text;
+
             }
-            catch (Exception ex)
+            catch (Exception Gv_Alocator_RowEditing_ex)
             {
-                Response.Write("<script> alert('Linia 390 - Błąd pobierania listy operacji') </script>");
+                Response.Write("<script> alert('Błąd Gv_Alocator_RowEditing()') </script>");
             }
             BindGrid();
         }
@@ -398,7 +394,7 @@ namespace Bus_Management_System
         //Dodanie nowej operacji
         protected void Gv_Alocator_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            bool success = true;
+            bool success = false;
 
             if (e.CommandName.Equals("Insert"))
             {
@@ -443,15 +439,23 @@ namespace Bus_Management_System
                 newOp.RadioNeon = tb_RadioNeonAdd.Text;
 
                 newOp.BusNb = ddl_BusAdd.SelectedItem.ToString();
-                
+
                 try
                 {
                     success = bl.AddNewOperation(newOp);
+
                 }
-                catch (Exception ex)
+                catch (Exception Gv_Alocator_RowCommand_ex)
                 {
-                    Response.Write("<script> alert('Błąd - nie udało się dodać nowej operacji' ) </script>");
+                    Response.Write("<script> alert('Błąd - Gv_Alocator_RowCommand()' ) </script>");
                 }
+            }
+            else
+            if (e.CommandName.Equals("Edit"))
+            {
+                btn_addNewOperation.Visible = true;
+                gv_Alocator.ShowFooter = false;
+                BindGrid();
             }
             if (success)
             {
@@ -465,75 +469,28 @@ namespace Bus_Management_System
         // Poprawienie danych w istniejącym rekordzie
         protected void Gv_Alocator_RowUpdating(object sender, GridViewUpdateEventArgs e)
         {
-            int id = int.Parse(((Label)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("lb_id"))).Text);
-            int operation = int.Parse(((DropDownList)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_operationEdit"))).SelectedValue);
-            string godzinaRozkladowa = (((TextBox)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_godzinaRozkładowa"))).Text);
-            string flightNb = (((TextBox)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_flightNbEdit"))).Text);
-            int airPort = int.Parse(((DropDownList)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_airPortEdit"))).SelectedValue);
-            string pax = (((TextBox)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_paxEdit"))).Text);
-            int gate = int.Parse(((DropDownList)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_gateEdit"))).SelectedValue);
-            int pps = int.Parse(((DropDownList)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_ppsEdit"))).SelectedValue);
-            int bus = int.Parse(((DropDownList)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_busEdit"))).SelectedValue);
-            string radioGate = ((TextBox)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_radioGateEdit"))).Text;
-            string radioNeon = ((TextBox)(gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_radioNeonEdit"))).Text;
+            loggedUser.Al_Id = ((Label)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("lb_id")).Text;
+            string godzinaRozkładowa = ((TextBox)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_godzinaRozkładowa")).Text;
+            loggedUser.Al_Op = ((DropDownList)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_operationEdit")).SelectedValue;
+            loggedUser.Al_Gr = CheckTimeFormat(godzinaRozkładowa);
+            loggedUser.Al_Fl = ((TextBox)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_flightNbEdit")).Text;
+            loggedUser.Al_Ai = ((DropDownList)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_airPortEdit")).SelectedValue;
+            loggedUser.Al_Pa = ((TextBox)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_paxEdit")).Text;
+            loggedUser.Al_Ga = ((DropDownList)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_gateEdit")).SelectedValue;
+            loggedUser.Al_Pp = ((DropDownList)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_ppsEdit")).SelectedValue;
+            loggedUser.Al_Bu = ((DropDownList)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_busEdit")).SelectedValue;
+            loggedUser.Al_Rg = ((TextBox)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_radioGateEdit")).Text;
+            loggedUser.Al_Rn = ((TextBox)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_radioNeonEdit")).Text;
 
-            DateTime editDate = DateTime.Now;
-            DateTime opTime = CheckTimeFormat(godzinaRozkladowa);
+            bool success = false;
 
-                SqlCommand cmd = new SqlCommand("UPDATE Operations SET Operation = @operation, " +
-                                "FlightNb = @flightNb, " +
-                                "GodzinaRozkladowa = @opTime, " +
-                                "AirPort = @airPort, " +
-                                "Pax = @pax, " +
-                                "Gate = @gate, " +
-                                "PPS = @pps, " +
-                                "Bus = @bus, " +
-                                "RadioGate = @radioGate, " +
-                                "RadioNeon = @radioNeon, " +
-                                "Created = @editDate " +
-                                "WHERE Id=@id ");
-                cmd.Parameters.AddWithValue("@operation", operation);
-                cmd.Parameters.AddWithValue("@flightNb", flightNb);
-                cmd.Parameters.AddWithValue("@opTime", opTime);
-                cmd.Parameters.AddWithValue("@airPort", airPort);
-                cmd.Parameters.AddWithValue("@pax", pax);
-                cmd.Parameters.AddWithValue("@gate", gate);
-                cmd.Parameters.AddWithValue("@pps", pps);
-                cmd.Parameters.AddWithValue("@bus", bus);
-                cmd.Parameters.AddWithValue("@radioGate", radioGate);
-                cmd.Parameters.AddWithValue("@radioNeon", radioNeon);
-                cmd.Parameters.AddWithValue("@editDate", editDate);
-                cmd.Parameters.AddWithValue("@id", id);
+            success = bl.AlocatorRowUpdate(loggedUser);
 
-            try
+            if (success)
             {
-                dal.QueryExecution(cmd);
-                gv_Alocator.EditIndex = -1;
-                cmd.Parameters.Clear();
-                cmd.Dispose();
-            }
-            catch
-            {
-                Response.Write("<script> alert('Błąd - nie udało się poprawić istniejącej operacji') </script>");
-            }
-            
-
-            try
-            {
-                SqlCommand cmd1 = new SqlCommand("UPDATE Vehicles SET Work_Status = 1 WHERE Id = @bus ");
-                cmd.Parameters.AddWithValue("@bus", bus);
-                dal.QueryExecution(cmd1);
-
                 gv_Alocator.EditIndex = -1;
                 btn_addNewOperation.Enabled = true;
-                cmd1.Parameters.Clear();
-                cmd1.Dispose();
             }
-            catch
-            {
-                Response.Write("<script> alert('Błąd - nie udało się poprawić istniejącej operacji') </script>");
-            }
-
             BindGrid();
         }
 
@@ -566,7 +523,7 @@ namespace Bus_Management_System
             BindGrid();
         }
 
-
+        // sprawdzenie statusu wszystkich pojazdów i naniesienie informacji graficznych na panel
         private void SetBusStatus()
         {
             //Bus status: 0 - Not Available, 1 - Empty, 2 - Free, 3 - In Work
@@ -634,6 +591,7 @@ namespace Bus_Management_System
         }
 
 
+        // utworzenie struktury GV, jeśli nie ma jeszcze żadnych operacji
         private DataTable GridViewStructCreate()
         {
             DataTable dt = new DataTable();

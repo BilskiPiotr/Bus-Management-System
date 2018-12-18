@@ -466,5 +466,65 @@ namespace Bus_Management_System
             }
             return result;
         }
+
+        // update danych do istniejącej operacji
+        public bool AlocatorRowUpdate(User loggedUser)
+        {
+            SqlCommand sqlCmd = new SqlCommand();
+            bool result = false;
+            DateTime updateDate = DateTime.Now;
+            sqlCmd.CommandText = "UPDATE Operations SET Operation = @operation, " +
+                                 "FlightNb = @flightNb, " +
+                                 "GodzinaRozkladowa = @opTime, " +
+                                 "AirPort = @airPort, " +
+                                 "Pax = @pax, " +
+                                 "Gate = @gate, " +
+                                 "PPS = @pps, " +
+                                 "Bus = @bus, " +
+                                 "RadioGate = @radioGate, " +
+                                 "RadioNeon = @radioNeon, " +
+                                 "Created = @editDate " +
+                                 "WHERE Id=@id ";
+            sqlCmd.Parameters.AddWithValue("@operation", Convert.ToInt32(loggedUser.Al_Op));
+            sqlCmd.Parameters.AddWithValue("@flightNb", loggedUser.Al_Fl);
+            sqlCmd.Parameters.AddWithValue("@opTime", loggedUser.Al_Gr);
+            sqlCmd.Parameters.AddWithValue("@airPort", Convert.ToInt32(loggedUser.Al_Ai));
+            sqlCmd.Parameters.AddWithValue("@pax", Convert.ToInt32(loggedUser.Al_Pa));
+            sqlCmd.Parameters.AddWithValue("@gate", Convert.ToInt32(loggedUser.Al_Ga));
+            sqlCmd.Parameters.AddWithValue("@pps", Convert.ToInt32(loggedUser.Al_Pp));
+            sqlCmd.Parameters.AddWithValue("@bus", Convert.ToInt32(loggedUser.Al_Bu));
+            sqlCmd.Parameters.AddWithValue("@radioGate", loggedUser.Al_Rg);
+            sqlCmd.Parameters.AddWithValue("@radioNeon", loggedUser.Al_Rn);
+            sqlCmd.Parameters.AddWithValue("@editDate", updateDate);
+            sqlCmd.Parameters.AddWithValue("@id", Convert.ToInt32(loggedUser.Al_Id));
+            try
+            {
+                dal.QueryExecution(sqlCmd);
+                sqlCmd.CommandText = "";
+                sqlCmd.Parameters.Clear();
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                result = false;
+            }
+            if (result)
+            {
+                sqlCmd.CommandText = "UPDATE Vehicles SET Work_Status = 1 WHERE Id = @bus ";
+                sqlCmd.Parameters.AddWithValue("@bus", Convert.ToInt32(loggedUser.Al_Bu));
+                try
+                {
+                    dal.QueryExecution(sqlCmd);
+                    sqlCmd.CommandText = "";
+                    sqlCmd.Parameters.Clear();
+                    result = true;
+                }
+                catch (Exception ex)
+                {
+                    result = false;
+                }
+            }
+            return result;
+        }
     }
 }

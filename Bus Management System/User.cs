@@ -1,4 +1,6 @@
-﻿namespace Bus_Management_System
+﻿using System;
+
+namespace Bus_Management_System
 {
     public class User
     {
@@ -77,6 +79,18 @@
 
 
         public string LogFilePath { get; set; }
-        public AlocatorData AD { get; set; }
+
+        public string Al_Id { get; set; }
+        public string Al_Op { get; set; }
+        public DateTime Al_Gr { get; set; }
+        public string Al_Fl { get; set; }
+        public string Al_Ai { get; set; }
+        public string Al_Pa { get; set; }
+        public string Al_Ga { get; set; }
+        public string Al_Pp { get; set; }
+        public string Al_Bu { get; set; }
+        public string Al_Rg { get; set; }
+        public string Al_Rn { get; set; }
+
     }
 }
