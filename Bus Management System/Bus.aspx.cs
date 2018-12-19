@@ -326,10 +326,10 @@ namespace Bus_Management_System
                         GetOperationData(ds);
                         InWorkBusControls(loggedUser.OperationStatus);
                     }
-                    else
-                    {
-                        IddleBusControls();
-                    }
+                    //else
+                    //{
+                    //    IddleBusControls();
+                    //}
                 }
                 else
                 {
@@ -506,18 +506,18 @@ namespace Bus_Management_System
 
 
         // pojazd nie ma zadań, oczekuje
-        private void IddleBusControls()
-        {
-            R1C2.Style.Add("background-color", "#FFFFCC");
-            R1C4.Style.Add("background-color", "#FFFFCC");
-            R3C2.Style.Add("color", "#FFFFCC");
-            R3C3.Style.Add("color", "#FFFFCC");
-            R3C4.Style.Add("color", "#FFFFCC");
-            R4C2.Style.Add("color", "#FFFFCC");
-            R4C3.Style.Add("color", "#FFFFCC");
-            R4C4.Style.Add("color", "#FFFFCC");
-            R5C3.Text = "oczekiwanie...";
-        }
+        //private void IddleBusControls()
+        //{
+        //    R1C2.Style.Add("background-color", "#FFFFCC");
+        //    R1C4.Style.Add("background-color", "#FFFFCC");
+        //    R3C2.Style.Add("color", "#FFFFCC");
+        //    R3C3.Style.Add("color", "#FFFFCC");
+        //    R3C4.Style.Add("color", "#FFFFCC");
+        //    R4C2.Style.Add("color", "#FFFFCC");
+        //    R4C3.Style.Add("color", "#FFFFCC");
+        //    R4C4.Style.Add("color", "#FFFFCC");
+        //    R5C3.Text = "oczekiwanie...";
+        //}
 
         // ustawienie grafik w zależności od operacji i strefy
         private void SetGraficElements()
@@ -585,7 +585,14 @@ namespace Bus_Management_System
             {
                 case 0:
                     {
-
+                        R1C2.Style.Add("background-color", "#FFFFCC");
+                        R1C4.Style.Add("background-color", "#FFFFCC");
+                        R3C2.Style.Add("color", "#FFFFCC");
+                        R3C3.Style.Add("color", "#FFFFCC");
+                        R3C4.Style.Add("color", "#FFFFCC");
+                        R4C2.Style.Add("color", "#FFFFCC");
+                        R4C3.Style.Add("color", "#FFFFCC");
+                        R4C4.Style.Add("color", "#FFFFCC");
                     }
                     break;
                 case 1:
@@ -681,7 +688,7 @@ namespace Bus_Management_System
             {
                 case 0:
                     {
-
+                        R5C3.Text = "oczekiwanie...";
                     }
                     break;
                 case 1:
