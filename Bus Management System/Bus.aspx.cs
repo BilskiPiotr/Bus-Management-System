@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Data;
-using System.Device.Location;
 using System.Globalization;
-using System.IO;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
@@ -12,12 +10,12 @@ namespace Bus_Management_System
 {
     public partial class Bus : System.Web.UI.Page
     {
-        private static BusinessLayer bl = new BusinessLayer();
+        public static BusinessLayer bl = new BusinessLayer();
         private static DataAccessLayer dal = new DataAccessLayer();
-        private static double speed = 0.0d;
-        private static double accuracy = 0.0d;
-        private static double currentLat = 0.0d;
-        private static double currentLon = 0.0d;
+        public static double speed = 0.0d;
+        public static double accuracy = 0.0d;
+        public static double currentLat = 0.0d;
+        public static double currentLon = 0.0d;
         User loggedUser;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -48,8 +46,12 @@ namespace Bus_Management_System
                     // załadowanie listy dostępnych pojazdów do listy
                     BindBusDDL();
 
-                    PrepareLogFile(DateTime.Now.ToString("yyyyMMdd_HH_mm_ss"));
-                    ClearSessionObject();
+                    Reporting rp = new Reporting();
+                    rp.PrepareLogFile(loggedUser, DateTime.Now.ToString("yyyyMMdd_HH_mm_ss"));
+                    rp.Dispose();
+                    Cleaning cl = new Cleaning();
+                    cl.ClearSessionObject(loggedUser);
+                    cl.Dispose();
                     CheckOperations();
                 }
             }
@@ -90,6 +92,7 @@ namespace Bus_Management_System
         protected void BusHomeTimer_Tick(object sender, EventArgs e)
         {
             DataSet ds = new DataSet();
+            DataManipulate dm = new DataManipulate();
 
             // pomiar czasu wykonywania timera
             int start, stop;
@@ -101,7 +104,7 @@ namespace Bus_Management_System
             {
                 // zerowanie potęcjalnego komunikatu głosowego
                 loggedUser.Alert = 0;
-                UpdateGPSData();
+                dm.UpdateGPSData(loggedUser);
 
                 // jeśli nie ma zlecenia
                 if (loggedUser.OperationStatus == 0)
@@ -112,11 +115,11 @@ namespace Bus_Management_System
                     // jeśli pojawiło sie zlecenie
                     if (ds.Tables[0].Rows.Count > 0)
                     {
-                        GetPPSData(ds.Tables[0].Rows[0].Field<int>("PPS"));
-                        GetGateData(ds.Tables[0].Rows[0].Field<int>("Gate"));
-                        SetOperationStatus(ds);
+                        dm.GetPPSData(loggedUser, ds.Tables[0].Rows[0].Field<int>("PPS"));
+                        dm.GetGateData(loggedUser, ds.Tables[0].Rows[0].Field<int>("Gate"));
+                        dm.SetOperationStatus(loggedUser, ds);
                         SetButtonsStatus(loggedUser.OperationStatus);
-                        GetOperationData(ds);
+                        dm.GetOperationData(loggedUser, ds);
                         InWorkBusControls(loggedUser.OperationStatus);
                     }
                     else
@@ -131,10 +134,10 @@ namespace Bus_Management_System
                     if (loggedUser.Interval == 5)
                     {
                         ds = bl.GetOperations(loggedUser.Bus);
-                        GetPPSData(ds.Tables[0].Rows[0].Field<int>("PPS"));
-                        GetGateData(ds.Tables[0].Rows[0].Field<int>("Gate"));
-                        GetOperationData(ds);
-                        SetOperationStatus(ds);
+                        dm.GetPPSData(loggedUser, ds.Tables[0].Rows[0].Field<int>("PPS"));
+                        dm.GetGateData(loggedUser, ds.Tables[0].Rows[0].Field<int>("Gate"));
+                        dm.GetOperationData(loggedUser, ds);
+                        dm.SetOperationStatus(loggedUser, ds);
                         SetButtonsStatus(loggedUser.OperationStatus);
                         InWorkBusControls(loggedUser.OperationStatus);
                         loggedUser.Interval = 0;
@@ -161,7 +164,10 @@ namespace Bus_Management_System
             // obsługa zmiennych testowych
             stop = Environment.TickCount & Int32.MaxValue;
             loggedUser.LoopTime = stop - start;
-            SaveUserFieldsValues();
+            Reporting rp = new Reporting();
+            rp.SaveUserFieldsValues(loggedUser);
+            rp.Dispose();
+            dm.Dispose();
         }
 
         // obsługa zdażeń menu Operatora
@@ -269,106 +275,21 @@ namespace Bus_Management_System
         // Sprawdzenie stanu zleceń w bazie
         private void CheckOperations()
         {
+            DataManipulate dm = new DataManipulate();
             DataSet ds = bl.GetOperations(loggedUser.Bus);
             if (ds.Tables[0].Rows.Count > 0)
             {
-                GetPPSData(ds.Tables[0].Rows[0].Field<int>("PPS"));
-                GetGateData(ds.Tables[0].Rows[0].Field<int>("Gate"));
-                SetOperationStatus(ds);
+                dm.GetPPSData(loggedUser, ds.Tables[0].Rows[0].Field<int>("PPS"));
+                dm.GetGateData(loggedUser, ds.Tables[0].Rows[0].Field<int>("Gate"));
+                dm.SetOperationStatus(loggedUser, ds);
                 SetButtonsStatus(loggedUser.OperationStatus);
-                UpdateGPSData();
+                dm.UpdateGPSData(loggedUser);
                 if (loggedUser.OperationStatus == 2)
-                    TranslateColToDegree();
-                GetOperationData(ds);
-                TranslateColToDegree();
+                    dm.TranslateColToDegree(loggedUser);
+                dm.GetOperationData(loggedUser, ds);
                 InWorkBusControls(loggedUser.OperationStatus);
+                dm.Dispose();
             }
-        }
-
-        // pobranie danych lokalizacyjnych stanowiska postojowego samolotu
-        private void GetPPSData(int ppsId)
-        {
-            DataSet pps = bl.GetPPS(ppsId);
-            loggedUser.Pps = pps.Tables[0].Rows[0].Field<string>("StationNb");
-            loggedUser.PpsLat = Convert.ToDouble(pps.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
-            loggedUser.PpsLon = Convert.ToDouble(pps.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
-            pps.Dispose();
-        }
-
-        // pobranie danych lokalizacyjnych wyjścia pasażerskiego
-        private void GetGateData(int gateId)
-        {
-            DataSet gate = bl.GetGate(gateId);
-            loggedUser.Gate = gate.Tables[0].Rows[0].Field<string>("GateNb");
-            loggedUser.GateLat = Convert.ToDouble(gate.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
-            loggedUser.GateLon = Convert.ToDouble(gate.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
-            gate.Dispose();
-        }
-
-        //ustawienie wartości aktualnej operacji w zmiennej sesyjnej
-        private void GetOperationData(DataSet ds)
-        {
-            loggedUser.Operation = ds.Tables[0].Rows[0].Field<int>("Operation");
-            loggedUser.FlightNb = ds.Tables[0].Rows[0].Field<string>("FlightNb");
-            loggedUser.Pax = ds.Tables[0].Rows[0].Field<int>("Pax").ToString();
-            loggedUser.RadioGate = ds.Tables[0].Rows[0].Field<string>("RadioGate").ToString();
-            loggedUser.RadioNeon = ds.Tables[0].Rows[0].Field<string>("RadioNeon").ToString();
-            loggedUser.GodzinaRozkladowa = (ds.Tables[0].Rows[0].Field<DateTime>("GodzinaRozkladowa")).ToString("HH:mm");
-
-            GetSpecyficAirPortData(ds.Tables[0].Rows[0].Field<int>("AirPort"));
-        }
-
-        // ustalenie stref bezpieczeństwa dla obsługiwanego portu
-        private void GetSpecyficAirPortData(int airPort)
-        {
-            DataSet ds = bl.GetAirPort(airPort);
-            loggedUser.AirPort = ds.Tables[0].Rows[0].Field<string>("IATA_Name");
-            loggedUser.Shengen = Convert.ToInt32(bl.GetCountry(ds.Tables[0].Rows[0].Field<int>("Shengen")));
-            loggedUser.PortName = ds.Tables[0].Rows[0].Field<string>("Full_Name");
-            loggedUser.Country = ds.Tables[0].Rows[0].Field<string>("Country_name");
-        }
-
-        // Ustalenie na jakim etapie jest aktualna operacja
-        private void SetOperationStatus(DataSet ds)
-        {
-            /* operationStatus wartości możliwe:
-             * 0 - brak zlecenia       <-
-             * 1 - zlecenie utworzone    |
-             * 2 - zlecenie przyjete     |
-             * 3 - rozpoczęty załadunek  |
-             * 4 - dowóz pasażerów       |
-             * 5 - rozpoczęty wyładunek >|
-             */
-            int operationStatus = 0;
-            loggedUser.Created = (ds.Tables[0].Rows[0].Field<DateTime>("Created")).ToString("HH:mm");
-            loggedUser.Accepted = (ds.Tables[0].Rows[0].Field<DateTime>("Accepted")).ToString("HH:mm");
-            loggedUser.StartLoad = (ds.Tables[0].Rows[0].Field<DateTime>("StartLoad")).ToString("HH:mm");
-            loggedUser.StartDrive = (ds.Tables[0].Rows[0].Field<DateTime>("StartDrive")).ToString("HH:mm");
-            loggedUser.StartUnload = (ds.Tables[0].Rows[0].Field<DateTime>("StartUnload")).ToString("HH:mm");
-            loggedUser.EndOp = (ds.Tables[0].Rows[0].Field<DateTime>("EndOp")).ToString("HH:mm");
-            if (loggedUser.Created != "00:00")
-                operationStatus = 1;
-            if (loggedUser.Accepted != "00:00")
-                operationStatus = operationStatus + 1;
-            if (loggedUser.StartLoad != "00:00")
-                operationStatus = operationStatus + 1;
-            if (loggedUser.StartDrive != "00:00")
-                operationStatus = operationStatus + 1;
-            if (loggedUser.StartUnload != "00:00")
-                operationStatus = operationStatus + 1;
-            if (loggedUser.EndOp != "00:00")
-                operationStatus = 0;
-
-            loggedUser.OperationStatus = operationStatus;
-        }
-
-        // naniesienie aktualnych danych lokalizacyjnych
-        private void UpdateGPSData()
-        {
-            loggedUser.Speed = speed;
-            loggedUser.Accuracy = accuracy;
-            loggedUser.CurrentLat = currentLat;
-            loggedUser.CurrentLon = currentLon;
         }
 
         // podstawienie odpowiedniego dzwieku do alertu
@@ -404,108 +325,25 @@ namespace Bus_Management_System
             BusHomeUP.ContentTemplateContainer.Controls.Add(sound);
         }
 
-
         // ustawienie kolorów aktywnych dla wszystrkich przycisków na stronie bus
         private void InWorkBusControls(int operationStatus)
         {
-            UpdateGPSData();
+            DataManipulate dm = new DataManipulate();
+            dm.UpdateGPSData(loggedUser);
             if (loggedUser.OperationStatus == 2 && (loggedUser.StartLocLatDegree == "" || loggedUser.StartLocLonDegree == ""))
-                TranslateColToDegree();
-            CheckDistance();
-            SetPredictedDistance();
+                dm.TranslateColToDegree(loggedUser);
+            dm.CheckDistance(loggedUser);
+            dm.SetPredictedDistance(loggedUser);
             SetGraficElements();
             SetColorControls();
             SetDataControls();
             CheckPosition();
             SetAlert();
             BusAlert(loggedUser.Alert);
+            dm.Dispose();
         }
 
-        // określenie odległości
-        private void CheckDistance()
-        {
-            switch (loggedUser.OperationStatus)
-            {
-                case 2:
-                    {
-                        if (loggedUser.Operation == 1)
-                        {
-                            Distance(loggedUser.PpsLat, loggedUser.PpsLon);
-                        }
-                        else
-                        {
-                            Distance(loggedUser.GateLat, loggedUser.GateLon);
-                        }
-                    }
-                    break;
-                case 4:
-                    {
-                        if (loggedUser.Operation == 1)
-                        {
-                            Distance(loggedUser.GateLat, loggedUser.GateLon);
-                        }
-                        else
-                        {
-                            Distance(loggedUser.PpsLat, loggedUser.PpsLon);
-                        }
-                    }
-                    break;
-            }
-        }
-
-        // przeliczenie przewidywanej odległości do celu ze względu na prędkość
-        private void SetPredictedDistance()
-        {
-            double predictedDistance = 0.0d;
-
-            if (loggedUser.OperationStatus == 2 || loggedUser.OperationStatus == 4)
-            {
-                // prędkość obiektu jest większa niż 3km / h
-                if (loggedUser.DistanceT > 30.0d)
-                {
-                    if (loggedUser.Operation == 1)
-                    {
-                        switch (loggedUser.Shengen)
-                        {
-                            case 0:
-                                {
-                                    if (loggedUser.OldDistanceN > loggedUser.DistanceN)
-                                        predictedDistance = Math.Round((loggedUser.DistanceN - (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);
-                                    else
-                                    if (loggedUser.OldDistanceN < loggedUser.DistanceN)
-                                        predictedDistance = Math.Round((loggedUser.DistanceN + (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);
-                                    else
-                                        predictedDistance = loggedUser.DistanceN;
-                                }
-                                break;
-                            case 1:
-                                {
-                                    if (loggedUser.OldDistanceS > loggedUser.DistanceS)
-                                        predictedDistance = Math.Round((loggedUser.DistanceS - (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);
-                                    else
-                                    if (loggedUser.OldDistanceS < loggedUser.DistanceS)
-                                        predictedDistance = Math.Round((loggedUser.DistanceS + (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);
-                                    else
-                                        predictedDistance = loggedUser.DistanceS;
-                                }
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        if (loggedUser.OldDistanceT > loggedUser.DistanceT)
-                            predictedDistance = Math.Round((loggedUser.DistanceT - (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);
-                        else
-                        if (loggedUser.OldDistanceT < loggedUser.DistanceT)
-                            predictedDistance = Math.Round((loggedUser.DistanceN + (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);
-                        else
-                            predictedDistance = loggedUser.DistanceT;
-                    }
-                }
-                loggedUser.PredictedDistance = predictedDistance;
-            }
-        }
-
+        // ustawienie aktywności kontrolek na panelu
         private void SetButtonsStatus(int operationStatus)
         {
             switch (operationStatus)
@@ -1038,37 +876,14 @@ namespace Bus_Management_System
             Dr5C3.Style.Add("color", "Black");
         }
 
-        // przeliczenie wszystkich odległości
-        private double Distance(double destinationLat, double destinationLon)
-        {
-            GeoCoordinate busPosition = new GeoCoordinate(currentLat, currentLon);
-            GeoCoordinate targetPosition = new GeoCoordinate(destinationLat, destinationLon);
-            GeoCoordinate shengen = new GeoCoordinate(52.17035, 20.97174);
-            GeoCoordinate nonShengen = new GeoCoordinate(52.17224, 20.9702);
-
-            // zwrocenie odleglosci miedzy wspolrzednymi z ograniczeniem do 2 miejsc po przecinku
-            double distanceT = Math.Round(busPosition.GetDistanceTo(targetPosition), 2, MidpointRounding.AwayFromZero);
-            double distanceS = Math.Round(busPosition.GetDistanceTo(shengen), 2, MidpointRounding.AwayFromZero);
-            double distanceN = Math.Round(busPosition.GetDistanceTo(nonShengen), 2, MidpointRounding.AwayFromZero);
-
-            loggedUser.OldDistanceT = loggedUser.DistanceT;
-            loggedUser.DistanceT = distanceT;
-
-            loggedUser.OldDistanceS = loggedUser.DistanceS;
-            loggedUser.DistanceS = distanceS;
-
-            loggedUser.OldDistanceN = loggedUser.DistanceN;
-            loggedUser.DistanceN = distanceN;
-
-            return distanceT;
-        }
-
         // operacja została zaakceptowana
         protected void BusAccept_Click(object sender, EventArgs e)
         {
             bl.BusOperationAction(loggedUser, 1);
             loggedUser.OperationStatus = 2;
-            TranslateColToDegree();
+            DataManipulate dm = new DataManipulate();
+            dm.TranslateColToDegree(loggedUser);
+            dm.Dispose();
         }
 
         // zaznaczenie początku operacji odbioru pasażerów z samolotu lub Gate
@@ -1076,198 +891,41 @@ namespace Bus_Management_System
         {
             bl.BusOperationAction(loggedUser, 2);
             loggedUser.OperationStatus = 3;
-            TranslateColToDegree();
+            DataManipulate dm = new DataManipulate();
+            dm.TranslateColToDegree(loggedUser);
+            dm.Dispose();
         }
 
         protected void BusStartDrive_Click(object sender, EventArgs e)
         {
             bl.BusOperationAction(loggedUser, 3);
             loggedUser.OperationStatus = 4;
-            TranslateColToDegree();
+            DataManipulate dm = new DataManipulate();
+            dm.TranslateColToDegree(loggedUser);
+            dm.Dispose();
         }
 
         protected void BusStartUnload_Click(object sender, EventArgs e)
         {
             bl.BusOperationAction(loggedUser, 4);
             loggedUser.OperationStatus = 5;
-            TranslateColToDegree();
+            DataManipulate dm = new DataManipulate();
+            dm.TranslateColToDegree(loggedUser);
+            dm.Dispose();
         }
 
         protected void BusEndOp_Click(object sender, EventArgs e)
         {
             bl.BusOperationAction(loggedUser, 5);
             loggedUser.OperationStatus = 0;
-            ClearSessionObject();
+            Cleaning cl = new Cleaning();
+            cl.ClearSessionObject(loggedUser);
+            cl.Dispose();
         }
 
         protected void busPause_Click(object sender, EventArgs e)
         {
 
-        }
-
-        // wyzerowanie wartości w zmiennej sesyjnej
-        private void ClearSessionObject()
-        {
-            loggedUser.Interval = 0;
-            loggedUser.Operation = 0;
-            loggedUser.FlightNb = "";
-            loggedUser.AirPort = "";
-            loggedUser.Pax = "";
-            loggedUser.Pps = "";
-            loggedUser.Gate = "";
-            loggedUser.RadioGate = "";
-            loggedUser.RadioNeon = "";
-            loggedUser.Shengen = 0;
-            loggedUser.PortName = "";
-            loggedUser.Country = "";
-            loggedUser.GodzinaRozkladowa = "";
-            loggedUser.Created = "";
-            loggedUser.Accepted = "";
-            loggedUser.StartLoad = "";
-            loggedUser.StartDrive = "";
-            loggedUser.StartUnload = "";
-            loggedUser.EndOp = "";
-            loggedUser.PpsLat = 0.0d;
-            loggedUser.PpsLon = 0.0d;
-            loggedUser.GateLat = 0.0d;
-            loggedUser.GateLon = 0.0d;
-            loggedUser.Alert = 0;
-            loggedUser.LoopTime = 0;
-            loggedUser.Speed = 0.0d;
-            loggedUser.Accuracy = 0.0d;
-            loggedUser.OldDistanceT = 0.0d;
-            loggedUser.DistanceT = 0.0d;
-            loggedUser.OldDistanceS = 0.0d;
-            loggedUser.DistanceS = 0.0d;
-            loggedUser.OldDistanceN = 0.0d;
-            loggedUser.DistanceN = 0.0d;
-            loggedUser.PredictedDistance = 0.0d;
-            loggedUser.CurrentLat = 0.0d;
-            loggedUser.CurrentLon = 0.0d;
-            loggedUser.StartLat = 0.0d;
-            loggedUser.StartLon = 0.0d;
-            loggedUser.StartLocLatDegree = "";
-            loggedUser.StartLocLonDegree = "";
-            loggedUser.LogFilePath = "";
-    }
-
-        // przeliczenie współrzędnych pobranych z urządzenia GPS do czytelnych współrzędnych w stopniach
-        private void TranslateColToDegree()
-        {
-            double latitude = loggedUser.CurrentLat;
-            double longitude = loggedUser.CurrentLon;
-
-            string latitude_Kierunek = (latitude >= 0 ? "N" : "S");
-
-            latitude = Math.Abs(latitude);
-            double minutyLat = ((latitude - Math.Truncate(latitude) / 1) * 60);
-            double sekundyLat = ((minutyLat - Math.Truncate(minutyLat) / 1) * 60);
-
-            string longitude_Kierunek = (longitude >= 0 ? "E" : "W");
-            longitude = Math.Abs(longitude);
-            double minutyLon = ((longitude - Math.Truncate(longitude) / 1) * 60);
-            double sekundyLon = ((minutyLon - Math.Truncate(minutyLon) / 1) * 60);
-
-            loggedUser.StartLocLatDegree = String.Format(Convert.ToString(Math.Truncate(latitude) + "° " + +Math.Truncate(minutyLat) + "' " + Math.Truncate(sekundyLat) + "'' " + latitude_Kierunek));
-            loggedUser.StartLocLonDegree = String.Format(Convert.ToString(Math.Truncate(longitude) + "° " + Math.Truncate(minutyLon) + "' " + Math.Truncate(sekundyLon) + "'' " + longitude_Kierunek));
-        }
-
-        // przygotowanie i obrobka pliku tekstowego z logami operacji
-        private void PrepareLogFile(string data)
-        {
-            // tworzymy nazwę pliku ktory bedzie uzupelniany danymi
-            string dataLogic = Server.MapPath("~/logi/" + loggedUser.FirstName + "_" + loggedUser.LastName + "__" + data + ".txt");
-
-            FileStream fs = null;
-
-            if (!File.Exists(dataLogic))
-            {
-                using (fs = File.Create(dataLogic))
-                {
-
-                }
-                fs.Close();
-
-                string newLine = Environment.NewLine;
-                newLine += "Operation; ";
-                newLine += "Operation Status; ";
-                newLine += "Created; ";
-                newLine += "Accepted; ";
-                newLine += "Start Load; ";
-                newLine += "Start Drive; ";
-                newLine += "Start Unload; ";
-                newLine += "End Operation; ";
-                newLine += "Start Latitude; ";
-                newLine += "Start Longitude; ";
-                newLine += "Current Latitude; ";
-                newLine += "Current Longitude; ";
-                newLine += "Speed; ";
-                newLine += "Accuracy; ";
-                newLine += "Old Distance to Target; ";
-                newLine += "Distance to Target; ";
-                newLine += "Old Distance to Shengen; ";
-                newLine += "Distance to Shengen; ";
-                newLine += "Old Distance to NonShengen; ";
-                newLine += "Distance to NonShengen; ";
-                newLine += "Predicted Distance; ";
-                newLine += "Alert Nb; ";
-                newLine += "Loop Time; ";
-                newLine += "Measurement Time";
-
-                using (StreamWriter writer = new StreamWriter(dataLogic, true))
-                {
-                    writer.WriteLine(newLine);
-                    writer.Close();
-                }
-
-            }
-            else
-            {
-                Response.Write("<script> alert('Błąd - ścieżki lub pliku') </script>");
-            }
-            // i dodajemy nazwe pliku do zmiennej sesyjnej
-            loggedUser.LogFilePath = dataLogic;
-        }
-        
-        // dodajemy do pliku log sesji dane z kontrolek
-        private void SaveUserFieldsValues()
-        {
-            string newLine = Environment.NewLine;
-            newLine += loggedUser.Operation.ToString() + "; ";
-            newLine += loggedUser.OperationStatus.ToString() + "; ";
-            newLine += loggedUser.Created + "; ";
-            newLine += loggedUser.Accepted + "; ";
-            newLine += loggedUser.StartLoad + "; ";
-            newLine += loggedUser.StartDrive + "; ";
-            newLine += loggedUser.StartUnload + "; ";
-            newLine += loggedUser.EndOp + "; ";
-            newLine += loggedUser.StartLat.ToString() + "; ";
-            newLine += loggedUser.StartLon.ToString() + "; ";
-            newLine += loggedUser.CurrentLat.ToString() + "; ";
-            newLine += loggedUser.CurrentLon.ToString() + "; ";
-            newLine += loggedUser.Speed.ToString() + "; ";
-            newLine += loggedUser.Accuracy.ToString() + "; ";
-            newLine += loggedUser.OldDistanceT.ToString() + "; ";
-            newLine += loggedUser.DistanceT.ToString() + "; ";
-            newLine += loggedUser.OldDistanceS.ToString() + "; ";
-            newLine += loggedUser.DistanceS.ToString() + "; ";
-            newLine += loggedUser.OldDistanceN.ToString() + "; ";
-            newLine += loggedUser.DistanceN.ToString() + "; ";
-            newLine += loggedUser.PredictedDistance.ToString() + "; ";
-            newLine += loggedUser.Alert.ToString() + "; ";
-            newLine += loggedUser.LoopTime.ToString() + "; ";
-            newLine += DateTime.Now.ToString("HH:mm:ss");
-
-            string dataLogic = loggedUser.LogFilePath;
-
-            if (File.Exists(dataLogic))
-            {
-                using (StreamWriter writer = new StreamWriter(loggedUser.LogFilePath, true))
-                {
-                    writer.WriteLine(newLine);
-                    writer.Close();
-                }
-            }    
         }
     }
 }

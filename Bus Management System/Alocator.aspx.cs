@@ -43,8 +43,6 @@ namespace Bus_Management_System
             }
         }
 
-
-
         //obsługva zdażenia MenuItem Click
         protected void MineMenu_MenuItemClick(object sender, MenuEventArgs e)
         {
@@ -312,7 +310,6 @@ namespace Bus_Management_System
             return success;
         }
 
-
         // ustalenie typu operacji i strefy ze względu na wczytane dane
         protected void Gv_CheckSecurityZone(object sender, EventArgs e)
         {
@@ -343,7 +340,6 @@ namespace Bus_Management_System
             }
         }
 
-
         // usunięcie błędnego wpisu do rozważenia, czy to na pewno jest potrzebne
         protected void Gv_Alocator_RowDeleting(object sender, GridViewDeleteEventArgs e)
         {
@@ -360,7 +356,6 @@ namespace Bus_Management_System
             if (!result)
                 Response.Write("<script> alert('Błąd - Gv_Alocator_RowDeleting()') </script>");
         }
-
 
         // Edycja istniejącej operacji
         protected void Gv_Alocator_RowEditing(object sender, GridViewEditEventArgs e)
@@ -389,7 +384,6 @@ namespace Bus_Management_System
             }
             BindGrid();
         }
-
 
         //Dodanie nowej operacji
         protected void Gv_Alocator_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -465,7 +459,6 @@ namespace Bus_Management_System
             }
         }
 
-
         // Poprawienie danych w istniejącym rekordzie
         protected void Gv_Alocator_RowUpdating(object sender, GridViewUpdateEventArgs e)
         {
@@ -494,7 +487,6 @@ namespace Bus_Management_System
             BindGrid();
         }
 
-
         // Rezygnacja z poprawienia operacjhi
         protected void Gv_Alocator_CancelEdit(object sender, GridViewCancelEditEventArgs e)
         {
@@ -502,7 +494,6 @@ namespace Bus_Management_System
             gv_Alocator.EditIndex = -1;
             BindGrid();
         }
-
 
         // Wyświetlenie "Footer" kontrolki GridView
         protected void Gv_Alocator_NewOperation(object sender, EventArgs e)
@@ -512,7 +503,6 @@ namespace Bus_Management_System
             gv_Alocator.ShowFooter = true;
             BindGrid();
         }
-
 
         // Anulowanie operacji dodawania nowej operacji
         protected void Gv_Alocator_CancelNewOperation(object sender, EventArgs e)
@@ -590,7 +580,6 @@ namespace Bus_Management_System
             ds.Dispose();
         }
 
-
         // utworzenie struktury GV, jeśli nie ma jeszcze żadnych operacji
         private DataTable GridViewStructCreate()
         {
@@ -623,7 +612,6 @@ namespace Bus_Management_System
             return dt;
         }
 
-
         // Sprawdzenie formatu wprowadzonej godziny operacji
         private DateTime CheckTimeFormat(string time)
         {
@@ -636,6 +624,5 @@ namespace Bus_Management_System
             }
             return dt;
         }
-        
     }
 }
