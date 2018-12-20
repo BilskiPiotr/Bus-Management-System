@@ -89,9 +89,7 @@
     <Content Include="Alocator.aspx" />
     <Content Include="Bus.aspx" />
     <Content Include="css\alocator.css" />
-    <Content Include="css\bus-baza.css" />
     <Content Include="css\bus.css" />
-    <Content Include="css\style-old.css" />
     <Content Include="css\style.css" />
     <Content Include="global.aspx" />
     <Content Include="js\get_location.js" />

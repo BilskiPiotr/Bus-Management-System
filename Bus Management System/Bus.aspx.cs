@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Data.SqlClient;
 using System.Device.Location;
 using System.Globalization;
 using System.IO;
@@ -50,10 +49,11 @@ namespace Bus_Management_System
                     BindBusDDL();
 
                     PrepareLogFile(DateTime.Now.ToString("yyyyMMdd_HH_mm_ss"));
+                    ClearSessionObject();
+                    CheckOperations();
                 }
             }
         }
-
 
         [System.Web.Services.WebMethod/*(EnableSession = true)*/]
         public static string PrzeliczArray(string[] arrayIn)
@@ -84,6 +84,84 @@ namespace Bus_Management_System
             currentLon = longitude;
 
             return currentSpeed.ToString();
+        }
+
+        // pętla odświeżająca Update Panel
+        protected void BusHomeTimer_Tick(object sender, EventArgs e)
+        {
+            DataSet ds = new DataSet();
+
+            // pomiar czasu wykonywania timera
+            int start, stop;
+            start = Environment.TickCount & Int32.MaxValue;
+
+            // sprawdzenie, czy użytkownik jest poprawnie zalogowany
+            HttpCookie cookie = Request.Cookies["Bus"];
+            if (cookie != null)
+            {
+                // zerowanie potęcjalnego komunikatu głosowego
+                loggedUser.Alert = 0;
+                UpdateGPSData();
+
+                // jeśli nie ma zlecenia
+                if (loggedUser.OperationStatus == 0)
+                {
+                    // sprawdzenie, czy pojawiła się operacja
+                    ds = bl.GetOperations(loggedUser.Bus);
+
+                    // jeśli pojawiło sie zlecenie
+                    if (ds.Tables[0].Rows.Count > 0)
+                    {
+                        GetPPSData(ds.Tables[0].Rows[0].Field<int>("PPS"));
+                        GetGateData(ds.Tables[0].Rows[0].Field<int>("Gate"));
+                        SetOperationStatus(ds);
+                        SetButtonsStatus(loggedUser.OperationStatus);
+                        GetOperationData(ds);
+                        InWorkBusControls(loggedUser.OperationStatus);
+                    }
+                    else
+                    {
+                        InWorkBusControls(loggedUser.OperationStatus);
+                    }
+                }
+                else
+                {
+                    loggedUser.Interval = loggedUser.Interval + 1;
+                    // żeby nie zapychać łącza, odświeżanie danych co 10s
+                    if (loggedUser.Interval == 5)
+                    {
+                        ds = bl.GetOperations(loggedUser.Bus);
+                        GetPPSData(ds.Tables[0].Rows[0].Field<int>("PPS"));
+                        GetGateData(ds.Tables[0].Rows[0].Field<int>("Gate"));
+                        GetOperationData(ds);
+                        SetOperationStatus(ds);
+                        SetButtonsStatus(loggedUser.OperationStatus);
+                        InWorkBusControls(loggedUser.OperationStatus);
+                        loggedUser.Interval = 0;
+                    }
+                    else
+                    {
+                        InWorkBusControls(loggedUser.OperationStatus);
+                    }
+                }
+            }
+            // "buss" cookie nie istnieje, wiedz na wszelki wypadek koniec sesji i wylogowanie
+            else
+            {
+                // wylogować użytkownika zapisanego w sesji oraz zwolnic BUS
+                if (Request.Cookies["Bus"] != null)
+                {
+                    Response.Cookies["Bus"].Expires = DateTime.Now.AddDays(-1);
+                }
+                bl.UserLogOut(loggedUser);
+                Session.Abandon();
+                Response.Redirect("global.aspx");
+            }
+
+            // obsługa zmiennych testowych
+            stop = Environment.TickCount & Int32.MaxValue;
+            loggedUser.LoopTime = stop - start;
+            SaveUserFieldsValues();
         }
 
         // obsługa zdażeń menu Operatora
@@ -169,9 +247,6 @@ namespace Bus_Management_System
 
                 // naniesienie zmiany statusu wybranego pojazdu
                 bl.UpdateVehicleStatus(2, loggedUser);
-
-                // na koniec pobranie informacji czy operator ma jakieś zlecenie
-                CheckOperations();
             }
             else
             {
@@ -202,6 +277,8 @@ namespace Bus_Management_System
                 SetOperationStatus(ds);
                 SetButtonsStatus(loggedUser.OperationStatus);
                 UpdateGPSData();
+                if (loggedUser.OperationStatus == 2)
+                    TranslateColToDegree();
                 GetOperationData(ds);
                 TranslateColToDegree();
                 InWorkBusControls(loggedUser.OperationStatus);
@@ -294,89 +371,6 @@ namespace Bus_Management_System
             loggedUser.CurrentLon = currentLon;
         }
 
-        protected void BusHomeTimer_Tick(object sender, EventArgs e)
-        {
-            DataSet ds = new DataSet();
-
-            // pomiar czasu wykonywania timera
-            int start, stop;
-            start = Environment.TickCount & Int32.MaxValue;
-
-            // sprawdzenie, czy użytkownik jest poprawnie zalogowany
-            HttpCookie cookie = Request.Cookies["Bus"];
-            if (cookie != null)
-            {
-                // zerowanie potęcjalnego komunikatu głosowego
-                loggedUser.Alert = 0;
-                UpdateGPSData();
-
-                // jeśli nie ma zlecenia
-                if (loggedUser.Operation == 0)
-                {
-                    // sprawdzenie, czy pojawiła się operacja
-                    ds = bl.GetOperations(loggedUser.Bus);
-
-                    // jeśli pojawiło sie zlecenie
-                    if (ds.Tables[0].Rows.Count > 0)
-                    {
-                        GetPPSData(ds.Tables[0].Rows[0].Field<int>("PPS"));
-                        GetGateData(ds.Tables[0].Rows[0].Field<int>("Gate"));
-                        SetOperationStatus(ds);
-                        SetButtonsStatus(loggedUser.OperationStatus);
-                        GetOperationData(ds);
-                        InWorkBusControls(loggedUser.OperationStatus);
-                    }
-                    //else
-                    //{
-                    //    IddleBusControls();
-                    //}
-                }
-                else
-                {
-                    loggedUser.Interval = loggedUser.Interval + 1;
-                    // żeby nie zapychać łącza, odświeżanie danych co 10s
-                    if (loggedUser.Interval == 5)
-                    {
-                        ds = bl.GetOperations(loggedUser.Bus);
-                        GetPPSData(ds.Tables[0].Rows[0].Field<int>("PPS"));
-                        GetGateData(ds.Tables[0].Rows[0].Field<int>("Gate"));
-                        GetOperationData(ds);
-                        SetOperationStatus(ds);
-                        SetButtonsStatus(loggedUser.OperationStatus);
-                        InWorkBusControls(loggedUser.OperationStatus);
-                        loggedUser.Interval = 0;
-                    }
-                    else
-                    {
-                        InWorkBusControls(loggedUser.OperationStatus);
-                    }
-                }
-            }
-            // "buss" cookie nie istnieje, wiedz na wszelki wypadek koniec sesji i wylogowanie
-            else
-            {
-                // wylogować użytkownika zapisanego w sesji oraz zwolnic BUS
-                if (Request.Cookies["Bus"] != null)
-                {
-                    Response.Cookies["Bus"].Expires = DateTime.Now.AddDays(-1);
-                }
-                bl.UserLogOut(loggedUser);
-                Session.Abandon();
-                Response.Redirect("global.aspx");
-            }
-
-            // sprawdzenie stanu alertu, i ewentualne odtworzenie go
-            BusAlert(loggedUser.Alert);
-
-            stop = Environment.TickCount & Int32.MaxValue;
-
-            loggedUser.LoopTime = stop - start;
-
-            SaveUserFieldsValues();
-        }
-
-
-
         // podstawienie odpowiedniego dzwieku do alertu
         private void BusAlert(int alert)
         {
@@ -414,27 +408,118 @@ namespace Bus_Management_System
         // ustawienie kolorów aktywnych dla wszystrkich przycisków na stronie bus
         private void InWorkBusControls(int operationStatus)
         {
+            UpdateGPSData();
+            if (loggedUser.OperationStatus == 2 && (loggedUser.StartLocLatDegree == "" || loggedUser.StartLocLonDegree == ""))
+                TranslateColToDegree();
+            CheckDistance();
+            SetPredictedDistance();
             SetGraficElements();
             SetColorControls();
             SetDataControls();
-            //switch (loggedUser.Operation)
-            //{
-            //    case 1:
-            //        Przylot(loggedUser.Shengen);
-            //        break;
-            //    case 2:
-            //        Odlot(loggedUser.Shengen);
-            //        break;
-            //}
+            CheckPosition();
+            SetAlert();
+            BusAlert(loggedUser.Alert);
         }
 
+        // określenie odległości
+        private void CheckDistance()
+        {
+            switch (loggedUser.OperationStatus)
+            {
+                case 2:
+                    {
+                        if (loggedUser.Operation == 1)
+                        {
+                            Distance(loggedUser.PpsLat, loggedUser.PpsLon);
+                        }
+                        else
+                        {
+                            Distance(loggedUser.GateLat, loggedUser.GateLon);
+                        }
+                    }
+                    break;
+                case 4:
+                    {
+                        if (loggedUser.Operation == 1)
+                        {
+                            Distance(loggedUser.GateLat, loggedUser.GateLon);
+                        }
+                        else
+                        {
+                            Distance(loggedUser.PpsLat, loggedUser.PpsLon);
+                        }
+                    }
+                    break;
+            }
+        }
 
+        // przeliczenie przewidywanej odległości do celu ze względu na prędkość
+        private void SetPredictedDistance()
+        {
+            double predictedDistance = 0.0d;
+
+            if (loggedUser.OperationStatus == 2 || loggedUser.OperationStatus == 4)
+            {
+                // prędkość obiektu jest większa niż 3km / h
+                if (loggedUser.DistanceT > 30.0d)
+                {
+                    if (loggedUser.Operation == 1)
+                    {
+                        switch (loggedUser.Shengen)
+                        {
+                            case 0:
+                                {
+                                    if (loggedUser.OldDistanceN > loggedUser.DistanceN)
+                                        predictedDistance = Math.Round((loggedUser.DistanceN - (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);
+                                    else
+                                    if (loggedUser.OldDistanceN < loggedUser.DistanceN)
+                                        predictedDistance = Math.Round((loggedUser.DistanceN + (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);
+                                    else
+                                        predictedDistance = loggedUser.DistanceN;
+                                }
+                                break;
+                            case 1:
+                                {
+                                    if (loggedUser.OldDistanceS > loggedUser.DistanceS)
+                                        predictedDistance = Math.Round((loggedUser.DistanceS - (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);
+                                    else
+                                    if (loggedUser.OldDistanceS < loggedUser.DistanceS)
+                                        predictedDistance = Math.Round((loggedUser.DistanceS + (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);
+                                    else
+                                        predictedDistance = loggedUser.DistanceS;
+                                }
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        if (loggedUser.OldDistanceT > loggedUser.DistanceT)
+                            predictedDistance = Math.Round((loggedUser.DistanceT - (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);
+                        else
+                        if (loggedUser.OldDistanceT < loggedUser.DistanceT)
+                            predictedDistance = Math.Round((loggedUser.DistanceN + (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);
+                        else
+                            predictedDistance = loggedUser.DistanceT;
+                    }
+                }
+                loggedUser.PredictedDistance = predictedDistance;
+            }
+        }
 
         private void SetButtonsStatus(int operationStatus)
         {
             switch (operationStatus)
             {
                 case 0:
+                    {
+                        loggedUser.OperationStatus = 0;
+                        busEndOp.Click -= new EventHandler(BusEndOp_Click);
+                        busAccept.Style.Add("background-color", "Silver");
+                        busStartLoad.Style.Add("background-color", "Silver");
+                        busStartDrive.Style.Add("background-color", "Silver");
+                        busStartUnload.Style.Add("background-color", "Silver");
+                        busEndOp.Style.Add("background-color", "Silver");
+                    }
                     break;
                 case 1:
                     {
@@ -488,40 +573,17 @@ namespace Bus_Management_System
                         busDriveTable.Visible = false;
                     }
                     break;
-                case 6:
-                    {
-                        loggedUser.OperationStatus = 0;
-                        busEndOp.Click -= new EventHandler(BusEndOp_Click);
-                        busAccept.Style.Add("background-color", "Silver");
-                        busStartLoad.Style.Add("background-color", "Silver");
-                        busStartDrive.Style.Add("background-color", "Silver");
-                        busStartUnload.Style.Add("background-color", "Silver");
-                        busEndOp.Style.Add("background-color", "Silver");
-                    }
-                    break;
-                default:
-                    break;
             }
         }
-
-
-        // pojazd nie ma zadań, oczekuje
-        //private void IddleBusControls()
-        //{
-        //    R1C2.Style.Add("background-color", "#FFFFCC");
-        //    R1C4.Style.Add("background-color", "#FFFFCC");
-        //    R3C2.Style.Add("color", "#FFFFCC");
-        //    R3C3.Style.Add("color", "#FFFFCC");
-        //    R3C4.Style.Add("color", "#FFFFCC");
-        //    R4C2.Style.Add("color", "#FFFFCC");
-        //    R4C3.Style.Add("color", "#FFFFCC");
-        //    R4C4.Style.Add("color", "#FFFFCC");
-        //    R5C3.Text = "oczekiwanie...";
-        //}
 
         // ustawienie grafik w zależności od operacji i strefy
         private void SetGraficElements()
         {
+            if (loggedUser.OperationStatus == 0)
+            {
+                R1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "");
+                R1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "");
+            }
             if (loggedUser.OperationStatus == 1)            // jest zadanie, ale jeszcze nie zaakceptowane
             {
                 if (loggedUser.Operation == 1)              // przylot
@@ -541,7 +603,7 @@ namespace Bus_Management_System
                 R1C4.Style.Add("background-size", "100% 100%");
             }
             else
-            if (loggedUser.OperationStatus > 1)             // zaakceptowana operacja
+            if (loggedUser.OperationStatus == 2 || loggedUser.OperationStatus == 4)             // zaakceptowana operacja
             {
                 switch (loggedUser.Operation)
                 {
@@ -572,9 +634,40 @@ namespace Bus_Management_System
                 Dr1C4.Style.Add("background-size", "100% 100%");
             }
             else
-            if (loggedUser.OperationStatus == 0)            // nie ma żadnej operacji 
+            if (loggedUser.OperationStatus == 3 || loggedUser.OperationStatus == 5)            // nie ma żadnej operacji 
             {
-                            
+                switch (loggedUser.Operation)
+                {
+                    case 1:                                                                 // przylot
+                        {
+                            if (loggedUser.Shengen == 0)                                    // shengen
+                            {
+                                R1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sz.png");
+                                R1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sz.png");
+                            }
+                            else                                                            // non shengen
+                            {
+                                R1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sc.png");
+                                R1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sc.png");
+                            }
+                        }
+                        break;
+                    case 2:                                                                 // odlot
+                        {
+                            R1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sn.png");
+                            R1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sn.png");
+                        }
+                        break;
+                }
+                
+                R1C2.Style.Add("background-repeat", "no-repeat");
+                R1C4.Style.Add("background-repeat", "no-repeat");
+                R1C2.Style.Add("background-size", "100% 100%");
+                R1C4.Style.Add("background-size", "100% 100%");
+                R3C2.Style.Add("font-size", "20px");
+                R3C3.Style.Add("font-size", "20px");
+                R3C4.Style.Add("font-size", "20px");
+                R5C3.Style.Add("font-size", "20px");
             }
         }
 
@@ -586,6 +679,7 @@ namespace Bus_Management_System
                 case 0:
                     {
                         R1C2.Style.Add("background-color", "#FFFFCC");
+                        R1C3.Style.Add("color", "Violet");
                         R1C4.Style.Add("background-color", "#FFFFCC");
                         R3C2.Style.Add("color", "#FFFFCC");
                         R3C3.Style.Add("color", "#FFFFCC");
@@ -627,6 +721,7 @@ namespace Bus_Management_System
                         Dr1C3.Style.Add("color", "Black");
                         Dr2C2.Style.Add("Color", "DarkBlue");
                         Dr2C4.Style.Add("Color", "DarkBlue");
+                        Dr3C3.Style.Add("color", "Violet");
                         Dr4C3.Style.Add("color", "Black");
                     }
                     break;
@@ -634,11 +729,34 @@ namespace Bus_Management_System
                     {
                         if (loggedUser.Operation == 1)
                         {
-
+                            if (loggedUser.Shengen == 0)
+                            {
+                                R1C3.Style.Add("color", "Green");
+                                R4C2.Style.Add("color", "Green");
+                                R4C4.Style.Add("color", "Green");
+                            }
+                            else
+                            {
+                                R1C3.Style.Add("color", "Red");
+                                R4C2.Style.Add("color", "Red");
+                                R4C4.Style.Add("color", "Red");
+                            }
+                            R3C2.Style.Add("color", "DarkBlue");
+                            R3C3.Style.Add("color", "DarkBlue");
+                            R3C4.Style.Add("color", "DarkBlue");
+                            R4C3.Style.Add("color", "Black");
+                            R5C3.Style.Add("color", "Purple");
                         }
                         else
                         {
-
+                            R1C3.Style.Add("color", "Blue");
+                            R3C2.Style.Add("color", "DarkBlue");
+                            R3C3.Style.Add("color", "DarkBlue");
+                            R3C4.Style.Add("color", "DarkBlue");
+                            R4C2.Style.Add("color", "Blue");
+                            R4C3.Style.Add("color", "Black");
+                            R4C4.Style.Add("color", "Blue");
+                            R5C3.Style.Add("color", "Purple");
                         }
                     }
                     break;
@@ -662,6 +780,7 @@ namespace Bus_Management_System
                         Dr1C3.Style.Add("color", "Black");
                         Dr2C2.Style.Add("Color", "DarkBlue");
                         Dr2C4.Style.Add("Color", "DarkBlue");
+                        Dr3C3.Style.Add("color", "Violet");
                         Dr4C3.Style.Add("color", "Black");
                     }
                     break;
@@ -669,11 +788,34 @@ namespace Bus_Management_System
                     {
                         if (loggedUser.Operation == 1)
                         {
-
+                            if (loggedUser.Shengen == 0)
+                            {
+                                R1C3.Style.Add("color", "Green");
+                                R4C2.Style.Add("color", "Green");
+                                R4C4.Style.Add("color", "Green");
+                            }
+                            else
+                            {
+                                R1C3.Style.Add("color", "Red");
+                                R4C2.Style.Add("color", "Red");
+                                R4C4.Style.Add("color", "Red");
+                            }
+                            R3C2.Style.Add("color", "DarkBlue");
+                            R3C3.Style.Add("color", "DarkBlue");
+                            R3C4.Style.Add("color", "DarkBlue");
+                            R4C3.Style.Add("color", "Black");
+                            R5C3.Style.Add("color", "Purple");
                         }
                         else
                         {
-
+                            R1C3.Style.Add("color", "Blue");
+                            R3C2.Style.Add("color", "DarkBlue");
+                            R3C3.Style.Add("color", "DarkBlue");
+                            R3C4.Style.Add("color", "DarkBlue");
+                            R4C2.Style.Add("color", "Blue");
+                            R4C3.Style.Add("color", "Black");
+                            R4C4.Style.Add("color", "Blue");
+                            R5C3.Style.Add("color", "Purple");
                         }
                     }
                     break;
@@ -688,20 +830,21 @@ namespace Bus_Management_System
             {
                 case 0:
                     {
+                        R1C3.Text = loggedUser.Bus;
                         R5C3.Text = "oczekiwanie...";
                     }
                     break;
                 case 1:
                     {
-                        if (loggedUser.Operation == 0)
+                        if (loggedUser.Operation == 1)
                         {
                             R4C2.Text = loggedUser.Pps;
                             R4C4.Text = loggedUser.Gate;
                         }
                         else
                         {
-                            R4C2.Text = loggedUser.Gate;
-                            R4C4.Text = loggedUser.Pps;
+                            R4C2.Text = "GATE " + loggedUser.Gate;
+                            R4C4.Text = "PPS " + loggedUser.Pps;
                         }
                         R1C3.Text = loggedUser.AirPort;
                         R3C2.Text = loggedUser.FlightNb;
@@ -722,28 +865,37 @@ namespace Bus_Management_System
                             {
                                 Dr5C3.Text = "NON SHENGEN";
                             }
+                            Dr5C3.Text = loggedUser.Pps;
                         }
                         else
                         {
-                            
+                            Dr5C3.Text = loggedUser.Gate;
                         }
                         Dr2C2.Text = loggedUser.StartLocLatDegree;
                         Dr2C3.Text = "";
                         Dr2C4.Text = loggedUser.StartLocLonDegree;
                         Dr3C3.Text = Math.Round(loggedUser.PredictedDistance, 2, MidpointRounding.AwayFromZero).ToString() + " m";
-                        Dr5C3.Text = loggedUser.Gate;
                     }
                     break;
                 case 3:
                     {
                         if (loggedUser.Operation == 1)
                         {
-
+                            R4C2.Text = loggedUser.Pps;
+                            R4C4.Text = loggedUser.Gate;
+                            R1C3.Text = "PRZYLOT";
+                            R5C3.Text = "...debording...";
                         }
                         else
                         {
-
+                            R4C2.Text = "GATE " + loggedUser.Gate;
+                            R4C4.Text = "PPS " + loggedUser.Pps;
+                            R1C3.Text = "ODLOT";
+                            R5C3.Text = "...loading...";
                         }
+                        R3C2.Text = loggedUser.FlightNb;
+                        R3C3.Text = loggedUser.GodzinaRozkladowa;
+                        R3C4.Text = loggedUser.Pax;
                     }
                     break;
                 case 4:
@@ -758,344 +910,136 @@ namespace Bus_Management_System
                             {
                                 R5C3.Text = "NON SHENGEN";
                             }
+                            Dr5C3.Text = loggedUser.Gate;
                         }
                         else
                         {
-                            
+                            Dr5C3.Text = loggedUser.Pps;
                         }
                         Dr2C2.Text = loggedUser.StartLocLatDegree;
                         Dr2C3.Text = "";
                         Dr2C4.Text = loggedUser.StartLocLonDegree;
                         Dr3C3.Text = Math.Round(loggedUser.PredictedDistance, 2, MidpointRounding.AwayFromZero).ToString() + " m";
-                        Dr5C3.Text = loggedUser.Pps;
                     }
                     break;
                 case 5:
                     {
                         if (loggedUser.Operation == 1)
                         {
-
+                            R4C2.Text = loggedUser.Pps;
+                            R4C4.Text = loggedUser.Gate;
+                            R1C3.Text = "PRZYLOT";
+                            R5C3.Text = "...unload...";
                         }
                         else
                         {
-
+                            R4C2.Text = "GATE " + loggedUser.Gate;
+                            R4C4.Text = "PPS " + loggedUser.Pps;
+                            R1C3.Text = "ODLOT";
+                            R5C3.Text = "...boarding...";
                         }
+                        R3C2.Text = loggedUser.FlightNb;
+                        R3C3.Text = loggedUser.GodzinaRozkladowa;
+                        R3C4.Text = loggedUser.Pax;
                     }
                     break;
             }
 
         }
 
-
-        //private void GreyScreen(int operation, int shengen)
-        //{
-
-        //}
-
-
-        //private void DisplayWork(int operation, int shengen)
-        //{
-
-        //}
-
-        private void Odlot(int shengen)
+        // sprawdzenie aktualnej pozycji w zależności od celu zadania i ustawnie odpowienich akcji
+        private void CheckPosition()
         {
-            if (busMINEtable.Visible == false)
+            if (loggedUser.OperationStatus == 2 || loggedUser.Operation == 4)
             {
-                Dr1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/3snl.png");
-                Dr1C2.Style.Add("background-repeat", "no-repeat");
-                Dr1C2.Style.Add("background-size", "100% 100%");
-                Dr1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/3snp.png");
-                Dr1C4.Style.Add("background-repeat", "no-repeat");
-                Dr1C4.Style.Add("background-size", "100% 100%");
-
-                if (loggedUser.OperationStatus == 2 || loggedUser.OperationStatus == 4)
+                if (loggedUser.PredictedDistance > 30.0d)
                 {
-                    if (loggedUser.StartLocLatDegree == null || loggedUser.StartLocLonDegree == null)
-                    {
-                        TranslateColToDegree();
-                    }
-                    Dr2C2.Text = loggedUser.StartLocLatDegree;
-                    Dr2C3.Text = "";
-                    Dr2C4.Text = loggedUser.StartLocLonDegree;
-                    Dr5C3.Text = loggedUser.Gate;
-
-                    double distanceT = 0.0;
-
-                    if (loggedUser.OperationStatus == 2)
-                    {
-                        distanceT = CheckDistance(loggedUser.CurrentLat, loggedUser.CurrentLon, loggedUser.GateLat, loggedUser.GateLon);
-                    }
-                    else
-                    {
-                        distanceT = CheckDistance(loggedUser.CurrentLat, loggedUser.CurrentLon, loggedUser.PpsLat, loggedUser.PpsLon);
-
-                    }
-
-                    /*  to jest niedorobiona metoda MUSZĘ TO KIEDYŚ POPRAWIC!!! */
-
-                    if (distanceT > 15.0d)
-                    {
-                        // jesli poprzedni dystans do celu byl wiekszy (mniejszy) to
-                        Dr3C3.Text = Math.Round(loggedUser.DistanceT - (loggedUser.Speed * 3), 2, MidpointRounding.AwayFromZero).ToString() + " m";
-                        Dr3C3.Style.Add("color", "Violet");
-                    }
-                    else
-                    {
-                        Dr3C3.Text = "OK!";
-                        Dr3C3.Style.Add("color", "Green");
-                    }
+                    Dr3C3.Text = Math.Round(loggedUser.DistanceT - (loggedUser.Speed * 3), 2, MidpointRounding.AwayFromZero).ToString() + " m";
                 }
                 else
                 {
-                    Dr2C3.Text = loggedUser.Gate;
-                    Dr5C3.Text = loggedUser.Pps;
+                    Dr3C3.Text = "OK!";
+                    Dr3C3.Style.Add("color", "Green");
                 }
             }
         }
 
-
-
-        private void Przylot(int shengen)
+        //ustawienie poziomu alertu ze względu na odległości do punktów szczególnych
+        private void SetAlert()
         {
-            double distanceT = 0.0d;
-
-            // ustalenie kolorów w zależności od strefy
-            if (shengen == 0)
+            if (loggedUser.Operation == 1)      // przylot
             {
-                Dr1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sz.png");
-                Dr1C2.Style.Add("background-repeat", "no-repeat");
-                Dr1C2.Style.Add("background-size", "100% 100%");
-
-                Dr1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sz.png");
-                Dr1C4.Style.Add("background-repeat", "no-repeat");
-                Dr1C4.Style.Add("background-size", "100% 100%");
-
-                Dr5C3.Style.Add("color", "Green");
-                Dr5C3.Text = "SHENGEN";
-            }
-            else
-            {
-                Dr1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sc.png");
-                Dr1C2.Style.Add("background-repeat", "no-repeat");
-                Dr1C2.Style.Add("background-size", "100% 100%");
-                ;
-                Dr1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sc.png");
-                Dr1C4.Style.Add("background-repeat", "no-repeat");
-                Dr1C4.Style.Add("background-size", "100% 100%");
-
-                R5C3.Style.Add("color", "Red");
-                R5C3.Text = "NON SHENGEN";
-            }
-
-
-            // ustalenie zawartości pozostałych komurek tabeli w zależności od postępu zadania
-            if (busMINEtable.Visible == false)
-            {
-                if (loggedUser.OperationStatus == 2 || loggedUser.OperationStatus == 4)
+                switch (loggedUser.Shengen)
                 {
-                    //wyświetlenie aktualnej prędkości
-                    Dr4C3.Style.Add("font-size", "16px");
-                    Dr4C3.Text = Math.Round(loggedUser.Speed, 2, MidpointRounding.AwayFromZero).ToString() + " m/s   |   " + Math.Round(((loggedUser.Speed * 3600) / 1000), 2, MidpointRounding.AwayFromZero).ToString() + " km/h";
-
-                    // ustalenie, gdzie operacja została przyjęta
-                    if (loggedUser.StartLocLatDegree == "0° 0' 0'' N" || loggedUser.StartLocLonDegree == "0° 0' 0'' E")
-                    {
-                        TranslateColToDegree();
-                    }
-
-                    // sprawdzenie wszystkich odległości w zależności od celu
-                    if (loggedUser.OperationStatus == 2)
-                    {
-                        distanceT = CheckDistance(loggedUser.CurrentLat, loggedUser.CurrentLon, loggedUser.PpsLat, loggedUser.PpsLon);
-                        Dr5C3.Text = loggedUser.Pps;
-                    }
-                    else
-                    {
-                        distanceT = CheckDistance(loggedUser.CurrentLat, loggedUser.CurrentLon, loggedUser.GateLat, loggedUser.GateLon);
-                        Dr5C3.Text = loggedUser.Gate;
-                    }
-
-                    Dr2C2.Text = loggedUser.StartLocLatDegree;
-                    Dr2C3.Text = "";
-                    Dr2C4.Text = loggedUser.StartLocLonDegree;
-
-                    if (loggedUser.OldDistanceT > loggedUser.DistanceT)
-                    {
-                        loggedUser.PredictedDistance = distanceT - (loggedUser.Speed * 3);
-                    }
-                    else
-                    {
-                        loggedUser.PredictedDistance = distanceT + (loggedUser.Speed * 3);
-                    }
-
-                    Dr3C3.Text = Math.Round(loggedUser.PredictedDistance, 2, MidpointRounding.AwayFromZero).ToString() + " m";
-
-
-
-                    // interakcja z użytkownikiem w zależności od odległości do punktów szczegulnych
-                    bool danger = false;
-
-                    if (distanceT != 0.0d && Math.Round(loggedUser.PredictedDistance, 2, MidpointRounding.AwayFromZero) > 100.0d)
-                    {
-                        danger = CheckSecurityZone(loggedUser.Shengen);
-                    }
-                    else
-                    {
-                        // metoda normalne kolody
-                        Dr3C3.Style.Add("background-color", "#FFFFCC");
-                        Dr4C3.Style.Add("background-color", "#FFFFCC");
-                        Dr5C3.Style.Add("background-color", "#FFFFCC");
-                        Dr3C3.Style.Add("color", "Violet");
-                        Dr4C3.Style.Add("color", "Black");
-
-                        // metoda dojazd do strefy przeznaczenia
-                        if (shengen == 0)
-                            Dr5C3.Style.Add("color", "Green");
-                        else
-                        if (shengen == 1)
-                            Dr5C3.Style.Add("color", "Red");
-
-
-
-                        // dojechano do strefy przeznaczenia
-                        if (Math.Round(loggedUser.PredictedDistance, 2, MidpointRounding.AwayFromZero) <= 15.0d)
+                    case 0:                     // shengen
                         {
-                            Dr3C3.Text = "OK!";
+                            if (loggedUser.PredictedDistance > 30.0d)
+                            {
+                                if (loggedUser.DistanceN >= 100.0d)
+                                    loggedUser.Alert = 0;
+                                else
+                                {
+                                    if (loggedUser.Speed <= 0.88d)
+                                    {
+                                        loggedUser.Alert = 1;
+                                        SetColorAlert();
+                                    }
+                                    else
+                                    {
+                                        loggedUser.Alert = 3;
+                                        SetColorAlert();
+                                    }
+                                }
+                            }   
                         }
-                        else
+                        break;
+                    case 1:                     // nonShengen
                         {
-                            Dr3C3.Text = Math.Round(loggedUser.PredictedDistance, 2, MidpointRounding.AwayFromZero).ToString() + " m";
+                            if (loggedUser.PredictedDistance > 30.0d)
+                            {
+                                if (loggedUser.DistanceS >= 100.0d)
+                                    loggedUser.Alert = 0;
+                                else
+                                {
+                                    if (loggedUser.Speed <= 0.88d)
+                                    {
+                                        loggedUser.Alert = 1;
+                                        SetColorAlert();
+                                    }
+                                    else
+                                    {
+                                        loggedUser.Alert = 2;
+                                        SetColorAlert();
+                                    }
+                                }
+                            }
                         }
-                    }
-
-                    if (!danger)
-                    {
-                        // metoda normalne kolory 
-                        Dr3C3.Style.Add("background-color", "#FFFFCC");
-                        Dr4C3.Style.Add("background-color", "#FFFFCC");
-                        Dr5C3.Style.Add("background-color", "#FFFFCC");
-                        Dr3C3.Style.Add("color", "Violet");
-                        Dr4C3.Style.Add("color", "Black");
-
-                        // metoda dojazd do strefy przeznaczenia
-                        if (shengen == 0)
-                            Dr5C3.Style.Add("color", "Green");
-                        else
-                        if (shengen == 1)
-                            Dr5C3.Style.Add("color", "Red");
-                    }
-                    else
-                    {
-                        // metoda kolory alarmowe
-                        Dr3C3.Style.Add("background-color", "Red");
-                        Dr4C3.Style.Add("background-color", "Red");
-                        Dr5C3.Style.Add("background-color", "Red");
-                        Dr3C3.Style.Add("color", "White");
-                        Dr4C3.Style.Add("color", "Black");
-                        Dr5C3.Style.Add("color", "Black");
-                    }
-                }
-                else
-                {
-                    // jeśli autobus aktualnie nie przewozi ludzi
+                        break;
                 }
             }
         }
 
-
-
-        private bool CheckSecurityZone(int securityZone)
+        // zmiana koloru panelu jeśli wystąpi sytuacja krytyczna
+        private void SetColorAlert()
         {
-            bool danger = false;
-            double predictedDistance = 0.0d;
-
-            switch (securityZone)
-            {
-                case 0:
-                    {
-                        if (loggedUser.OldDistanceN == loggedUser.DistanceN)
-                            predictedDistance = Math.Round(loggedUser.DistanceN, 2, MidpointRounding.AwayFromZero);
-                        else
-                        if (loggedUser.OldDistanceN > loggedUser.DistanceN)
-                            predictedDistance = Math.Round((loggedUser.DistanceN - (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);
-                        else
-                        if (loggedUser.OldDistanceN < loggedUser.DistanceN)
-                            predictedDistance = Math.Round((loggedUser.DistanceN + (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);
-
-                        // jeśli pojazd jadąc do shengen jest w pobliżu non shengen
-                        if (predictedDistance < 75.0d && predictedDistance > 25.0d)
-                        {
-                            // w odległości mniejszej niż 75m 
-                            loggedUser.Alert = 3;
-                            danger = true;
-                        }
-                        else
-                        // odległość mniejsza niż 25m, i prędkość mniejsza od 1,5 km/h
-                        if (predictedDistance <= 25.0d && predictedDistance >= 0.0d)
-                        {
-                            if (loggedUser.Speed <= 0.83d)
-                            {
-                                loggedUser.Alert = 1;
-                                danger = true;
-                            }
-                            else
-                                if (loggedUser.Speed > 0.83d)
-                            {
-                                loggedUser.Alert = 3;
-                                danger = true;
-                            }
-                        }
-                        else
-                            danger = false;
-                    }
-                    break;
-                case 1:
-                    {
-                        if (loggedUser.OldDistanceS == loggedUser.DistanceS)
-                            predictedDistance = Math.Round(loggedUser.DistanceS, 2, MidpointRounding.AwayFromZero);
-                        else
-                        if (loggedUser.OldDistanceS > loggedUser.DistanceS)
-                            predictedDistance = Math.Round((loggedUser.DistanceS - (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);
-                        else
-                        if (loggedUser.OldDistanceS < loggedUser.DistanceS)
-                            predictedDistance = Math.Round((loggedUser.DistanceS + (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);
-
-                        // jeśli pojazd jadąc do NonShengen jest w pobliżu Shengen
-                        if (predictedDistance < 75.0d && predictedDistance > 25.0d)
-                        {
-                            // w odległości mniejszej niż 75m 
-                            loggedUser.Alert = 2;
-                            danger = true;
-                        }
-                        else
-                        // odległość mniejsza niż 25m, i prędkość mniejsza od 1,5 km/h
-                        if (predictedDistance <= 25.0d)
-                        {
-                            if (loggedUser.Speed <= 0.83d)
-                            {
-                                loggedUser.Alert = 1;
-                                danger = true;
-                            }
-                            else
-                                if (loggedUser.Speed > 0.83d)
-                            {
-                                loggedUser.Alert = 2;
-                                danger = true;
-                            }
-                        }
-                        else
-                            danger = false;
-                    }
-                    break;
-            }
-            return danger;
+            Dr1C3.Style.Add("background-color", "Red");
+            Dr1C3.Style.Add("color", "Black");
+            Dr2C2.Style.Add("background-color", "Red");
+            Dr2C2.Style.Add("color", "Black");
+            Dr2C3.Style.Add("background-color", "Red");
+            Dr2C3.Style.Add("color", "Black");
+            Dr2C4.Style.Add("background-color", "Red");
+            Dr2C4.Style.Add("color", "Black");
+            Dr3C3.Style.Add("background-color", "Red");
+            Dr3C3.Style.Add("color", "White");
+            Dr4C3.Style.Add("background-color", "Red");
+            Dr4C3.Style.Add("color", "Black");
+            Dr5C3.Style.Add("background-color", "Red");
+            Dr5C3.Style.Add("color", "Black");
         }
 
-
-
-
-        private double CheckDistance(double currentLat, double currentLon, double destinationLat, double destinationLon)
+        // przeliczenie wszystkich odległości
+        private double Distance(double destinationLat, double destinationLon)
         {
             GeoCoordinate busPosition = new GeoCoordinate(currentLat, currentLon);
             GeoCoordinate targetPosition = new GeoCoordinate(destinationLat, destinationLon);
@@ -1118,20 +1062,6 @@ namespace Bus_Management_System
 
             return distanceT;
         }
-
-
-
-
-        // konwersja i sprawdzenie czy operacja została rozpoczęta
-        private Boolean GetStoredTime(DateTime inputDate)
-        {
-            TimeSpan time = inputDate.TimeOfDay;
-            if (time.ToString() == "00:00:00")
-                return false;
-            else
-                return true;
-        }
-
 
         // operacja została zaakceptowana
         protected void BusAccept_Click(object sender, EventArgs e)
@@ -1167,22 +1097,59 @@ namespace Bus_Management_System
         {
             bl.BusOperationAction(loggedUser, 5);
             loggedUser.OperationStatus = 0;
-            TranslateColToDegree();
+            ClearSessionObject();
         }
 
-        protected void BusPause_Click(object sender, EventArgs e)
+        protected void busPause_Click(object sender, EventArgs e)
         {
 
         }
 
-
-
-        private void ClearFields()
+        // wyzerowanie wartości w zmiennej sesyjnej
+        private void ClearSessionObject()
         {
-            // wyczyszczenie wszystkich wartości i zakończenie wgrywania danych
-        }
-
-
+            loggedUser.Interval = 0;
+            loggedUser.Operation = 0;
+            loggedUser.FlightNb = "";
+            loggedUser.AirPort = "";
+            loggedUser.Pax = "";
+            loggedUser.Pps = "";
+            loggedUser.Gate = "";
+            loggedUser.RadioGate = "";
+            loggedUser.RadioNeon = "";
+            loggedUser.Shengen = 0;
+            loggedUser.PortName = "";
+            loggedUser.Country = "";
+            loggedUser.GodzinaRozkladowa = "";
+            loggedUser.Created = "";
+            loggedUser.Accepted = "";
+            loggedUser.StartLoad = "";
+            loggedUser.StartDrive = "";
+            loggedUser.StartUnload = "";
+            loggedUser.EndOp = "";
+            loggedUser.PpsLat = 0.0d;
+            loggedUser.PpsLon = 0.0d;
+            loggedUser.GateLat = 0.0d;
+            loggedUser.GateLon = 0.0d;
+            loggedUser.Alert = 0;
+            loggedUser.LoopTime = 0;
+            loggedUser.Speed = 0.0d;
+            loggedUser.Accuracy = 0.0d;
+            loggedUser.OldDistanceT = 0.0d;
+            loggedUser.DistanceT = 0.0d;
+            loggedUser.OldDistanceS = 0.0d;
+            loggedUser.DistanceS = 0.0d;
+            loggedUser.OldDistanceN = 0.0d;
+            loggedUser.DistanceN = 0.0d;
+            loggedUser.PredictedDistance = 0.0d;
+            loggedUser.CurrentLat = 0.0d;
+            loggedUser.CurrentLon = 0.0d;
+            loggedUser.StartLat = 0.0d;
+            loggedUser.StartLon = 0.0d;
+            loggedUser.StartLocLatDegree = "";
+            loggedUser.StartLocLonDegree = "";
+            loggedUser.LogFilePath = "";
+    }
 
         // przeliczenie współrzędnych pobranych z urządzenia GPS do czytelnych współrzędnych w stopniach
         private void TranslateColToDegree()
@@ -1204,7 +1171,6 @@ namespace Bus_Management_System
             loggedUser.StartLocLatDegree = String.Format(Convert.ToString(Math.Truncate(latitude) + "° " + +Math.Truncate(minutyLat) + "' " + Math.Truncate(sekundyLat) + "'' " + latitude_Kierunek));
             loggedUser.StartLocLonDegree = String.Format(Convert.ToString(Math.Truncate(longitude) + "° " + Math.Truncate(minutyLon) + "' " + Math.Truncate(sekundyLon) + "'' " + longitude_Kierunek));
         }
-
 
         // przygotowanie i obrobka pliku tekstowego z logami operacji
         private void PrepareLogFile(string data)
@@ -1263,8 +1229,6 @@ namespace Bus_Management_System
             loggedUser.LogFilePath = dataLogic;
         }
         
-
-
         // dodajemy do pliku log sesji dane z kontrolek
         private void SaveUserFieldsValues()
         {

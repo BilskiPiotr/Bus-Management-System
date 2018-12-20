@@ -145,31 +145,56 @@
         border-color: Fuchsia;
         border-style: solid;
         width: 435px;
-        height: 200px;
+
     }
 
     .busTable1Row1 {
-        height: 25px;
+        height: 70px;
         padding: 0;
     }
 
     .busTable1Row2 {
-        height: 40px;
+        height: 25px;
         padding: 0;
     }
 
     .busTable1Row3 {
-        height: 65px;
+        height: 35px;
         padding: 0;
     }
 
     .busTable1Row4 {
-        height: 40px;
+        height: 45px;
         padding: 0;
     }
 
     .busTable1Row5 {
-        height: 58px;
+        height: 73px;
+        padding: 0;
+    }
+
+    .busTable2Row1 {
+        height: 29px;
+        padding: 0;
+    }
+
+    .busTable2Row2 {
+        height: 40px;
+        padding: 0;
+    }
+
+    .busTable2Row3 {
+        height: 75px;
+        padding: 0;
+    }
+
+    .busTable2Row4 {
+        height: 30px;
+        padding: 0;
+    }
+
+    .busTable2Row5 {
+        height: 75px;
         padding: 0;
     }
 }

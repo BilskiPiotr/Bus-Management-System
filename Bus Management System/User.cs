@@ -92,6 +92,5 @@ namespace Bus_Management_System
         public string Al_Bu { get; set; }
         public string Al_Rg { get; set; }
         public string Al_Rn { get; set; }
-
     }
 }
