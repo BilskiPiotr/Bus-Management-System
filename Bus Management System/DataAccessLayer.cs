@@ -6,7 +6,7 @@ namespace Bus_Management_System
 {
     public class DataAccessLayer
     {
-        SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["BusData"].ConnectionString);
+        private SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["BusData"].ConnectionString);
 
         public DataTable GetDataTable(SqlCommand sqlCmd)
         {

@@ -11,7 +11,6 @@ namespace Bus_Management_System
     public partial class Bus : System.Web.UI.Page
     {
         public static BusinessLayer bl = new BusinessLayer();
-        private static DataAccessLayer dal = new DataAccessLayer();
         public static double speed = 0.0d;
         public static double accuracy = 0.0d;
         public static double currentLat = 0.0d;
@@ -285,7 +284,7 @@ namespace Bus_Management_System
                 SetButtonsStatus(loggedUser.OperationStatus);
                 dm.UpdateGPSData(loggedUser);
                 if (loggedUser.OperationStatus == 2)
-                    dm.TranslateColToDegree(loggedUser);
+                    dm.TranslateCoordToDegree(loggedUser);
                 dm.GetOperationData(loggedUser, ds);
                 InWorkBusControls(loggedUser.OperationStatus);
                 dm.Dispose();
@@ -331,10 +330,10 @@ namespace Bus_Management_System
             DataManipulate dm = new DataManipulate();
             dm.UpdateGPSData(loggedUser);
             if (loggedUser.OperationStatus == 2 && (loggedUser.StartLocLatDegree == "" || loggedUser.StartLocLonDegree == ""))
-                dm.TranslateColToDegree(loggedUser);
+                dm.TranslateCoordToDegree(loggedUser);
             dm.CheckDistance(loggedUser);
             dm.SetPredictedDistance(loggedUser);
-            SetGraficElements();
+            SetGraficsElements();
             SetColorControls();
             SetDataControls();
             CheckPosition();
@@ -415,7 +414,7 @@ namespace Bus_Management_System
         }
 
         // ustawienie grafik w zależności od operacji i strefy
-        private void SetGraficElements()
+        private void SetGraficsElements()
         {
             if (loggedUser.OperationStatus == 0)
             {
@@ -449,20 +448,23 @@ namespace Bus_Management_System
                         {
                             if (loggedUser.Shengen == 0)    // shengen
                             {
-                                Dr1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sz.png");
-                                Dr1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sz.png");
+                                Dr1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/3szl.png");
+                                Dr1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/3szp.png");
                             }
                             else                            // non shengen
                             {
-                                Dr1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sc.png");
-                                Dr1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sc.png");
+                                Dr1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/3scl.png");
+                                Dr1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/3scp.png");
                             }
                         }
                         break;
                     case 2:                                 // odlot
                         {
-                            Dr1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sn.png");
-                            Dr1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/sn.png");
+                            Dr1C2.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/3snl.png");
+                            Dr1C4.Style.Add(HtmlTextWriterStyle.BackgroundImage, "pictures/3snp.png");
+                            Dr2C2.Style.Add("font-size", "14px");
+                            Dr2C3.Style.Add("font-size", "32px");
+                            Dr2C4.Style.Add("font-size", "14px");
                         }
                         break;
                 }
@@ -558,6 +560,7 @@ namespace Bus_Management_System
                         }
                         Dr1C3.Style.Add("color", "Black");
                         Dr2C2.Style.Add("Color", "DarkBlue");
+                        Dr2C3.Style.Add("Color", "#00008B");
                         Dr2C4.Style.Add("Color", "DarkBlue");
                         Dr3C3.Style.Add("color", "Violet");
                         Dr4C3.Style.Add("color", "Black");
@@ -591,9 +594,9 @@ namespace Bus_Management_System
                             R3C2.Style.Add("color", "DarkBlue");
                             R3C3.Style.Add("color", "DarkBlue");
                             R3C4.Style.Add("color", "DarkBlue");
-                            R4C2.Style.Add("color", "Blue");
+                            R4C2.Style.Add("color", "#00008B");
                             R4C3.Style.Add("color", "Black");
-                            R4C4.Style.Add("color", "Blue");
+                            R4C4.Style.Add("color", "#00008B");
                             R5C3.Style.Add("color", "Purple");
                         }
                     }
@@ -650,9 +653,9 @@ namespace Bus_Management_System
                             R3C2.Style.Add("color", "DarkBlue");
                             R3C3.Style.Add("color", "DarkBlue");
                             R3C4.Style.Add("color", "DarkBlue");
-                            R4C2.Style.Add("color", "Blue");
+                            R4C2.Style.Add("color", "#00008B");
                             R4C3.Style.Add("color", "Black");
-                            R4C4.Style.Add("color", "Blue");
+                            R4C4.Style.Add("color", "#00008B");
                             R5C3.Style.Add("color", "Purple");
                         }
                     }
@@ -726,8 +729,9 @@ namespace Bus_Management_System
                         }
                         else
                         {
-                            R4C2.Text = "GATE " + loggedUser.Gate;
-                            R4C4.Text = "PPS " + loggedUser.Pps;
+                            R4C2.Text = "Gate: " + loggedUser.RadioGate;
+                            R4C3.Text = "";
+                            R4C4.Text = "Neon: " + loggedUser.RadioNeon;
                             R1C3.Text = "ODLOT";
                             R5C3.Text = "...loading...";
                         }
@@ -755,7 +759,7 @@ namespace Bus_Management_System
                             Dr5C3.Text = loggedUser.Pps;
                         }
                         Dr2C2.Text = loggedUser.StartLocLatDegree;
-                        Dr2C3.Text = "";
+                        Dr2C3.Text = loggedUser.Gate;
                         Dr2C4.Text = loggedUser.StartLocLonDegree;
                         Dr3C3.Text = Math.Round(loggedUser.PredictedDistance, 2, MidpointRounding.AwayFromZero).ToString() + " m";
                     }
@@ -771,9 +775,9 @@ namespace Bus_Management_System
                         }
                         else
                         {
-                            R4C2.Text = "GATE " + loggedUser.Gate;
-                            R4C4.Text = "PPS " + loggedUser.Pps;
-                            R1C3.Text = "ODLOT";
+                            R4C2.Text = "Gate: " + loggedUser.RadioGate;
+                            R4C4.Text = "Neon: " + loggedUser.RadioNeon;
+                            R1C3.Text = loggedUser.Pps;
                             R5C3.Text = "...boarding...";
                         }
                         R3C2.Text = loggedUser.FlightNb;
@@ -882,7 +886,7 @@ namespace Bus_Management_System
             bl.BusOperationAction(loggedUser, 1);
             loggedUser.OperationStatus = 2;
             DataManipulate dm = new DataManipulate();
-            dm.TranslateColToDegree(loggedUser);
+            dm.TranslateCoordToDegree(loggedUser);
             dm.Dispose();
         }
 
@@ -892,7 +896,7 @@ namespace Bus_Management_System
             bl.BusOperationAction(loggedUser, 2);
             loggedUser.OperationStatus = 3;
             DataManipulate dm = new DataManipulate();
-            dm.TranslateColToDegree(loggedUser);
+            dm.TranslateCoordToDegree(loggedUser);
             dm.Dispose();
         }
 
@@ -901,7 +905,7 @@ namespace Bus_Management_System
             bl.BusOperationAction(loggedUser, 3);
             loggedUser.OperationStatus = 4;
             DataManipulate dm = new DataManipulate();
-            dm.TranslateColToDegree(loggedUser);
+            dm.TranslateCoordToDegree(loggedUser);
             dm.Dispose();
         }
 
@@ -910,7 +914,7 @@ namespace Bus_Management_System
             bl.BusOperationAction(loggedUser, 4);
             loggedUser.OperationStatus = 5;
             DataManipulate dm = new DataManipulate();
-            dm.TranslateColToDegree(loggedUser);
+            dm.TranslateCoordToDegree(loggedUser);
             dm.Dispose();
         }
 
@@ -923,7 +927,7 @@ namespace Bus_Management_System
             cl.Dispose();
         }
 
-        protected void busPause_Click(object sender, EventArgs e)
+        protected void BusPause_Click(object sender, EventArgs e)
         {
 
         }

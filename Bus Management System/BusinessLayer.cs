@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Web;
-using System.Web.UI.WebControls;
 
 namespace Bus_Management_System
 {
     public class BusinessLayer
     {
         private DataAccessLayer dal = new DataAccessLayer();
-
 
         public DataTable GetUserData(int iD)
         {
@@ -111,7 +108,6 @@ namespace Bus_Management_System
             }
             return ds;
         }
-
 
         // pobranie informacji specyficznych o wyjściu pasażerskim dla panelu Operatora
         public DataSet GetGate(int gate)
@@ -232,7 +228,7 @@ namespace Bus_Management_System
         }
         
         // dodanie nowej operacji
-        public Boolean AddNewOperation(NewOperation newOp)
+        public bool AddNewOperation(NewOperation newOp)
         {
             SqlCommand sqlCmd = new SqlCommand();
             DateTime addOpDate = DateTime.Now;
@@ -356,7 +352,7 @@ namespace Bus_Management_System
         }
 
         // sprawdzenie poświadczeń wprowadzonych przez użytkownika
-        public Boolean VerifyUser(VerifyLayer vl, ref int iD)
+        public bool VerifyUser(VerifyLayer vl, ref int iD)
         {
             SqlCommand sqlCmd = new SqlCommand();
             sqlCmd.CommandText = "SELECT Id FROM Employees_Basic WHERE Employee_Imie = @userName AND Employee_Nazwisko = @user2ndName AND Employee_PESEL = @userPESEL";

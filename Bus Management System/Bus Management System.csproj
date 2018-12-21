@@ -93,8 +93,12 @@
     <Content Include="css\style.css" />
     <Content Include="global.aspx" />
     <Content Include="js\get_location.js" />
+    <Content Include="pictures\3scl.png" />
+    <Content Include="pictures\3scp.png" />
     <Content Include="pictures\3snl.png" />
     <Content Include="pictures\3snp.png" />
+    <Content Include="pictures\3szl.png" />
+    <Content Include="pictures\3szp.png" />
     <Content Include="pictures\sc.png" />
     <Content Include="pictures\scr.png" />
     <Content Include="pictures\sn.png" />

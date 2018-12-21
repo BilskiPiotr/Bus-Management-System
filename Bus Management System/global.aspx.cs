@@ -6,7 +6,7 @@ namespace Bus_Management_System
 {
     public partial class global : System.Web.UI.Page
     {
-        BusinessLayer bl = new BusinessLayer();
+        private BusinessLayer bl = new BusinessLayer();
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -23,7 +23,6 @@ namespace Bus_Management_System
             ClearTextbox();
             inp_name.Focus();
         }
-
 
         // weryfikacja logowania
         protected void Bt_submitLogin_Click(object sender, EventArgs e)

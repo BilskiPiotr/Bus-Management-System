@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Data;
-using System.Data.SqlClient;
 using System.Drawing;
 using System.Globalization;
-using System.Web;
 using System.Web.UI.WebControls;
 
 namespace Bus_Management_System
@@ -12,7 +10,6 @@ namespace Bus_Management_System
     {
         private static BusinessLayer bl = new BusinessLayer();
         private User loggedUser;
-
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -114,7 +111,6 @@ namespace Bus_Management_System
                 success = FillBusDDL(sender, e);
             }
         }
-
 
         // pobranie i wypełnienie kontrolek DropDownList listą możliwych operacji
         private bool FillOperationDDL(object sender, GridViewRowEventArgs e)

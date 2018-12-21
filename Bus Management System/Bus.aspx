@@ -142,9 +142,9 @@
                                                 <asp:TableCell Id="R3C4" runat="server" ForeColor="DarkBlue" Font-Size="16px" Font-Bold="true" Width="19%" HorizontalAlign="Center">000</asp:TableCell>
                                             </asp:TableRow>
                                             <asp:TableRow CssClass="busTable1Row4" runat="server">
-                                                <asp:TableCell Id="R4C2" runat="server" Back-Color="" ForeColor="Black" Font-Size="20px" Font-Bold="true" HorizontalAlign="right">XXX</asp:TableCell>
-                                                <asp:TableCell Id="R4C3" runat="server" ForeColor="Black" Font-Size="24px" Font-Bold="true" HorizontalAlign="center">>>></asp:TableCell>
-                                                <asp:TableCell Id="R4C4" runat="server" ForeColor="Black" Font-Size="20px" Font-Bold="true" HorizontalAlign="left">XXX</asp:TableCell>
+                                                <asp:TableCell Id="R4C2" runat="server" Back-Color="" ForeColor="Black" Font-Size="16px" Font-Bold="true" HorizontalAlign="right">XXX</asp:TableCell>
+                                                <asp:TableCell Id="R4C3" runat="server" ForeColor="Black" Font-Size="20px" Font-Bold="true" HorizontalAlign="center">>>></asp:TableCell>
+                                                <asp:TableCell Id="R4C4" runat="server" ForeColor="Black" Font-Size="16px" Font-Bold="true" HorizontalAlign="left">XXX</asp:TableCell>
                                             </asp:TableRow>
                                             <asp:TableRow CssClass="busTable1Row5" runat="server">
                                                 <asp:TableCell Id="R5C3" runat="server" ColSpan="3" ForeColor="DarkBlue" Font-Size="36px" Font-Bold="true" HorizontalAlign="Center">PPS-GATE</asp:TableCell>
@@ -186,7 +186,7 @@
                                         <div class="bus-2ndLine">
                                             <asp:Button Id="busStartUnload" CssClass="bus-Buttons" runat="server" Text="UNLOAD" BackColor="Silver"/>
                                             <asp:Button Id="busEndOp" CssClass="bus-Buttons" runat="server" Text="END" BackColor="Silver"/>
-                                            <asp:Button Id="busPause" CssClass="bus-Buttons" runat="server" Text="PAUSE" BackColor="Silver" OnClientClick="return confirm('Are you sure?');" OnClick="busPause_Click"/>
+                                            <asp:Button Id="BusPause" CssClass="bus-Buttons" runat="server" Text="PAUSE" BackColor="Silver" OnClientClick="return confirm('Are you sure?');" OnClick="BusPause_Click"/>
                                         </div>
                                     </div>
                                 </div>

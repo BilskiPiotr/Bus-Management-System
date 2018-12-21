@@ -1,15 +1,12 @@
-﻿
-using System;
+﻿using System;
 using System.Data;
 using System.Device.Location;
 using System.Globalization;
-using System.Web.UI.HtmlControls;
 
 namespace Bus_Management_System
 {
     public class DataManipulate : Bus
     {
-
         // naniesienie aktualnych danych lokalizacyjnych
         public void UpdateGPSData(User loggedUser)
         {
@@ -20,7 +17,7 @@ namespace Bus_Management_System
         }
 
         // przeliczenie współrzędnych pobranych z urządzenia GPS do czytelnych współrzędnych w stopniach
-        public void TranslateColToDegree(User loggedUser)
+        public void TranslateCoordToDegree(User loggedUser)
         {
             double latitude = loggedUser.CurrentLat;
             double longitude = loggedUser.CurrentLon;
@@ -150,10 +147,10 @@ namespace Bus_Management_System
         }
 
         // przeliczenie wszystkich odległości
-        private double Distance(User loggedUser, double destinationLat, double destinationLon)
+        private double Distance(User loggedUser, double destLat, double destLon)
         {
             GeoCoordinate busPosition = new GeoCoordinate(currentLat, currentLon);
-            GeoCoordinate targetPosition = new GeoCoordinate(destinationLat, destinationLon);
+            GeoCoordinate targetPosition = new GeoCoordinate(destLat, destLon);
             GeoCoordinate shengen = new GeoCoordinate(52.17035, 20.97174);
             GeoCoordinate nonShengen = new GeoCoordinate(52.17224, 20.9702);
 
