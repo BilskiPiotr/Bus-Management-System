@@ -343,7 +343,12 @@ namespace Bus_Management_System
                 DataSet ds = dal.GetDataSet(sqlCmd);
                 sqlCmd.Parameters.Clear();
                 sqlCmd.Dispose();
-                return ds.Tables[0].Rows[0].Field<int>("Shengen");
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    return ds.Tables[0].Rows[0].Field<int>("Shengen");
+                }
+                else
+                    return 2;
             }
             catch (Exception ex)
             {

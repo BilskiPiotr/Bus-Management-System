@@ -10,10 +10,10 @@ namespace Bus_Management_System
         // naniesienie aktualnych danych lokalizacyjnych
         public void UpdateGPSData(User loggedUser)
         {
-            loggedUser.Speed = speed;
-            loggedUser.Accuracy = accuracy;
-            loggedUser.CurrentLat = currentLat;
-            loggedUser.CurrentLon = currentLon;
+            //loggedUser.Speed = speed;
+            //loggedUser.Accuracy = accuracy;
+            //loggedUser.CurrentLat = currentLat;
+            //loggedUser.CurrentLon = currentLon;
         }
 
         // przeliczenie współrzędnych pobranych z urządzenia GPS do czytelnych współrzędnych w stopniach
@@ -73,11 +73,19 @@ namespace Bus_Management_System
         // ustalenie stref bezpieczeństwa dla obsługiwanego portu
         public void GetSpecyficAirPortData(User loggedUser, int airPort)
         {
-            DataSet ds = bl.GetAirPort(airPort);
-            loggedUser.AirPort = ds.Tables[0].Rows[0].Field<string>("IATA_Name");
-            loggedUser.Shengen = Convert.ToInt32(bl.GetCountry(ds.Tables[0].Rows[0].Field<int>("Shengen")));
-            loggedUser.PortName = ds.Tables[0].Rows[0].Field<string>("Full_Name");
-            loggedUser.Country = ds.Tables[0].Rows[0].Field<string>("Country_name");
+            if (airPort != 0)
+            {
+                DataSet ds = bl.GetAirPort(airPort);
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    loggedUser.AirPort = ds.Tables[0].Rows[0].Field<string>("IATA_Name");
+                    loggedUser.Shengen = Convert.ToInt32(ds.Tables[0].Rows[0].Field<int>("Shengen"));
+                    //loggedUser.Shengen = Convert.ToInt32(bl.GetCountry(ds.Tables[0].Rows[0].Field<int>("Shengen")));
+                    loggedUser.PortName = ds.Tables[0].Rows[0].Field<string>("Full_Name");
+                    loggedUser.Country = ds.Tables[0].Rows[0].Field<string>("Country_name");
+                }
+                ds.Dispose();
+            }
         }
 
         // Ustalenie na jakim etapie jest aktualna operacja
@@ -149,7 +157,7 @@ namespace Bus_Management_System
         // przeliczenie wszystkich odległości
         private double Distance(User loggedUser, double destLat, double destLon)
         {
-            GeoCoordinate busPosition = new GeoCoordinate(currentLat, currentLon);
+            GeoCoordinate busPosition = new GeoCoordinate(loggedUser.CurrentLat, loggedUser.CurrentLon);
             GeoCoordinate targetPosition = new GeoCoordinate(destLat, destLon);
             GeoCoordinate shengen = new GeoCoordinate(52.17035, 20.97174);
             GeoCoordinate nonShengen = new GeoCoordinate(52.17224, 20.9702);
@@ -185,7 +193,7 @@ namespace Bus_Management_System
                     {
                         switch (loggedUser.Shengen)
                         {
-                            case 0:
+                            case 1:
                                 {
                                     if (loggedUser.OldDistanceN > loggedUser.DistanceN)
                                         predictedDistance = Math.Round((loggedUser.DistanceN - (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);
@@ -196,7 +204,7 @@ namespace Bus_Management_System
                                         predictedDistance = loggedUser.DistanceN;
                                 }
                                 break;
-                            case 1:
+                            case 0:
                                 {
                                     if (loggedUser.OldDistanceS > loggedUser.DistanceS)
                                         predictedDistance = Math.Round((loggedUser.DistanceS - (loggedUser.Speed * 3)), 2, MidpointRounding.AwayFromZero);

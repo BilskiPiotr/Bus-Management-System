@@ -22,9 +22,9 @@
         var spe = "";
 
         var error = "";
-        var dane = new Array();
+        //var dane = new Array();
 
-        setInterval(getLocation, 1000);
+        setInterval(getLocation, 2000);
 
         function getLocation() 
         {
@@ -49,19 +49,23 @@
             document.getElementById("<%=HiddenField2.ClientID%>").value = lon;
             document.getElementById("<%=HiddenField3.ClientID%>").value = acc;
             document.getElementById("<%=HiddenField4.ClientID%>").value = spe;
-            dane[0] = document.getElementById("<%=HiddenField1.ClientID%>").value;
-            dane[1] = document.getElementById("<%=HiddenField2.ClientID%>").value;
-            dane[2] = document.getElementById("<%=HiddenField3.ClientID%>").value;
-            dane[3] = document.getElementById("<%=HiddenField4.ClientID%>").value;
-            PageMethods.PrzeliczArray(dane, OnSuccess);
-        }
-        function OnSuccess(response, userContext, methodName)
-        {
-            lat = "";
+                        lat = "";
             lon = "";
             acc = "";
             spe = "";
+<%--            dane[0] = document.getElementById("<%=HiddenField1.ClientID%>").value;
+            dane[1] = document.getElementById("<%=HiddenField2.ClientID%>").value;
+            dane[2] = document.getElementById("<%=HiddenField3.ClientID%>").value;
+            dane[3] = document.getElementById("<%=HiddenField4.ClientID%>").value;
+            PageMethods.PrzeliczArray(dane, OnSuccess);--%>
         }
+        //function OnSuccess(response, userContext, methodName)
+        //{
+        //    lat = "";
+        //    lon = "";
+        //    acc = "";
+        //    spe = "";
+        //}
     }
 </script>
 
@@ -117,7 +121,7 @@
                 <asp:View ID="Home" runat="server">
                     <asp:UpdatePanel runat="server" Id="BusHomeUP" >
                         <ContentTemplate>
-                            <asp:Timer runat="server" Id="BusHomeTimer" Interval="2000" OnTick="BusHomeTimer_Tick"></asp:Timer>
+                            <asp:Timer runat="server" Id="BusHomeTimer" Interval="3000" OnTick="BusHomeTimer_Tick"></asp:Timer>
                                 <div class="bus-row">
                                     <div class="bus-left">
 

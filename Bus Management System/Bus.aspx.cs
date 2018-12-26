@@ -11,10 +11,10 @@ namespace Bus_Management_System
     public partial class Bus : System.Web.UI.Page
     {
         public static BusinessLayer bl = new BusinessLayer();
-        public static double speed = 0.0d;
-        public static double accuracy = 0.0d;
-        public static double currentLat = 0.0d;
-        public static double currentLon = 0.0d;
+        //public static double speed = 0.0d;
+        //public static double accuracy = 0.0d;
+        //public static double currentLat = 0.0d;
+        //public static double currentLon = 0.0d;
         User loggedUser;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -29,7 +29,7 @@ namespace Bus_Management_System
                 Response.Redirect("global.aspx");
             }
             loggedUser = (User)Session[userId];
-            SetButtonsStatus(loggedUser.OperationStatus);
+            //SetButtonsStatus(loggedUser.OperationStatus);
 
             if (!IsPostBack)
             {
@@ -79,10 +79,10 @@ namespace Bus_Management_System
             {
                 currentSpeed = 0.0d;
             }
-            speed = currentSpeed;
-            accuracy = currentAccuracy;
-            currentLat = latitude;
-            currentLon = longitude;
+            //speed = currentSpeed;
+            //accuracy = currentAccuracy;
+            //currentLat = latitude;
+            //currentLon = longitude;
 
             return currentSpeed.ToString();
         }
@@ -90,6 +90,15 @@ namespace Bus_Management_System
         // pętla odświeżająca Update Panel
         protected void BusHomeTimer_Tick(object sender, EventArgs e)
         {
+            loggedUser.CurrentLat = double.Parse(HiddenField1.Value, CultureInfo.InvariantCulture);
+            loggedUser.CurrentLon = double.Parse(HiddenField2.Value, CultureInfo.InvariantCulture);
+            loggedUser.Accuracy = double.Parse(HiddenField3.Value, CultureInfo.InvariantCulture);
+
+            string speed = HiddenField4.Value;
+            if (speed != "")
+                loggedUser.Speed = double.Parse(speed, CultureInfo.InvariantCulture);
+
+            //string test = HiddenField1.Value;
             DataSet ds = new DataSet();
             DataManipulate dm = new DataManipulate();
 
@@ -103,7 +112,7 @@ namespace Bus_Management_System
             {
                 // zerowanie potęcjalnego komunikatu głosowego
                 loggedUser.Alert = 0;
-                dm.UpdateGPSData(loggedUser);
+                //dm.UpdateGPSData(loggedUser);
 
                 // jeśli nie ma zlecenia
                 if (loggedUser.OperationStatus == 0)
@@ -128,23 +137,23 @@ namespace Bus_Management_System
                 }
                 else
                 {
-                    loggedUser.Interval = loggedUser.Interval + 1;
-                    // żeby nie zapychać łącza, odświeżanie danych co 10s
-                    if (loggedUser.Interval == 5)
-                    {
-                        ds = bl.GetOperations(loggedUser.Bus);
-                        dm.GetPPSData(loggedUser, ds.Tables[0].Rows[0].Field<int>("PPS"));
-                        dm.GetGateData(loggedUser, ds.Tables[0].Rows[0].Field<int>("Gate"));
-                        dm.GetOperationData(loggedUser, ds);
-                        dm.SetOperationStatus(loggedUser, ds);
-                        SetButtonsStatus(loggedUser.OperationStatus);
+                    //loggedUser.Interval = loggedUser.Interval + 1;
+                    //// żeby nie zapychać łącza, odświeżanie danych co 10s
+                    //if (loggedUser.Interval == 5)
+                    //{
+                    //    ds = bl.GetOperations(loggedUser.Bus);
+                    //    dm.GetPPSData(loggedUser, ds.Tables[0].Rows[0].Field<int>("PPS"));
+                    //    dm.GetGateData(loggedUser, ds.Tables[0].Rows[0].Field<int>("Gate"));
+                    //    dm.GetOperationData(loggedUser, ds);
+                    //    dm.SetOperationStatus(loggedUser, ds);
+                    //    SetButtonsStatus(loggedUser.OperationStatus);
+                    //    InWorkBusControls(loggedUser.OperationStatus);
+                    //    loggedUser.Interval = 0;
+                    //}
+                    //else
+                    //{
                         InWorkBusControls(loggedUser.OperationStatus);
-                        loggedUser.Interval = 0;
-                    }
-                    else
-                    {
-                        InWorkBusControls(loggedUser.OperationStatus);
-                    }
+                    //}
                 }
             }
             // "buss" cookie nie istnieje, wiedz na wszelki wypadek koniec sesji i wylogowanie
@@ -167,6 +176,7 @@ namespace Bus_Management_System
             rp.SaveUserFieldsValues(loggedUser);
             rp.Dispose();
             dm.Dispose();
+            ds.Dispose();
         }
 
         // obsługa zdażeń menu Operatora
@@ -282,7 +292,7 @@ namespace Bus_Management_System
                 dm.GetGateData(loggedUser, ds.Tables[0].Rows[0].Field<int>("Gate"));
                 dm.SetOperationStatus(loggedUser, ds);
                 SetButtonsStatus(loggedUser.OperationStatus);
-                dm.UpdateGPSData(loggedUser);
+                //dm.UpdateGPSData(loggedUser);
                 if (loggedUser.OperationStatus == 2)
                     dm.TranslateCoordToDegree(loggedUser);
                 dm.GetOperationData(loggedUser, ds);
@@ -322,13 +332,14 @@ namespace Bus_Management_System
             HtmlGenericControl sound = new HtmlGenericControl("<embed src=\"" + audioAlert + "\" type=\"audio/mp3\" autostart =\"true\" hidden=\"true\" showcontrols=\"0\" volume=\"-1\"></embed>");
             BusHomeUP.ContentTemplateContainer.Controls.Remove(sound);
             BusHomeUP.ContentTemplateContainer.Controls.Add(sound);
+            sound.Dispose();
         }
 
         // ustawienie kolorów aktywnych dla wszystrkich przycisków na stronie bus
         private void InWorkBusControls(int operationStatus)
         {
             DataManipulate dm = new DataManipulate();
-            dm.UpdateGPSData(loggedUser);
+            //dm.UpdateGPSData(loggedUser);
             if (loggedUser.OperationStatus == 2 && (loggedUser.StartLocLatDegree == "" || loggedUser.StartLocLonDegree == ""))
                 dm.TranslateCoordToDegree(loggedUser);
             dm.CheckDistance(loggedUser);
@@ -818,9 +829,6 @@ namespace Bus_Management_System
                             if (loggedUser.PredictedDistance > 30.0d)
                             {
                                 if (loggedUser.DistanceN >= 100.0d)
-                                    loggedUser.Alert = 0;
-                                else
-                                {
                                     if (loggedUser.Speed <= 0.88d)
                                     {
                                         loggedUser.Alert = 1;
@@ -831,6 +839,10 @@ namespace Bus_Management_System
                                         loggedUser.Alert = 3;
                                         SetColorAlert();
                                     }
+                                else
+                                {
+                                    loggedUser.Alert = 0;
+                                    SetColorAlert();
                                 }
                             }   
                         }
@@ -864,20 +876,41 @@ namespace Bus_Management_System
         // zmiana koloru panelu jeśli wystąpi sytuacja krytyczna
         private void SetColorAlert()
         {
-            Dr1C3.Style.Add("background-color", "Red");
-            Dr1C3.Style.Add("color", "Black");
-            Dr2C2.Style.Add("background-color", "Red");
-            Dr2C2.Style.Add("color", "Black");
-            Dr2C3.Style.Add("background-color", "Red");
-            Dr2C3.Style.Add("color", "Black");
-            Dr2C4.Style.Add("background-color", "Red");
-            Dr2C4.Style.Add("color", "Black");
-            Dr3C3.Style.Add("background-color", "Red");
-            Dr3C3.Style.Add("color", "White");
-            Dr4C3.Style.Add("background-color", "Red");
-            Dr4C3.Style.Add("color", "Black");
-            Dr5C3.Style.Add("background-color", "Red");
-            Dr5C3.Style.Add("color", "Black");
+            if (loggedUser.Alert == 1)
+            {
+                Dr1C3.Style.Add("background-color", "Red");
+                Dr1C3.Style.Add("color", "Black");
+                Dr2C2.Style.Add("background-color", "Red");
+                Dr2C2.Style.Add("color", "Black");
+                Dr2C3.Style.Add("background-color", "Red");
+                Dr2C3.Style.Add("color", "Black");
+                Dr2C4.Style.Add("background-color", "Red");
+                Dr2C4.Style.Add("color", "Black");
+                Dr3C3.Style.Add("background-color", "Red");
+                Dr3C3.Style.Add("color", "White");
+                Dr4C3.Style.Add("background-color", "Red");
+                Dr4C3.Style.Add("color", "Black");
+                Dr5C3.Style.Add("background-color", "Red");
+                Dr5C3.Style.Add("color", "Black");
+            }
+            else
+            {
+                Dr1C3.Style.Add("background-color", "#FFFFCC");
+                Dr1C3.Style.Add("color", "Black");
+                Dr2C2.Style.Add("background-color", "#FFFFCC");
+                Dr2C2.Style.Add("color", "Black");
+                Dr2C3.Style.Add("background-color", "#FFFFCC");
+                Dr2C3.Style.Add("color", "Black");
+                Dr2C4.Style.Add("background-color", "#FFFFCC");
+                Dr2C4.Style.Add("color", "Black");
+                Dr3C3.Style.Add("background-color", "#FFFFCC");
+                Dr3C3.Style.Add("color", "White");
+                Dr4C3.Style.Add("background-color", "#FFFFCC");
+                Dr4C3.Style.Add("color", "Black");
+                Dr5C3.Style.Add("background-color", "#FFFFCC");
+                Dr5C3.Style.Add("color", "Black");
+                SetColorControls();
+            }
         }
 
         // operacja została zaakceptowana
