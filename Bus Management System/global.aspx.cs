@@ -76,8 +76,7 @@ namespace Bus_Management_System
 
 
                     // tworzenie ciasteczka z danymi aktualnie zalogowanego operatora
-                    // sprawdzenie, czy przypadkiem takie ciasteczko już nie zostało stworzone, 
-                    // bo jeśli tak - to kasujemy je!
+
                     //if (Request.Cookies["Bus"] != null)
                     //{
                     //    Response.Cookies["Bus"].Expires = DateTime.Now.AddDays(-1);
