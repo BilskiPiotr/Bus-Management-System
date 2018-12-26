@@ -47,58 +47,29 @@ namespace Bus_Management_System
             // user istnieje - wiedz tworzenie danych sesji
             else
             {
-                DataTable loggedUserData = bl.GetUserData(iD);
+                DataTable dt = new DataTable();
+                bl.GetUserData(iD, ref dt);
 
                 // Konstruktor obiektu SESJA
-                if (loggedUserData.Rows.Count > 0)
+                if (dt.Rows.Count > 0)
                 {
-                    //User loggedUser = new User
-                    //{
-                    //    Id = iD,
-                    //    CompanyId = Convert.ToInt32(loggedUserData.Rows[0][0]),
-                    //    FirstName = (string)loggedUserData.Rows[0][1],
-                    //    LastName = (string)loggedUserData.Rows[0][2],
-                    //    AdminPrivileges = Convert.ToInt32(loggedUserData.Rows[0][3]),
-                    //    Interval = 0,
-                    //    Bus = "",
-                    //    OperationStatus = 0
-                    //};
-                    //string sessionName = (string)loggedUserData.Rows[0][0];
-                    //Session[sessionName] = loggedUser;
-                    Session["Name"] = loggedUserData.Rows[0][0].ToString();
-                    Session["FirstName"] = loggedUserData.Rows[0][1].ToString();
-                    Session["LastName"] = loggedUserData.Rows[0][2].ToString();
-                    Session["AdminPrivileges"] = loggedUserData.Rows[0][3].ToString();
-                    Session["Interval"] = 0;
-                    Session["Bus"] = "";
-                    Session["Id"] = iD.ToString();
-                    Session["OperationStatus"] = 0;
+                    bool result = PrepareSession(dt, iD);
 
-
-                    // tworzenie ciasteczka z danymi aktualnie zalogowanego operatora
-
-                    //if (Request.Cookies["Bus"] != null)
-                    //{
-                    //    Response.Cookies["Bus"].Expires = DateTime.Now.AddDays(-1);
-                    //}
-
-                    DateTime loginDate = DateTime.Now;
-                    //CreateNewBusCookie(sessionName, iD, loginDate);
-
-                    // wprowadzenie danych o zalogowaniu operatora do bazy i wywołanie odpowiedniego panelu
-                    if (bl.UserLogIn(iD, loginDate))
+                    if (result)
                     {
-                        HomeView((string)Session["AdminPrivileges"]);
-                    }
-                        
-                    // w przypadku błędu dodania do bazy informacji o zalogowaniu użytkownika 
-                    // skasowanie ciasteczka i zamknięcie sesji - co jest jednoznaczne z wylogowaniem
-                    else
-                    {
-                        if (Request.Cookies["Bus"] != null)
+                        DateTime loginDate = DateTime.Now;
+                        if (bl.UserLogIn(iD, loginDate))
                         {
-                            Response.Cookies["Bus"].Expires = DateTime.Now.AddDays(-1);
+                            HomeView((string)Session["AdminPrivileges"]);
                         }
+                        else
+                        {
+                            result = false;
+                        }
+                    }
+                    if (!result)
+                    {
+                        bl.UserLogOut(iD, "");
                         Session.Abandon();
                         Response.Redirect("global.aspx");
                     }
@@ -121,11 +92,6 @@ namespace Bus_Management_System
                 Response.Redirect("Bus.aspx");
             else
             {
-                //// odczytano nieznane poświadczenia
-                //if (Request.Cookies["Bus"] != null)
-                //{
-                //    Response.Cookies["Bus"].Expires = DateTime.Now.AddDays(-1);
-                //}
                 Session.Abandon();
                 Response.Redirect("Global.aspx");
             }
@@ -139,16 +105,61 @@ namespace Bus_Management_System
             inp_pesel.Text = "";
         }
 
-        // utworzenie ciasteczka o zalogowanym użytkowniku
-        //private void CreateNewBusCookie(string sessionName, int iD, DateTime loginDate)
-        //{
-        //    HttpCookie BusCookie = new HttpCookie("Bus");
-        //    BusCookie.Values["userId"] = sessionName;
-        //    BusCookie.Values["Id"] = iD.ToString();
-        //    BusCookie.Values["loginTime"] = loginDate.ToString();
-        //    // domyslnie cookie zaniknie po wyłączeniu przeglądarki, ae ustawiamy na 8h ze względu na kodeks pracy
-        //    BusCookie.Expires = loginDate.AddHours(8);
-        //    Response.Cookies.Add(BusCookie);
-        //}
+        private bool PrepareSession(DataTable dt, int iD)
+        {
+            bool result = false;
+            try
+            {
+                Session["Name"] = dt.Rows[0][0].ToString();
+                Session["FirstName"] = dt.Rows[0][1].ToString();
+                Session["LastName"] = dt.Rows[0][2].ToString();
+                Session["AdminPrivileges"] = dt.Rows[0][3].ToString();
+                Session["Interval"] = 0;
+                Session["Bus"] = "";
+                Session["Id"] = iD;
+                if ((string)Session["AdminPrivileges"] == "2")
+                {
+                    Session["OperationStatus"] = 0;
+                    Session["Shengen"] = 0;
+                    Session["Operation"] = 2;
+                    Session["GateLat"] = 0.0d;
+                    Session["GateLon"] = 0.0d;
+                    Session["PpsLat"] = 0.0d;
+                    Session["PpsLon"] = 0.0d;
+                    Session["DistanceT"] = 0.0d;
+                    Session["OldDistanceT"] = 0.0d;
+                    Session["DistanceS"] = 0.0d;
+                    Session["OldDistanceS"] = 0.0d;
+                    Session["DistanceN"] = 0.0d;
+                    Session["OldDistanceN"] = 0.0d;
+                    Session["CurrentLat"] = 0.0d;
+                    Session["CurrentLon"] = 0.0d;
+                    Session["PredictedDistance"] = 0.0d;
+                    Session["Interval"] = 0;
+                    result = true;
+                }
+                else
+                    if ((string)Session["AdminPrivileges"] == "1")
+                {
+                    Session["Operation"] = 0;
+                    Session["Pps"] = "";
+                    Session["AirPort"] = 0;
+                    Session["Gate"] = "";
+                    Session["GodzinaRozkladowa"] = "";
+                    Session["FlightNb"] = "";
+                    Session["Pax"] = "";
+                    Session["RadioGate"] = "";
+                    Session["RadioNeon"] = "";
+                    result = true;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                result = false;
+            }
+            return result;
+        }
     }
 }

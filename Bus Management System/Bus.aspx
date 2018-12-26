@@ -117,7 +117,7 @@
                 <asp:View ID="Home" runat="server">
                     <asp:UpdatePanel runat="server" Id="BusHomeUP" >
                         <ContentTemplate>
-                            <asp:Timer runat="server" Id="BusHomeTimer" Interval="20000" OnTick="BusHomeTimer_Tick"></asp:Timer>
+                            <asp:Timer runat="server" Id="BusHomeTimer" Interval="2000" OnTick="BusHomeTimer_Tick"></asp:Timer>
                                 <div class="bus-row">
                                     <div class="bus-left">
 

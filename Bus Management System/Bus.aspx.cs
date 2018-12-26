@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 using System.Globalization;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
@@ -11,11 +10,6 @@ namespace Bus_Management_System
     public partial class Bus : System.Web.UI.Page
     {
         public static BusinessLayer bl = new BusinessLayer();
-        //public static double speed = 0.0d;
-        //public static double accuracy = 0.0d;
-        //public static double currentLat = 0.0d;
-        //public static double currentLon = 0.0d;
-        //User loggedUser;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -25,19 +19,8 @@ namespace Bus_Management_System
             else
                 userId = (string)Session["Name"]; 
 
-            //if (Request.Cookies["Bus"] != null)
-            //{
-            //    userId = Convert.ToString(Request.Cookies["Bus"].Values["userId"]);
-            //}
-            //else
-            //{
-            //    Response.Redirect("global.aspx");
-            //}
-            //loggedUser = (User)Session[userId];
-            //string test = (string)Session["AdminPrivileges"];
             if (Session["OperationStatus"] != null)
                 SetButtonsStatus();
-
 
             if (!IsPostBack)
             {
@@ -53,47 +36,14 @@ namespace Bus_Management_System
                     // załadowanie listy dostępnych pojazdów do listy
                     BindBusDDL();
 
+                    // przygotowanie wiersza nagłówkowego do pliku raportu
                     Reporting rp = new Reporting();
                     rp.PrepareLogFile(/*loggedUser, */DateTime.Now.ToString("yyyyMMdd_HH_mm_ss"));
                     rp.Dispose();
-                    //Cleaning cl = new Cleaning();
-                    //cl.ClearSessionObject(loggedUser);
-                    //cl.Dispose();
                     CheckOperations();
                 }
             }
         }
-
-        //[System.Web.Services.WebMethod/*(EnableSession = true)*/]
-        //public static string PrzeliczArray(string[] arrayIn)
-        //{
-        //    double currentSpeed = 0.0d;
-        //    double currentAccuracy = 0.0d;
-        //    double latitude = double.Parse(arrayIn[0], CultureInfo.InvariantCulture);
-        //    double longitude = double.Parse(arrayIn[1], CultureInfo.InvariantCulture);
-        //    if (arrayIn[2] != "")
-        //    {
-        //        currentAccuracy = double.Parse(arrayIn[2], CultureInfo.InvariantCulture);
-        //    }
-        //    else
-        //    {
-        //        currentAccuracy = 0.0d;
-        //    }
-        //    if (arrayIn[3] != "")
-        //    {
-        //        currentSpeed = double.Parse(arrayIn[3], CultureInfo.InvariantCulture);
-        //    }
-        //    else
-        //    {
-        //        currentSpeed = 0.0d;
-        //    }
-            //speed = currentSpeed;
-            //accuracy = currentAccuracy;
-            //currentLat = latitude;
-            //currentLon = longitude;
-
-        //    return currentSpeed.ToString();
-        //}
 
         // pętla odświeżająca Update Panel
         protected void BusHomeTimer_Tick(object sender, EventArgs e)
@@ -106,7 +56,6 @@ namespace Bus_Management_System
             start = Environment.TickCount & Int32.MaxValue;
 
             // sprawdzenie, czy użytkownik jest poprawnie zalogowany
-            //HttpCookie cookie = Request.Cookies["Bus"];
             if (Session["Name"] != null)
             {
                 // zerowanie potęcjalnego komunikatu głosowego
@@ -117,7 +66,7 @@ namespace Bus_Management_System
                 if ((int)Session["OperationStatus"] == 0)
                 {
                     // sprawdzenie, czy pojawiła się operacja
-                    ds = bl.GetOperations((string)Session["Bus"]);
+                    bl.GetOperations((string)Session["Bus"], ref ds);
 
                     // jeśli pojawiło sie zlecenie
                     if (ds.Tables[0].Rows.Count > 0)
@@ -137,10 +86,10 @@ namespace Bus_Management_System
                 else
                 {
                     Session["Interval"] = (int)Session["Interval"] + 1;
-                    // żeby nie zapychać łącza, odświeżanie danych co 10s
-                    if ((int)Session["Interval"] == 5)
+                    // żeby nie zapychać łącza, odświeżanie danych co 20s
+                    if ((int)Session["Interval"] == 10)
                     {
-                        ds = bl.GetOperations((string)Session["Bus"]);
+                        bl.GetOperations((string)Session["Bus"], ref ds);
                         dm.GetPPSData(ds.Tables[0].Rows[0].Field<int>("PPS"));
                         dm.GetGateData(ds.Tables[0].Rows[0].Field<int>("Gate"));
                         dm.GetOperationData(ds);
@@ -158,12 +107,7 @@ namespace Bus_Management_System
             // "buss" cookie nie istnieje, wiedz na wszelki wypadek koniec sesji i wylogowanie
             else
             {
-                // wylogować użytkownika zapisanego w sesji oraz zwolnic BUS
-                if (Request.Cookies["Bus"] != null)
-                {
-                    Response.Cookies["Bus"].Expires = DateTime.Now.AddDays(-1);
-                }
-                bl.UserLogOut((string)Session["Id"], (string)Session["Bus"]);
+                bl.UserLogOut((int)Session["Id"], (string)Session["Bus"]);
                 Session.Abandon();
                 Response.Redirect("global.aspx");
             }
@@ -181,9 +125,18 @@ namespace Bus_Management_System
         // naniesienie aktualnych danych lokalizacyjnych
         public void UpdateGPSData()
         {
-            Session["CurrentLat"] = double.Parse(HiddenField1.Value, CultureInfo.InvariantCulture);
-            Session["CurrentLon"] = double.Parse(HiddenField2.Value, CultureInfo.InvariantCulture);
-            Session["Accuracy"] = double.Parse(HiddenField3.Value, CultureInfo.InvariantCulture);
+            if (HiddenField1.Value != "")
+                Session["CurrentLat"] = double.Parse(HiddenField1.Value, CultureInfo.InvariantCulture);
+            else
+                Session["CurrentLat"] = 0.0d;
+            if (HiddenField2.Value != "")
+                Session["CurrentLon"] = double.Parse(HiddenField2.Value, CultureInfo.InvariantCulture);
+            else
+                Session["CurrentLon"] = 0.0d;
+            if (HiddenField3.Value != "")
+                Session["Accuracy"] = double.Parse(HiddenField3.Value, CultureInfo.InvariantCulture);
+            else
+                Session["Accuracy"] = 0.0d;
             if (HiddenField4.Value != "")
                 Session["Speed"] = double.Parse(HiddenField4.Value, CultureInfo.InvariantCulture);
             else
@@ -208,21 +161,12 @@ namespace Bus_Management_System
                     break;
                 case "3":
                     {
-                        HttpCookie cookie = Request.Cookies["Bus"];
-                        if (cookie != null)
-                        {
-                            bool result = bl.UserLogOut((string)Session["Id"], (string)Session["Bus"]);
+                        bool result = bl.UserLogOut((int)Session["Id"], (string)Session["Bus"]);
 
-                            if (Request.Cookies["Bus"] != null)
-                            {
-                                Response.Cookies["Bus"].Expires = DateTime.Now.AddDays(-1);
-                            }
-                            
-                            if(result)
-                            {
-                                Session.Abandon();
-                                Response.Redirect("global.aspx");
-                            }
+                        if (result)
+                        {
+                            Session.Abandon();
+                            Response.Redirect("global.aspx");
                         }
                         else
                         {
@@ -243,7 +187,8 @@ namespace Bus_Management_System
         {
             if (Session["Name"] != null)
             {
-                DataSet ds = bl.GetBus(3, "");
+                DataSet ds = new DataSet();
+                bl.GetBus(3, "", ref ds);
                 if (ddl_busSelect != null)
                 {
                     ddl_busSelect.DataSource = ds;
@@ -276,13 +221,13 @@ namespace Bus_Management_System
             else
             {
                 // użytkownik nie jest zalogowany, albo ciasteczko z jakiegos powodu znikło
-                //bl.UserLogOut(loggedUser.CompanyId);
+                bl.UserLogOut((int)Session["Id"], (string)Session["Bus"]);
                 Response.Redirect("global.aspx");
             }
-            // dodać do zalogowanego usera wybrany autobus
             BusManagement.SetActiveView(Home);
         }
 
+        // reakcja na wybranie pojazdu
         protected void Ddl_busSelect_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (ddl_busSelect.SelectedIndex != 0)
@@ -295,7 +240,8 @@ namespace Bus_Management_System
         private void CheckOperations()
         {
             DataManipulate dm = new DataManipulate();
-            DataSet ds = bl.GetOperations((string)Session["Bus"]);
+            DataSet ds = new DataSet();
+            bl.GetOperations((string)Session["Bus"], ref ds);
             if (ds.Tables[0].Rows.Count > 0)
             {
                 dm.GetPPSData(ds.Tables[0].Rows[0].Field<int>("PPS"));
@@ -309,6 +255,7 @@ namespace Bus_Management_System
                 InWorkBusControls((int)Session["OperationStatus"]);
                 dm.Dispose();
             }
+            ds.Dispose();
         }
 
         // podstawienie odpowiedniego dzwieku do alertu
@@ -354,11 +301,6 @@ namespace Bus_Management_System
                 if ((string)Session["StartLocLatDegree"] == null || (string)Session["StartLocLonDegree"] == null || (string)Session["StartLocLatDegree"] == "" || (string)Session["StartLocLonDegree"] == "")
                     dm.TranslateCoordToDegree((double)Session["CurrentLat"], (double)Session["CurrentLon"]);
                 }
-            
-            //if ((int)Session["OperationStatus"] == 2 /*&& ((string)Session["StartLocLatDegree"] == "" || (string)Session["StartLocLonDegree"] == "")*/)
-
-                //dm.TranslateCoordToDegree((double)Session["CurrentLat"], (double)Session["CurrentLon"]);
-            //int test = (int)Session["OperationStatus"];
             dm.CheckDistance((int)Session["OperationStatus"]);
             dm.SetPredictedDistance();
             SetGraficsElements();
@@ -377,7 +319,6 @@ namespace Bus_Management_System
             {
                 case 0:
                     {
-                        //loggedUser.OperationStatus = 0;
                         busEndOp.Click -= new EventHandler(BusEndOp_Click);
                         busAccept.Style.Add("background-color", "Silver");
                         busStartLoad.Style.Add("background-color", "Silver");
@@ -950,9 +891,6 @@ namespace Bus_Management_System
         {
             bl.BusOperationAction(5, (string)Session["Bus"]);
             Session["OperationStatus"] = 0;
-            //Cleaning cl = new Cleaning();
-            //cl.ClearSessionObject(loggedUser);
-            //cl.Dispose();
         }
 
         protected void BusPause_Click(object sender, EventArgs e)

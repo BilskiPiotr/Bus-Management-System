@@ -8,11 +8,8 @@ namespace Bus_Management_System
     public class DataManipulate : Bus
     {
         // przeliczenie współrzędnych pobranych z urządzenia GPS do czytelnych współrzędnych w stopniach
-        public void TranslateCoordToDegree(/*User loggedUser*/double latitude, double longitude)
+        public void TranslateCoordToDegree(double latitude, double longitude)
         {
-            //double latitude = loggedUser.CurrentLat;
-            //double longitude = loggedUser.CurrentLon;
-
             string latitude_Kierunek = (latitude >= 0 ? "N" : "S");
 
             latitude = Math.Abs(latitude);
@@ -31,21 +28,23 @@ namespace Bus_Management_System
         // pobranie danych lokalizacyjnych stanowiska postojowego samolotu
         public void GetPPSData(int ppsId)
         {
-            DataSet pps = bl.GetPPS(ppsId);
-            Session["Pps"] = pps.Tables[0].Rows[0].Field<string>("StationNb");
-            Session["PpsLat"] = Convert.ToDouble(pps.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
-            Session["PpsLon"] = Convert.ToDouble(pps.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
-            pps.Dispose();
+            DataSet ds = new DataSet();
+            bl.GetPPS(ppsId, ref ds);
+            Session["Pps"] = ds.Tables[0].Rows[0].Field<string>("StationNb");
+            Session["PpsLat"] = Convert.ToDouble(ds.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
+            Session["PpsLon"] = Convert.ToDouble(ds.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
+            ds.Dispose();
         }
 
         // pobranie danych lokalizacyjnych wyjścia pasażerskiego
         public void GetGateData(int gateId)
         {
-            DataSet gate = bl.GetGate(gateId);
-            Session["Gate"] = gate.Tables[0].Rows[0].Field<string>("GateNb");
-            Session["GateLat"] = Convert.ToDouble(gate.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
-            Session["GateLon"] = Convert.ToDouble(gate.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
-            gate.Dispose();
+            DataSet ds = new DataSet();
+            bl.GetGate(gateId, ref ds);
+            Session["Gate"] = ds.Tables[0].Rows[0].Field<string>("GateNb");
+            Session["GateLat"] = Convert.ToDouble(ds.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
+            Session["GateLon"] = Convert.ToDouble(ds.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
+            ds.Dispose();
         }
 
         //ustawienie wartości aktualnej operacji w zmiennej sesyjnej
@@ -64,11 +63,13 @@ namespace Bus_Management_System
         // ustalenie stref bezpieczeństwa dla obsługiwanego portu
         public void GetSpecyficAirPortData(int airPort)
         {
-            DataSet ds = bl.GetAirPort(airPort);
+            DataSet ds = new DataSet();
+            bl.GetAirPort(airPort, ref ds);
             Session["AirPort"] = ds.Tables[0].Rows[0].Field<string>("IATA_Name");
             Session["Shengen"] = Convert.ToInt32(bl.GetCountry(ds.Tables[0].Rows[0].Field<int>("Shengen")));
             Session["PortName"] = ds.Tables[0].Rows[0].Field<string>("Full_Name");
             Session["Country"] = ds.Tables[0].Rows[0].Field<string>("Country_name");
+            ds.Dispose();
         }
 
         // Ustalenie na jakim etapie jest aktualna operacja
@@ -113,31 +114,12 @@ namespace Bus_Management_System
             Session["EdnOp"] = data;
             if (data != "00:00")
                 operationStatus = operationStatus + 1;
-            //Session["EndOp"] = (ds.Tables[0].Rows[0].Field<DateTime>("EndOp")).ToString("HH:mm");
-            //if (Session["Created"] != "00:00")
-            //    operationStatus = 1;
-            //if (Session["Accepted"] != "00:00")
-            //    operationStatus = operationStatus + 1;
-            //if (Session["StartLoad"] != "00:00")
-            //    operationStatus = operationStatus + 1;
-            //if (Session["StartDrive"] != "00:00")
-            //    operationStatus = operationStatus + 1;
-            //if (Session["StartUnload"] != "00:00")
-            //    operationStatus = operationStatus + 1;
-            //if (Session["EndOp"] != "00:00")
-            //    operationStatus = 0;
-            //string created = (string)Session["Created"];
-            //string accepted = (string)Session["Accepted"];
-            //string startLoad = (string)Session["StartLoad"];
-            //string startDrive = (string)Session["StartDrive"];
-            //string startUnload = (string)Session["StartUnload"];
-            //string endOp = (string)Session["EndOp"];
 
             Session["OperationStatus"] = operationStatus;
         }
 
         // określenie odległości
-        public void CheckDistance(/*double[] newData, */int operationStatus)
+        public void CheckDistance(int operationStatus)
         {
             switch (operationStatus)
             {
@@ -157,11 +139,11 @@ namespace Bus_Management_System
                             Session["OldDistanceN"] = 0;
                         if ((int)Session["Operation"] == 1)
                         {
-                            //Distance(loggedUser, loggedUser.PpsLat, loggedUser.PpsLon);
+                            Distance((double)Session["PpsLat"], (double)Session["PpsLon"]);
                         }
                         else
                         {
-                            //Distance(loggedUser, loggedUser.GateLat, loggedUser.GateLon);
+                            Distance((double)Session["GateLat"], (double)Session["GateLon"]);
                         }
                     }
                     break;
@@ -181,11 +163,11 @@ namespace Bus_Management_System
                             Session["OldDistanceN"] = 0;
                         if ((int)Session["Operation"] == 1)
                         {
-                            //Distance(loggedUser, loggedUser.GateLat, loggedUser.GateLon);
+                            Distance((double)Session["GateLat"], (double)Session["GateLon"]);
                         }
                         else
                         {
-                            //Distance(loggedUser, loggedUser.PpsLat, loggedUser.PpsLon);
+                            Distance((double)Session["PpsLat"], (double)Session["PpsLon"]);
                         }
                     }
                     break;
@@ -193,9 +175,9 @@ namespace Bus_Management_System
         }
 
         // przeliczenie wszystkich odległości
-        private void/*double[]*/ Distance(double[] actualDistance, double currentLat, double currentLon, double destLat, double destLon)
+        private void Distance(double destLat, double destLon)
         {
-            GeoCoordinate busPosition = new GeoCoordinate(currentLat, currentLon);
+            GeoCoordinate busPosition = new GeoCoordinate((double)Session["CurrentLat"], (double)Session["CurrentLon"]);
             GeoCoordinate targetPosition = new GeoCoordinate(destLat, destLon);
             GeoCoordinate shengen = new GeoCoordinate(52.17035, 20.97174);
             GeoCoordinate nonShengen = new GeoCoordinate(52.17224, 20.9702);
@@ -205,17 +187,14 @@ namespace Bus_Management_System
             double distanceS = Math.Round(busPosition.GetDistanceTo(shengen), 2, MidpointRounding.AwayFromZero);
             double distanceN = Math.Round(busPosition.GetDistanceTo(nonShengen), 2, MidpointRounding.AwayFromZero);
 
-            Session["OldDistanceT"] = actualDistance[0]/*loggedUser.DistanceT*/;
+            Session["OldDistanceT"] = (double)Session["DistanceT"];/*loggedUser.DistanceT*/;
             Session["DistanceT"] = distanceT;
 
-            Session["OldDistanceS"] = actualDistance[1]/*loggedUser.DistanceS*/;
+            Session["OldDistanceS"] = (double)Session["DistanceS"]/*loggedUser.DistanceS*/;
             Session["DistanceS"] = distanceS;
 
-            Session["OldDistanceN"] = actualDistance[2]/*loggedUser.DistanceN*/;
+            Session["OldDistanceN"] = (double)Session["DistanceN"]/*loggedUser.DistanceN*/;
             Session["DistanceN"] = distanceN;
-            //double[] coordinates = new double[6];
-            //coordinates[0] = 
-            //return (OldDistanceT = distanceT;
         }
 
         // przeliczenie przewidywanej odległości do celu ze względu na prędkość

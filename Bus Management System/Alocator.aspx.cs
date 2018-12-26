@@ -9,43 +9,30 @@ namespace Bus_Management_System
     public partial class Alocator : System.Web.UI.Page
     {
         private static BusinessLayer bl = new BusinessLayer();
-        private User loggedUser;
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            string userId = "";
-
-            if (Request.Cookies["Bus"] != null)
+            if ((string)Session["Name"] == "")
             {
-                userId = Convert.ToString(Request.Cookies["Bus"].Values["userId"]);
-            }
-            else
-            {
+                Session.Abandon();
                 Response.Redirect("global.aspx");
             }
-
-            loggedUser = (User)Session[userId];
 
             if (!IsPostBack)
             {
                 MenuItemCollection menuItems = alocatorMenu.Items;
 
-                if (loggedUser != null)
-                {
-                    lb_loggedUser.Text = "";
-                    lb_loggedUser.Text += (string)loggedUser.FirstName + " " + (string)loggedUser.LastName + "       ID: " + ((int)loggedUser.CompanyId).ToString();
-                    // załadowanie danych do GridView Alocator
-                    BindGrid();
-                }
+                lb_loggedUser.Text = "";
+                lb_loggedUser.Text += (string)Session["FirstName"] + " " + (string)Session["LastName"] + "       ID: " + ((string)Session["Name"]);
+                // załadowanie danych do GridView Alocator
+                 BindGrid();
             }
         }
 
         //obsługva zdażenia MenuItem Click
         protected void MineMenu_MenuItemClick(object sender, MenuEventArgs e)
         {
-            User loggedUser = (User)Session["loggedUser"];
             MenuItem mnu = (MenuItem)e.Item;
-
             switch (mnu.Value)
             {
                 case "1":
@@ -55,10 +42,7 @@ namespace Bus_Management_System
                     break;
                 case "2":
                     {
-                        if (Request.Cookies["Bus"] != null)
-                        {
-                            Response.Cookies["Bus"].Expires = DateTime.Now.AddDays(-1);
-                        }
+                        bl.UserLogOut((int)Session["Id"], "");
                         Session.Abandon();
                         Response.Redirect("global.aspx");
                     }
@@ -127,7 +111,7 @@ namespace Bus_Management_System
                     ddl_operationEdit.DataBind();
 
                     // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
-                    ddl_operationEdit.SelectedIndex = ddl_operationEdit.Items.IndexOf(ddl_operationEdit.Items.FindByText(loggedUser.Al_Op));
+                    ddl_operationEdit.SelectedIndex = ddl_operationEdit.Items.IndexOf(ddl_operationEdit.Items.FindByText((string)Session["Operation"]));
                     ddl_operationEdit.Dispose();
                     success = true;
                 }
@@ -164,7 +148,7 @@ namespace Bus_Management_System
                     ddl_ppsEdit.DataBind();
 
                     // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
-                    ddl_ppsEdit.SelectedIndex = ddl_ppsEdit.Items.IndexOf(ddl_ppsEdit.Items.FindByText(loggedUser.Al_Pp));
+                    ddl_ppsEdit.SelectedIndex = ddl_ppsEdit.Items.IndexOf(ddl_ppsEdit.Items.FindByText((string)Session["Pps"]));
                     ddl_ppsEdit.Dispose();
                     success = true;
                 }
@@ -201,7 +185,7 @@ namespace Bus_Management_System
                     ddl_airPortEdit.DataBind();
 
                     // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
-                    ddl_airPortEdit.SelectedIndex = ddl_airPortEdit.Items.IndexOf(ddl_airPortEdit.Items.FindByText(loggedUser.Al_Ai));
+                    ddl_airPortEdit.SelectedIndex = ddl_airPortEdit.Items.IndexOf(ddl_airPortEdit.Items.FindByText((string)Session["AirPort"]));
                     ddl_airPortEdit.Dispose();
                     success = true;
                 }
@@ -238,7 +222,7 @@ namespace Bus_Management_System
                     ddl_gateEdit.DataBind();
 
                     // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
-                    ddl_gateEdit.SelectedIndex = ddl_gateEdit.Items.IndexOf(ddl_gateEdit.Items.FindByText(loggedUser.Al_Ga));
+                    ddl_gateEdit.SelectedIndex = ddl_gateEdit.Items.IndexOf(ddl_gateEdit.Items.FindByText((string)Session["Gate"]));
                     ddl_gateEdit.Dispose();
                     success = true;
                 }
@@ -277,10 +261,10 @@ namespace Bus_Management_System
             }
             try
             {
-                ds = bl.GetBus(1, loggedUser.Al_Bu);
-                if (ds.Tables[0].Rows.Count == 0 && loggedUser.Al_Bu != null)
+                ds = bl.GetBus(1, (string)Session["Bus"]);
+                if (ds.Tables[0].Rows.Count == 0 && (string)Session["Bus"] != "")
                 {
-                    ds = bl.GetBus(2, loggedUser.Al_Bu);
+                    ds = bl.GetBus(2, (string)Session["Bus"]);
                     ddl.DataSource = ds;
                     ddl.DataValueField = "Id";
                     ddl.DataTextField = "VehicleNb";
@@ -294,7 +278,7 @@ namespace Bus_Management_System
                     ddl.DataTextField = "VehicleNb";
                     ddl.DataBind();
                     // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
-                    ddl.SelectedIndex = ddl.Items.IndexOf(ddl.Items.FindByText(loggedUser.Al_Bu));
+                    ddl.SelectedIndex = ddl.Items.IndexOf(ddl.Items.FindByText((string)Session["Bus"]));
                     success = true;
                 }
             }
@@ -362,16 +346,16 @@ namespace Bus_Management_System
             {
                 GridViewRow row = gv_Alocator.Rows[e.NewEditIndex];
                 Label oper = (Label)row.FindControl("lb_operation");
-                loggedUser.Al_Op = oper.Text;
+                Session["Operation"] = oper.Text;
 
                 Label iataName = (Label)row.FindControl("lb_airPort");
-                loggedUser.Al_Ai = iataName.Text;
+                Session["AirPort"] = iataName.Text;
                 Label gateNb = (Label)row.FindControl("lb_gate");
-                loggedUser.Al_Ga = gateNb.Text;
+                Session["Gate"] = gateNb.Text;
                 Label ppsNb = (Label)row.FindControl("lb_pps");
-                loggedUser.Al_Pp = ppsNb.Text;
+                Session["Pps"] = ppsNb.Text;
                 Label busNb = (Label)row.FindControl("lb_bus");
-                loggedUser.Al_Bu = busNb.Text;
+                Session["Bus"] = busNb.Text;
 
             }
             catch (Exception Gv_Alocator_RowEditing_ex)
@@ -458,22 +442,32 @@ namespace Bus_Management_System
         // Poprawienie danych w istniejącym rekordzie
         protected void Gv_Alocator_RowUpdating(object sender, GridViewUpdateEventArgs e)
         {
-            loggedUser.Al_Id = ((Label)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("lb_id")).Text;
-            string godzinaRozkładowa = ((TextBox)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_godzinaRozkładowa")).Text;
-            loggedUser.Al_Op = ((DropDownList)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_operationEdit")).SelectedValue;
-            loggedUser.Al_Gr = CheckTimeFormat(godzinaRozkładowa);
-            loggedUser.Al_Fl = ((TextBox)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_flightNbEdit")).Text;
-            loggedUser.Al_Ai = ((DropDownList)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_airPortEdit")).SelectedValue;
-            loggedUser.Al_Pa = ((TextBox)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_paxEdit")).Text;
-            loggedUser.Al_Ga = ((DropDownList)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_gateEdit")).SelectedValue;
-            loggedUser.Al_Pp = ((DropDownList)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_ppsEdit")).SelectedValue;
-            loggedUser.Al_Bu = ((DropDownList)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_busEdit")).SelectedValue;
-            loggedUser.Al_Rg = ((TextBox)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_radioGateEdit")).Text;
-            loggedUser.Al_Rn = ((TextBox)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_radioNeonEdit")).Text;
+            string id = ((Label)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("lb_id")).Text;
+            Session["Id"] = id;
+            DateTime godzinaRozkładowa = CheckTimeFormat(((TextBox)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_godzinaRozkładowa")).Text);
+            Session["GodzinaRozkladowa"] = godzinaRozkładowa;
+            string operation = ((DropDownList)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_operationEdit")).SelectedValue;
+            Session["Operation"] = operation;
+            string flightNb = ((TextBox)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_flightNbEdit")).Text;
+            Session["FlightNb"] = flightNb;
+            string airPort = ((DropDownList)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_airPortEdit")).SelectedValue;
+            Session["AirPort"] = airPort;
+            string pax = ((TextBox)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_paxEdit")).Text;
+            Session["Pax"] = pax;
+            string gate = ((DropDownList)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_gateEdit")).SelectedValue;
+            Session["Gate"] = gate;
+            string pps = ((DropDownList)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_ppsEdit")).SelectedValue;
+            Session["Pps"] = pps;
+            string bus = ((DropDownList)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("ddl_busEdit")).SelectedValue;
+            Session["Bus"] = bus;
+            string radioGate = ((TextBox)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_radioGateEdit")).Text;
+            Session["RadioGate"] = radioGate;
+            string radioNeon = ((TextBox)gv_Alocator.Rows[e.RowIndex].Cells[1].FindControl("tb_radioNeonEdit")).Text;
+            Session["RadioNeon"] = radioNeon;
 
             bool success = false;
 
-            success = bl.AlocatorRowUpdate(loggedUser);
+            success = bl.AlocatorRowUpdate(id, godzinaRozkładowa, operation, flightNb, airPort, pax, gate, pps, bus, radioGate, radioNeon);
 
             if (success)
             {
@@ -514,7 +508,7 @@ namespace Bus_Management_System
         {
             //Bus status: 0 - Not Available, 1 - Empty, 2 - Free, 3 - In Work
 
-            DataSet ds = bl.GetBus(4, loggedUser.Al_Bu);
+            DataSet ds = bl.GetBus(4, (string)Session["Bus"]);
             string numer = "";
             string str = "";
             int status = -1;

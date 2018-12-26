@@ -20,43 +20,20 @@ namespace Bus_Management_System
                     sda.Dispose();
                 }
             }
-            //sqlCmd.Connection = conn;
-            //SqlDataAdapter sda = new SqlDataAdapter(sqlCmd);
-            //DataTable dt = new DataTable();
-            //sda.Fill(dt);
-            //conn.Close();
-            //return dt;
-        }
-
-        public DataSet GetDataSet(SqlCommand sqlCmd)
-        {
-
-            sqlCmd.Connection = conn;
-            SqlDataAdapter sda = new SqlDataAdapter(sqlCmd);
-            DataSet ds = new DataSet();
-            sda.Fill(ds);
-            conn.Close();
-            return ds;
         }
 
         public void GetDataSet(SqlCommand sqlCmd, ref DataSet ds)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                sqlCmd.Connection = con;
+                sqlCmd.Connection = conn;
                 using (SqlDataAdapter sda = new SqlDataAdapter(sqlCmd))
                 {
                     sda.Fill(ds);
-                    con.Close();
+                    conn.Close();
                     sda.Dispose();
                 }
             }
-            //sqlCmd.Connection = conn;
-            //SqlDataAdapter sda = new SqlDataAdapter(sqlCmd);
-            //DataSet ds = new DataSet();
-            //sda.Fill(ds);
-            //conn.Close();
-            //return ds;
         }
 
         public int InsertExecution(SqlCommand sqlcmd)
