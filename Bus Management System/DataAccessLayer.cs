@@ -7,19 +7,30 @@ namespace Bus_Management_System
     public class DataAccessLayer
     {
         private SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["BusData"].ConnectionString);
-
-        public DataTable GetDataTable(SqlCommand sqlCmd)
+        string connectionString = ConfigurationManager.ConnectionStrings["BusData"].ConnectionString;
+        public void GetDataTable(SqlCommand sqlCmd, ref DataTable dt)
         {
-            sqlCmd.Connection = conn;
-            SqlDataAdapter sda = new SqlDataAdapter(sqlCmd);
-            DataTable dt = new DataTable();
-            sda.Fill(dt);
-            conn.Close();
-            return dt;
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                sqlCmd.Connection = con;
+                using (SqlDataAdapter sda = new SqlDataAdapter(sqlCmd))
+                {
+                    sda.Fill(dt);
+                    con.Close();
+                    sda.Dispose();
+                }
+            }
+            //sqlCmd.Connection = conn;
+            //SqlDataAdapter sda = new SqlDataAdapter(sqlCmd);
+            //DataTable dt = new DataTable();
+            //sda.Fill(dt);
+            //conn.Close();
+            //return dt;
         }
 
         public DataSet GetDataSet(SqlCommand sqlCmd)
         {
+
             sqlCmd.Connection = conn;
             SqlDataAdapter sda = new SqlDataAdapter(sqlCmd);
             DataSet ds = new DataSet();
@@ -28,15 +39,24 @@ namespace Bus_Management_System
             return ds;
         }
 
-        public byte[] GetByteData(SqlCommand sqlCmd)
+        public void GetDataSet(SqlCommand sqlCmd, ref DataSet ds)
         {
-            sqlCmd.Connection = conn;
-            if (conn.State == ConnectionState.Closed)
-                conn.Open();
-            byte[] bt = (byte[])sqlCmd.ExecuteScalar();
-            conn.Close();
-            return bt;
-
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                sqlCmd.Connection = con;
+                using (SqlDataAdapter sda = new SqlDataAdapter(sqlCmd))
+                {
+                    sda.Fill(ds);
+                    con.Close();
+                    sda.Dispose();
+                }
+            }
+            //sqlCmd.Connection = conn;
+            //SqlDataAdapter sda = new SqlDataAdapter(sqlCmd);
+            //DataSet ds = new DataSet();
+            //sda.Fill(ds);
+            //conn.Close();
+            //return ds;
         }
 
         public int InsertExecution(SqlCommand sqlcmd)

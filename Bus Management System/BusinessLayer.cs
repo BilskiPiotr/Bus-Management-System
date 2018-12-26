@@ -10,20 +10,37 @@ namespace Bus_Management_System
 
         public DataTable GetUserData(int iD)
         {
-            SqlCommand sqlCmd = new SqlCommand();
-            sqlCmd.CommandText = "SELECT Employee_CompanyId, Employee_Imie, Employee_Nazwisko, Employee_Priv FROM Employees_Basic WHERE Id = @userId";
-            sqlCmd.Parameters.AddWithValue("@userId", iD);
             try
             {
-                DataTable dt = dal.GetDataTable(sqlCmd);
-                sqlCmd.Parameters.Clear();
-                sqlCmd.Dispose();
-                return dt;
+                using (SqlCommand sqlCmd = new SqlCommand())
+                {
+                    DataTable dt = new DataTable();
+                    sqlCmd.CommandText = "SELECT Employee_CompanyId, Employee_Imie, Employee_Nazwisko, Employee_Priv FROM Employees_Basic WHERE Id = @userId";
+                    sqlCmd.Parameters.AddWithValue("@userId", iD);
+                    dal.GetDataTable(sqlCmd, ref dt);
+                    sqlCmd.Dispose();
+                    return dt;
+                }
             }
             catch (Exception ex)
             {
-                return null;
+
             }
+            //SqlCommand sqlCmd = new SqlCommand();
+            //sqlCmd.CommandText = "SELECT Employee_CompanyId, Employee_Imie, Employee_Nazwisko, Employee_Priv FROM Employees_Basic WHERE Id = @userId";
+            //sqlCmd.Parameters.AddWithValue("@userId", iD);
+            //try
+            //{
+                //DataTable dt = new DataTable();
+                //dal.GetDataTable(sqlCmd, ref dt);
+                //sqlCmd.Parameters.Clear();
+                //sqlCmd.Dispose();
+                //return dt;
+            //}
+            //catch (Exception ex)
+            //{
+            //}
+            return null;
         }
 
         // zapisanie w systemie informacji o zalogowaniu użytykownika
@@ -47,12 +64,12 @@ namespace Bus_Management_System
         }
 
         // wylogowanie użytkownika
-        public bool UserLogOut(User loggedUser)
+        public bool UserLogOut(string id, string bus)
         {
             SqlCommand sqlCmd = new SqlCommand();
             bool result = false;
             sqlCmd.CommandText = "INSERT INTO Employees_Status (Employee_Id, Employee_Logout) VALUES (@userId, @logOut)";
-            sqlCmd.Parameters.AddWithValue("@userId", loggedUser.Id);
+            sqlCmd.Parameters.AddWithValue("@userId", id);
             sqlCmd.Parameters.AddWithValue("@logOut", DateTime.Now);
             try
             {
@@ -68,18 +85,18 @@ namespace Bus_Management_System
 
             if (result)
             {
-                UpdateVehicleStatus(1, loggedUser);
+                UpdateVehicleStatus(1, bus);
             }
             return result;
         }
 
         // naniesieniesienie statusu dla wybranego pojazdu
-        public void UpdateVehicleStatus(int status, User loggedUser)
+        public void UpdateVehicleStatus(int status, string bus)
         {
             SqlCommand sqlCmd = new SqlCommand();
             sqlCmd.CommandText = "UPDATE VEHICLES SET Bus_Status = @busStatus WHERE VehicleNb = @busNb";
             sqlCmd.Parameters.AddWithValue("@busStatus", status);
-            sqlCmd.Parameters.AddWithValue("@busNb", loggedUser.Bus);
+            sqlCmd.Parameters.AddWithValue("@busNb", bus);
             try
             {
                 dal.QueryExecution(sqlCmd);
@@ -165,66 +182,70 @@ namespace Bus_Management_System
         // pobieranie listy dostępnych autobusów
         public DataSet GetBus(int commandTextNumber, string bus)
         {
-            SqlCommand sqlCmd = new SqlCommand();
-            DataSet ds = new DataSet();
-            switch (commandTextNumber)
-            {
-                case 1:
-                    {
-                        sqlCmd.CommandText = "SELECT Id, VehicleNb FROM Vehicles WHERE Bus_Status = @busStatus AND Work_Status = @workStatus";
-                        sqlCmd.Parameters.AddWithValue("@busStatus", 2);
-                        sqlCmd.Parameters.AddWithValue("@workStatus", 0);
-                    }
-                    break;
-                case 2:
-                    {
-                        sqlCmd.CommandText = "SELECT Id, VehicleNb FROM Vehicles WHERE VehicleNb = @bus";
-                        sqlCmd.Parameters.AddWithValue("@bus", bus);
-                    }
-                    break;
-                case 3:
-                    {
-                        sqlCmd.CommandText = "SELECT Id, VehicleNb FROM Vehicles WHERE Bus_Status = @busStatus";
-                        sqlCmd.Parameters.AddWithValue("@busStatus", 1);
-                    }
-                    break;
-                case 4:
-                    {
-                        sqlCmd.CommandText = "SELECT * FROM Vehicles";
-                    }
-                    break;
-            }
+            //SqlCommand sqlCmd = new SqlCommand();
+            
             try
             {
-                ds = dal.GetDataSet(sqlCmd);
-                sqlCmd.Parameters.Clear();
-                sqlCmd.Dispose();
+                using (SqlCommand sqlCmd = new SqlCommand())
+                {
+                    DataSet ds = new DataSet();
+                    switch (commandTextNumber)
+                    {
+                        case 1:
+                            {
+                                sqlCmd.CommandText = "SELECT Id, VehicleNb FROM Vehicles WHERE Bus_Status = @busStatus AND Work_Status = @workStatus";
+                                sqlCmd.Parameters.AddWithValue("@busStatus", 2);
+                                sqlCmd.Parameters.AddWithValue("@workStatus", 0);
+                            }
+                            break;
+                        case 2:
+                            {
+                                sqlCmd.CommandText = "SELECT Id, VehicleNb FROM Vehicles WHERE VehicleNb = @bus";
+                                sqlCmd.Parameters.AddWithValue("@bus", bus);
+                            }
+                            break;
+                        case 3:
+                            {
+                                sqlCmd.CommandText = "SELECT Id, VehicleNb FROM Vehicles WHERE Bus_Status = @busStatus";
+                                sqlCmd.Parameters.AddWithValue("@busStatus", 1);
+                            }
+                            break;
+                        case 4:
+                            {
+                                sqlCmd.CommandText = "SELECT * FROM Vehicles";
+                            }
+                            break;
+                    }
+                    ds = dal.GetDataSet(sqlCmd);
+                    sqlCmd.Dispose();
+                    return ds;
+                }
             }
             catch (Exception ex)
             {
             }
-            return ds;
+            return null;
         }
 
         // pobranie informacji o zleceniu dla panelu Operator
         public DataSet GetOperations(string bus)
         {
-            SqlCommand sqlCmd = new SqlCommand();
-            DataSet ds = new DataSet();
-            sqlCmd.CommandText = "SELECT * FROM Operations WHERE Bus=(SELECT Id FROM Vehicles WHERE VehicleNb = @busNb) AND Finished = @finished";
-            sqlCmd.Parameters.AddWithValue("@busNb", bus);
-            sqlCmd.Parameters.AddWithValue("@finished", 0);
             try
             {
-                ds = dal.GetDataSet(sqlCmd);
-                sqlCmd.Parameters.Clear();
-                sqlCmd.Dispose();
-                return ds;
+                using (SqlCommand sqlCmd = new SqlCommand())
+                {
+                    sqlCmd.CommandText = "SELECT * FROM Operations WHERE Bus=(SELECT Id FROM Vehicles WHERE VehicleNb = @busNb) AND Finished = @finished";
+                    sqlCmd.Parameters.AddWithValue("@busNb", bus);
+                    sqlCmd.Parameters.AddWithValue("@finished", 0);
+                    DataSet ds = dal.GetDataSet(sqlCmd);
+                    sqlCmd.Dispose();
+                    return ds;
+                }
             }
             catch(Exception ex)
             {
-                return ds;
             }
+            return null;
         }
         
         // dodanie nowej operacji
@@ -354,31 +375,56 @@ namespace Bus_Management_System
         // sprawdzenie poświadczeń wprowadzonych przez użytkownika
         public bool VerifyUser(VerifyLayer vl, ref int iD)
         {
-            SqlCommand sqlCmd = new SqlCommand();
-            sqlCmd.CommandText = "SELECT Id FROM Employees_Basic WHERE Employee_Imie = @userName AND Employee_Nazwisko = @user2ndName AND Employee_PESEL = @userPESEL";
-            sqlCmd.Parameters.AddWithValue("@userName", vl.Imię);
-            sqlCmd.Parameters.AddWithValue("@user2ndName", vl.Nazwisko);
-            sqlCmd.Parameters.AddWithValue("@userPESEL", vl.Pesel);
+            bool test = false;
             try
             {
-                DataTable dt = dal.GetDataTable(sqlCmd);
-                sqlCmd.Parameters.Clear();
-                sqlCmd.Dispose();
-                if (dt.Rows.Count > 0)
+                using (SqlCommand sqlCmd = new SqlCommand())
                 {
-                    iD = (int)dt.Rows[0][0];
-                    return true;
-                }
-                else
-                {
-                    iD = 0;
-                    return false;
+                    sqlCmd.CommandText = "SELECT Id FROM Employees_Basic WHERE Employee_Imie = @userName AND Employee_Nazwisko = @user2ndName AND Employee_PESEL = @userPESEL";
+                    sqlCmd.Parameters.AddWithValue("@userName", vl.Imię);
+                    sqlCmd.Parameters.AddWithValue("@user2ndName", vl.Nazwisko);
+                    sqlCmd.Parameters.AddWithValue("@userPESEL", vl.Pesel);
+                    DataTable dt = new DataTable();
+                    dal.GetDataTable(sqlCmd, ref dt);
+                    sqlCmd.Dispose();
+                    if (dt.Rows.Count > 0)
+                    {
+                        iD = (int)dt.Rows[0][0];
+                        test =  true;
+                        dt.Dispose();
+                    }
                 }
             }
             catch (Exception ex)
             {
-                return false;
+
             }
+            return test;
+                    //SqlCommand sqlCmd = new SqlCommand();
+            //sqlCmd.CommandText = "SELECT Id FROM Employees_Basic WHERE Employee_Imie = @userName AND Employee_Nazwisko = @user2ndName AND Employee_PESEL = @userPESEL";
+            //sqlCmd.Parameters.AddWithValue("@userName", vl.Imię);
+            //sqlCmd.Parameters.AddWithValue("@user2ndName", vl.Nazwisko);
+            //sqlCmd.Parameters.AddWithValue("@userPESEL", vl.Pesel);
+            //try
+            //{
+                //DataTable dt = dal.GetDataTable(sqlCmd);
+                //sqlCmd.Parameters.Clear();
+                //sqlCmd.Dispose();
+            //    if (dt.Rows.Count > 0)
+            //    {
+            //        iD = (int)dt.Rows[0][0];
+            //        return true;
+            //    }
+            //    else
+            //    {
+            //        iD = 0;
+            //        return false;
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    return false;
+            //}
         }
 
         // pobranie danych dokontrolki GridView na paneli Alokatora
@@ -524,7 +570,7 @@ namespace Bus_Management_System
         }
 
         // nanoszenie na bazę danych informacji o kolejnych etapach wykonania operacji
-        public bool BusOperationAction(User loggedUser, int command)
+        public bool BusOperationAction(int command, string bus)
         {
             SqlCommand sqlCmd = new SqlCommand();
             bool result = false;
@@ -565,7 +611,7 @@ namespace Bus_Management_System
             }
             try
             {
-                sqlCmd.Parameters.AddWithValue("@busNb", loggedUser.Bus);
+                sqlCmd.Parameters.AddWithValue("@busNb", bus);
                 sqlCmd.Parameters.Add("@ActionTime", SqlDbType.DateTime).Value = DateTime.Now;
                 dal.QueryExecution(sqlCmd);
                 result = true;
