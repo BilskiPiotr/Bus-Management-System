@@ -56,7 +56,7 @@ namespace Bus_Management_System
             Session["RadioNeon"] = dsInn.Tables[0].Rows[0].Field<string>("RadioNeon").ToString();
             Session["GodzinaRozkladowa"] = (dsInn.Tables[0].Rows[0].Field<DateTime>("GodzinaRozkladowa")).ToString("HH:mm");
 
-            GetSpecyficAirPortData(ds.Tables[0].Rows[0].Field<int>("AirPort"));
+            GetSpecyficAirPortData(dsInn.Tables[0].Rows[0].Field<int>("AirPort"));
         }
 
         // ustalenie stref bezpieczeństwa dla obsługiwanego portu
@@ -87,27 +87,22 @@ namespace Bus_Management_System
             Session["Created"] = data;
             if (data != "00:00")
                 operationStatus = operationStatus + 1;
-            //Session["Created"] = (ds.Tables[0].Rows[0].Field<DateTime>("Created")).ToString("HH:mm");
             data = dsInn.Tables[0].Rows[0].Field<DateTime>("Accepted").ToString("HH:mm");
             Session["Accepted"] = data;
             if (data != "00:00")
                 operationStatus = operationStatus + 1;
-            //Session["Accepted"] = (ds.Tables[0].Rows[0].Field<DateTime>("Accepted")).ToString("HH:mm");
             data = dsInn.Tables[0].Rows[0].Field<DateTime>("StartLoad").ToString("HH:mm");
             Session["StartLoad"] = data;
             if (data != "00:00")
                 operationStatus = operationStatus + 1;
-            //Session["StartLoad"] = (ds.Tables[0].Rows[0].Field<DateTime>("StartLoad")).ToString("HH:mm");
             data = dsInn.Tables[0].Rows[0].Field<DateTime>("StartDrive").ToString("HH:mm");
             Session["StartDrive"] = data;
             if (data != "00:00")
                 operationStatus = operationStatus + 1;
-            //Session["StartDrive"] = (ds.Tables[0].Rows[0].Field<DateTime>("StartDrive")).ToString("HH:mm");
             data = dsInn.Tables[0].Rows[0].Field<DateTime>("StartUnload").ToString("HH:mm");
             Session["StartUnload"] = data;
             if (data != "00:00")
                 operationStatus = operationStatus + 1;
-            //Session["StartUnload"] = (ds.Tables[0].Rows[0].Field<DateTime>("StartUnload")).ToString("HH:mm");
             data = dsInn.Tables[0].Rows[0].Field<DateTime>("EndOp").ToString("HH:mm");
             Session["EdnOp"] = data;
             if (data != "00:00")
@@ -185,13 +180,13 @@ namespace Bus_Management_System
             double distanceS = Math.Round(busPosition.GetDistanceTo(shengen), 2, MidpointRounding.AwayFromZero);
             double distanceN = Math.Round(busPosition.GetDistanceTo(nonShengen), 2, MidpointRounding.AwayFromZero);
 
-            Session["OldDistanceT"] = (double)Session["DistanceT"];/*loggedUser.DistanceT*/;
+            //Session["OldDistanceT"] = (double)Session["DistanceT"];
             Session["DistanceT"] = distanceT;
 
-            Session["OldDistanceS"] = (double)Session["DistanceS"]/*loggedUser.DistanceS*/;
+            //Session["OldDistanceS"] = (double)Session["DistanceS"];
             Session["DistanceS"] = distanceS;
 
-            Session["OldDistanceN"] = (double)Session["DistanceN"]/*loggedUser.DistanceN*/;
+            //Session["OldDistanceN"] = (double)Session["DistanceN"];
             Session["DistanceN"] = distanceN;
         }
 
@@ -202,50 +197,15 @@ namespace Bus_Management_System
 
             if ((int)Session["OperationStatus"] == 2 || (int)Session["OperationStatus"] == 4)
             {
-                // prędkość obiektu jest większa niż 3km / h
-                if ((double)Session["DistanceT"] > 30.0d)
-                {
-                    if ((int)Session["Operation"] == 1)
-                    {
-                        switch ((int)Session["Shengen"])
-                        {
-                            case 0:
-                                {
-                                    if ((double)Session["OldDistanceN"] > (double)Session["DistanceN"])
-                                        predictedDistance = Math.Round(((double)Session["DistanceN"] - ((double)Session["Speed"] * 3)), 2, MidpointRounding.AwayFromZero);
-                                    else
-                                    if ((double)Session["OldDistanceN"] < (double)Session["DistanceN"])
-                                        predictedDistance = Math.Round(((double)Session["DistanceN"] + ((double)Session["Speed"] * 3)), 2, MidpointRounding.AwayFromZero);
-                                    else
-                                        predictedDistance = (double)Session["DistanceN"];
-                                }
-                                break;
-                            case 1:
-                                {
-                                    if ((double)Session["OldDistanceS"] > (double)Session["DistanceS"])
-                                        predictedDistance = Math.Round(((double)Session["DistanceS"] - ((double)Session["Speed"] * 3)), 2, MidpointRounding.AwayFromZero);
-                                    else
-                                    if ((double)Session["OldDistanceS"] < (double)Session["DistanceS"])
-                                        predictedDistance = Math.Round(((double)Session["DistanceS"] + ((double)Session["Speed"] * 3)), 2, MidpointRounding.AwayFromZero);
-                                    else
-                                        predictedDistance = (double)Session["DistanceS"];
-                                }
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        if ((double)Session["OldDistanceT"] > (double)Session["DistanceT"])
-                            predictedDistance = Math.Round(((double)Session["DistanceT"] - ((double)Session["Speed"] * 3)), 2, MidpointRounding.AwayFromZero);
-                        else
-                        if ((double)Session["OldDistanceT"] < (double)Session["DistanceT"])
-                            predictedDistance = Math.Round(((double)Session["DistanceN"] + ((double)Session["Speed"] * 3)), 2, MidpointRounding.AwayFromZero);
-                        else
-                            predictedDistance = (double)Session["DistanceT"];
-                    }
-                }
-                Session["PredictedDistance"] = predictedDistance;
+                if ((double)Session["OldDistanceT"] > (double)Session["DistanceT"])
+                    predictedDistance = Math.Round(((double)Session["DistanceT"] - ((double)Session["Speed"] * 3)), 2, MidpointRounding.AwayFromZero);
+                else
+                if ((double)Session["OldDistanceT"] < (double)Session["DistanceT"])
+                    predictedDistance = Math.Round(((double)Session["DistanceT"] + ((double)Session["Speed"] * 3)), 2, MidpointRounding.AwayFromZero);
+                else
+                    predictedDistance = (double)Session["DistanceT"];
             }
+            Session["PredictedDistance"] = predictedDistance;
         }
     }
 }

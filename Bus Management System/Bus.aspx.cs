@@ -263,7 +263,7 @@ namespace Bus_Management_System
 
             switch (alert)
             {
-                // dojechałeś na miejsce
+                // nie ma zagrożeń
                 case 0:
                     audioAlert = "";
                     break;
@@ -283,11 +283,16 @@ namespace Bus_Management_System
                     audioAlert = "";
                     break;
             };
+            try
+            {
+                HtmlGenericControl sound = new HtmlGenericControl("<embed src=\"" + audioAlert + "\" type=\"audio/mp3\" autostart =\"true\" hidden=\"true\" showcontrols=\"0\" volume=\"-1\"></embed>");
+                BusHomeUP.ContentTemplateContainer.Controls.Remove(sound);
+                BusHomeUP.ContentTemplateContainer.Controls.Add(sound);
+            }
+            catch (Exception ex)
+            { }
 
-            HtmlGenericControl sound = new HtmlGenericControl("<embed src=\"" + audioAlert + "\" type=\"audio/mp3\" autostart =\"true\" hidden=\"true\" showcontrols=\"0\" volume=\"-1\"></embed>");
-            BusHomeUP.ContentTemplateContainer.Controls.Remove(sound);
-            BusHomeUP.ContentTemplateContainer.Controls.Add(sound);
-            sound.Dispose();
+            //sound.Dispose();
         }
 
         // ustawienie kolorów aktywnych dla wszystrkich przycisków na stronie bus
@@ -303,9 +308,7 @@ namespace Bus_Management_System
             dm.CheckDistance((int)Session["OperationStatus"]);
             dm.SetPredictedDistance();
             SetGraficsElements();
-            SetColorControls();
             SetDataControls();
-            CheckPosition();
             SetAlert();
             BusAlert((int)Session["Alert"]);
             dm.Dispose();
@@ -513,6 +516,13 @@ namespace Bus_Management_System
                     {
                         if ((int)Session["Operation"] == 1)
                         {
+                            Dr1C3.Style.Add("background-color", "#FFFFCC");
+                            Dr2C2.Style.Add("background-color", "#FFFFCC");
+                            Dr2C3.Style.Add("background-color", "#FFFFCC");
+                            Dr2C4.Style.Add("background-color", "#FFFFCC");
+                            Dr3C3.Style.Add("background-color", "#FFFFCC");
+                            Dr4C3.Style.Add("background-color", "#FFFFCC");
+                            Dr5C3.Style.Add("background-color", "#FFFFCC");
                             if ((int)Session["Shengen"] == 0)
                             {
                                 Dr5C3.Style.Add("color", "Green");
@@ -573,6 +583,13 @@ namespace Bus_Management_System
                     {
                         if ((int)Session["Operation"] == 1)
                         {
+                            Dr1C3.Style.Add("background-color", "#FFFFCC");
+                            Dr2C2.Style.Add("background-color", "#FFFFCC");
+                            Dr2C3.Style.Add("background-color", "#FFFFCC");
+                            Dr2C4.Style.Add("background-color", "#FFFFCC");
+                            Dr3C3.Style.Add("background-color", "#FFFFCC");
+                            Dr4C3.Style.Add("background-color", "#FFFFCC");
+                            Dr5C3.Style.Add("background-color", "#FFFFCC");
                             if ((int)Session["Shengen"] == 0)
                             {
                                 Dr5C3.Style.Add("color", "Green");
@@ -666,14 +683,6 @@ namespace Bus_Management_System
                     {
                         if ((int)Session["Operation"] == 1)
                         {
-                            if ((int)Session["Shengen"] == 0)
-                            {
-                                Dr5C3.Text = "SHENGEN";
-                            }
-                            else
-                            {
-                                Dr5C3.Text = "NON SHENGEN";
-                            }
                             Dr5C3.Text = (string)Session["Pps"];
                         }
                         else
@@ -683,7 +692,10 @@ namespace Bus_Management_System
                         Dr2C2.Text = (string)Session["StartLocLatDegree"];
                         Dr2C3.Text = "";
                         Dr2C4.Text = (string)Session["StartLocLonDegree"];
-                        Dr3C3.Text = Math.Round((double)Session["PredictedDistance"], 2, MidpointRounding.AwayFromZero).ToString() + " m";
+                        if ((double)Session["PredictedDistance"] >= 30.0d)
+                            Dr3C3.Text = Math.Round((double)Session["PredictedDistance"], 2, MidpointRounding.AwayFromZero).ToString() + " m";
+                        else
+                            Dr3C3.Text = "OK!";
                     }
                     break;
                 case 3:
@@ -729,7 +741,10 @@ namespace Bus_Management_System
                         Dr2C2.Text = (string)Session["StartLocLatDegree"];
                         Dr2C3.Text = (string)Session["Gate"];
                         Dr2C4.Text = (string)Session["StartLocLonDegree"];
-                        Dr3C3.Text = Math.Round((double)Session["PredictedDistance"], 2, MidpointRounding.AwayFromZero).ToString() + " m";
+                        if ((double)Session["PredictedDistance"] >= 25.0d)
+                            Dr3C3.Text = Math.Round((double)Session["PredictedDistance"], 2, MidpointRounding.AwayFromZero).ToString() + " m";
+                        else
+                            Dr3C3.Text = "OK!";
                     }
                     break;
                 case 5:
@@ -757,23 +772,6 @@ namespace Bus_Management_System
 
         }
 
-        // sprawdzenie aktualnej pozycji w zależności od celu zadania i ustawnie odpowienich akcji
-        private void CheckPosition()
-        {
-            if ((int)Session["OperationStatus"] == 2 || (int)Session["Operation"] == 4)
-            {
-                if ((double)Session["PredictedDistance"] > 30.0d)
-                {
-                    Dr3C3.Text = Math.Round((double)Session["DistanceT"] - ((double)Session["Speed"] * 3), 2, MidpointRounding.AwayFromZero).ToString() + " m";
-                }
-                else
-                {
-                    Dr3C3.Text = "OK!";
-                    Dr3C3.Style.Add("color", "Green");
-                }
-            }
-        }
-
         //ustawienie poziomu alertu ze względu na odległości do punktów szczególnych
         private void SetAlert()
         {
@@ -781,47 +779,85 @@ namespace Bus_Management_System
             {
                 switch ((int)Session["Shengen"])
                 {
-                    case 0:                     // shengen
+                    case 0:                         // shengen
                         {
-                            if ((double)Session["PredictedDistance"] > 30.0d)
+                            if ((double)Session["PredictedDistance"] > 100.0d)
                             {
-                                if ((double)Session["DistanceN"] >= 100.0d)
-                                    Session["Alert"] = 0;
-                                else
+                                if ((double)Session["OldDistanceN"] >= (double)Session["DistanceN"])
                                 {
-                                    if ((double)Session["Speed"] <= 0.88d)
+                                    if(((double)Session["DistanceN"] - (3 * (double)Session["speed"])) < 80.0d)
                                     {
-                                        Session["Alert"] = 1;
                                         SetColorAlert();
+                                        if (((double)Session["DistanceN"] - (3 * (double)Session["speed"])) > 30.0d)
+                                            Session["Alert"] = 3;
+                                        if (((double)Session["DistanceN"] - (3 * (double)Session["speed"])) <= 30.0d && (double)Session["speed"] < 0.8d)
+                                            Session["Alert"] = 1;
                                     }
                                     else
                                     {
-                                        Session["Alert"] = 3;
-                                        SetColorAlert();
+                                        SetColorControls();
                                     }
                                 }
-                            }   
+                                else
+                                {
+                                    if (((double)Session["DistanceN"] + (3 * (double)Session["speed"])) < 80.0d)
+                                    {
+                                        SetColorAlert();
+                                        if (((double)Session["DistanceN"] + (3 * (double)Session["speed"])) > 30.0d)
+                                            Session["Alert"] = 3;
+                                        if (((double)Session["DistanceN"] + (3 * (double)Session["speed"])) <= 30.0d && (double)Session["speed"] < 0.8d)
+                                            Session["Alert"] = 1;
+                                    }
+                                    else
+                                    {
+                                        SetColorControls();
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                SetColorControls();
+                            }
                         }
                         break;
                     case 1:                     // nonShengen
                         {
-                            if ((double)Session["PredictedDistance"] > 30.0d)
+                            if ((double)Session["PredictedDistance"] > 100.0d)
                             {
-                                if ((double)Session["DistanceS"] >= 100.0d)
-                                    Session["Alert"] = 0;
-                                else
+                                if ((double)Session["OldDistanceS"] >= (double)Session["DistanceS"])
                                 {
-                                    if ((double)Session["Speed"] <= 0.88d)
+                                    if (((double)Session["DistanceS"] - (3 * (double)Session["speed"])) < 80.0d)
                                     {
-                                        Session["Alert"] = 1;
                                         SetColorAlert();
+                                        if (((double)Session["DistanceS"] - (3 * (double)Session["speed"])) > 30.0d)
+                                            Session["Alert"] = 3;
+                                        if (((double)Session["DistanceS"] - (3 * (double)Session["speed"])) <= 30.0d && (double)Session["speed"] < 0.8d)
+                                            Session["Alert"] = 1;
                                     }
                                     else
                                     {
-                                        Session["Alert"] = 2;
-                                        SetColorAlert();
+                                        SetColorControls();
                                     }
                                 }
+                                else
+                                {
+                                    if (((double)Session["DistanceS"] + (3 * (double)Session["speed"])) < 80.0d)
+                                    {
+                                        SetColorAlert();
+                                        if (((double)Session["DistanceS"] + (3 * (double)Session["speed"])) > 30.0d)
+                                            Session["Alert"] = 3;
+                                        if (((double)Session["DistanceS"] + (3 * (double)Session["speed"])) <= 30.0d && (double)Session["speed"] < 0.8d)
+                                            Session["Alert"] = 1;
+                                    }
+                                    else
+                                    {
+                                        SetColorControls();
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                SetColorControls();
                             }
                         }
                         break;

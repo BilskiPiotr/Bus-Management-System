@@ -213,7 +213,7 @@ namespace Bus_Management_System
                     DataSet ds = new DataSet();
                     DropDownList ddl_airPortAdd = (DropDownList)e.Row.FindControl("ddl_airPortAdd");
                     bl.GetAirPort(ref ds);
-                    ddl_airPortAdd.DataSource = 
+                    ddl_airPortAdd.DataSource = ds;
                     ddl_airPortAdd.DataValueField = "Id";
                     ddl_airPortAdd.DataTextField = "IATA_Name";
                     ddl_airPortAdd.DataBind();
