@@ -10,6 +10,7 @@ namespace Bus_Management_System
     public partial class Bus : System.Web.UI.Page
     {
         public static BusinessLayer bl = new BusinessLayer();
+        private DataSet ds = new DataSet();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -48,7 +49,6 @@ namespace Bus_Management_System
         // pętla odświeżająca Update Panel
         protected void BusHomeTimer_Tick(object sender, EventArgs e)
         {
-            DataSet ds = new DataSet();
             DataManipulate dm = new DataManipulate();
 
             // pomiar czasu wykonywania timera
@@ -117,7 +117,7 @@ namespace Bus_Management_System
             Session["LoopTime"] = stop - start;
             Reporting rp = new Reporting();
             rp.SaveUserFieldsValues();
-            ds.Dispose();
+            ds.Clear();
             rp.Dispose();
             dm.Dispose();
         }
@@ -187,7 +187,6 @@ namespace Bus_Management_System
         {
             if (Session["Name"] != null)
             {
-                DataSet ds = new DataSet();
                 bl.GetBus(3, "", ref ds);
                 if (ddl_busSelect != null)
                 {
@@ -199,7 +198,7 @@ namespace Bus_Management_System
                     ddl_busSelect.Items.Insert(0, new ListItem("-----", String.Empty));
                     ddl_busSelect.SelectedIndex = 0;
                 }
-                ds.Dispose();
+                ds.Clear();
             }
             BusManagement.SetActiveView(BusSelection);
         }
@@ -240,7 +239,6 @@ namespace Bus_Management_System
         private void CheckOperations()
         {
             DataManipulate dm = new DataManipulate();
-            DataSet ds = new DataSet();
             bl.GetOperations((string)Session["Bus"], ref ds);
             if (ds.Tables[0].Rows.Count > 0)
             {
@@ -255,7 +253,7 @@ namespace Bus_Management_System
                 InWorkBusControls((int)Session["OperationStatus"]);
                 dm.Dispose();
             }
-            ds.Dispose();
+            ds.Clear();
         }
 
         // podstawienie odpowiedniego dzwieku do alertu
@@ -289,6 +287,7 @@ namespace Bus_Management_System
             HtmlGenericControl sound = new HtmlGenericControl("<embed src=\"" + audioAlert + "\" type=\"audio/mp3\" autostart =\"true\" hidden=\"true\" showcontrols=\"0\" volume=\"-1\"></embed>");
             BusHomeUP.ContentTemplateContainer.Controls.Remove(sound);
             BusHomeUP.ContentTemplateContainer.Controls.Add(sound);
+            sound.Dispose();
         }
 
         // ustawienie kolorów aktywnych dla wszystrkich przycisków na stronie bus

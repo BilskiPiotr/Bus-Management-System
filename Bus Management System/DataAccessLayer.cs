@@ -6,7 +6,7 @@ namespace Bus_Management_System
 {
     public class DataAccessLayer
     {
-        private SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["BusData"].ConnectionString);
+        //private SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["BusData"].ConnectionString);
         string connectionString = ConfigurationManager.ConnectionStrings["BusData"].ConnectionString;
         public void GetDataTable(SqlCommand sqlCmd, ref DataTable dt)
         {
@@ -26,11 +26,11 @@ namespace Bus_Management_System
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                sqlCmd.Connection = conn;
+                sqlCmd.Connection = con;
                 using (SqlDataAdapter sda = new SqlDataAdapter(sqlCmd))
                 {
                     sda.Fill(ds);
-                    conn.Close();
+                    con.Close();
                     sda.Dispose();
                 }
             }
@@ -38,21 +38,29 @@ namespace Bus_Management_System
 
         public int InsertExecution(SqlCommand sqlcmd)
         {
-            sqlcmd.Connection = conn;
-            if (conn.State == ConnectionState.Closed)
-                conn.Open();
-            int value = (int)sqlcmd.ExecuteScalar();
-            conn.Close();
-            return value;
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                sqlcmd.Connection = con;
+                if (con.State == ConnectionState.Closed)
+                    con.Open();
+                int value = (int)sqlcmd.ExecuteScalar();
+                con.Close();
+                con.Dispose();
+                return value;
+            }
         }
 
         public void QueryExecution(SqlCommand sqlcmd)
         {
-            sqlcmd.Connection = conn;
-            if (conn.State == ConnectionState.Closed)
-                conn.Open();
-            sqlcmd.ExecuteNonQuery();
-            conn.Close();
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                sqlcmd.Connection = con;
+                if (con.State == ConnectionState.Closed)
+                    con.Open();
+                    sqlcmd.ExecuteNonQuery();
+                    con.Close();
+                con.Dispose();
+            }
         }
     }
 }

@@ -55,19 +55,21 @@ namespace Bus_Management_System
         {
             DataSet ds = new DataSet();
 
-            ds = bl.GetGridData();
+            bl.GetGridData(ref ds);
              
             if (ds.Tables[0].Rows.Count > 0)
             {
                 gv_Alocator.DataSource = null;
                 gv_Alocator.DataSource = ds;
                 gv_Alocator.DataBind();
+                ds.Dispose();
             }
             else
             {
                 DataTable dt = GridViewStructCreate();
                 gv_Alocator.DataSource = dt;
                 gv_Alocator.DataBind();
+                dt.Dispose();
             }
             SetBusStatus();
         }
@@ -105,7 +107,9 @@ namespace Bus_Management_System
                 DropDownList ddl_operationEdit = (DropDownList)e.Row.FindControl("ddl_operationEdit");
                 if (ddl_operationEdit != null)
                 {
-                    ddl_operationEdit.DataSource = bl.GetOperationList();
+                    DataSet ds = new DataSet();
+                    bl.GetOperationList(ref ds);
+                    ddl_operationEdit.DataSource = ds;
                     ddl_operationEdit.DataValueField = "Id";
                     ddl_operationEdit.DataTextField = "Operation";
                     ddl_operationEdit.DataBind();
@@ -113,22 +117,27 @@ namespace Bus_Management_System
                     // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
                     ddl_operationEdit.SelectedIndex = ddl_operationEdit.Items.IndexOf(ddl_operationEdit.Items.FindByText((string)Session["Operation"]));
                     ddl_operationEdit.Dispose();
+                    ds.Dispose();
                     success = true;
                 }
                 if (e.Row.RowType == DataControlRowType.Footer)
                 {
+                    DataSet ds = new DataSet();
                     DropDownList ddl_OperationAdd = (DropDownList)e.Row.FindControl("ddl_operationAdd");
-                    ddl_OperationAdd.DataSource = bl.GetOperationList();
+                    bl.GetOperationList(ref ds);
+                    ddl_OperationAdd.DataSource = ds;
                     ddl_OperationAdd.DataValueField = "Id";
                     ddl_OperationAdd.DataTextField = "Operation";
                     ddl_OperationAdd.DataBind();
                     ddl_OperationAdd.Dispose();
+                    ds.Dispose();
                     success = true;
                 }
             }
             catch (Exception FillOperationDDL_ex)
             {
                 Response.Write("<script> alert('Błąd - FillOperationDDL()') </script>");
+                success = false;
             }
             return success;
         }
@@ -142,7 +151,9 @@ namespace Bus_Management_System
                 DropDownList ddl_ppsEdit = (DropDownList)e.Row.FindControl("ddl_ppsEdit");
                 if (ddl_ppsEdit != null)
                 {
-                    ddl_ppsEdit.DataSource = bl.GetStations();
+                    DataSet ds = new DataSet();
+                    bl.GetStations(ref ds);
+                    ddl_ppsEdit.DataSource = ds;
                     ddl_ppsEdit.DataValueField = "Id";
                     ddl_ppsEdit.DataTextField = "StationNb";
                     ddl_ppsEdit.DataBind();
@@ -150,22 +161,27 @@ namespace Bus_Management_System
                     // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
                     ddl_ppsEdit.SelectedIndex = ddl_ppsEdit.Items.IndexOf(ddl_ppsEdit.Items.FindByText((string)Session["Pps"]));
                     ddl_ppsEdit.Dispose();
+                    ds.Dispose();
                     success = true;
                 }
                 if (e.Row.RowType == DataControlRowType.Footer)
                 {
+                    DataSet ds = new DataSet();
                     DropDownList ddl_ppsAdd = (DropDownList)e.Row.FindControl("ddl_ppsAdd");
-                    ddl_ppsAdd.DataSource = bl.GetStations();
+                    bl.GetStations(ref ds);
+                    ddl_ppsAdd.DataSource = ds;
                     ddl_ppsAdd.DataValueField = "Id";
                     ddl_ppsAdd.DataTextField = "StationNb";
                     ddl_ppsAdd.DataBind();
                     ddl_ppsAdd.Dispose();
+                    ds.Dispose();
                     success = true;
                 }
             }
             catch (Exception FillPPSDDL_ex)
             {
                 Response.Write("<script> alert('Błąd - FillPPSDDL()') </script>");
+                success = false;
             }
             return success;
         }
@@ -179,7 +195,9 @@ namespace Bus_Management_System
                 DropDownList ddl_airPortEdit = (DropDownList)e.Row.FindControl("ddl_airPortEdit");
                 if (ddl_airPortEdit != null)
                 {
-                    ddl_airPortEdit.DataSource = bl.GetAirPort();
+                    DataSet ds = new DataSet();
+                    bl.GetAirPort(ref ds);
+                    ddl_airPortEdit.DataSource = ds;
                     ddl_airPortEdit.DataValueField = "Id";
                     ddl_airPortEdit.DataTextField = "IATA_Name";
                     ddl_airPortEdit.DataBind();
@@ -187,22 +205,27 @@ namespace Bus_Management_System
                     // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
                     ddl_airPortEdit.SelectedIndex = ddl_airPortEdit.Items.IndexOf(ddl_airPortEdit.Items.FindByText((string)Session["AirPort"]));
                     ddl_airPortEdit.Dispose();
+                    ds.Dispose();
                     success = true;
                 }
                 if (e.Row.RowType == DataControlRowType.Footer)
                 {
+                    DataSet ds = new DataSet();
                     DropDownList ddl_airPortAdd = (DropDownList)e.Row.FindControl("ddl_airPortAdd");
-                    ddl_airPortAdd.DataSource = bl.GetAirPort();
+                    bl.GetAirPort(ref ds);
+                    ddl_airPortAdd.DataSource = 
                     ddl_airPortAdd.DataValueField = "Id";
                     ddl_airPortAdd.DataTextField = "IATA_Name";
                     ddl_airPortAdd.DataBind();
                     ddl_airPortAdd.Dispose();
+                    ds.Dispose();
                     success = true;
                 }
             }
             catch (Exception FillAirPortDDL_ex)
             {
                 Response.Write("<script> alert('Błąd - FillAirPortDDL()') </script>");
+                success = false;
             }
             return success;
         }
@@ -216,7 +239,9 @@ namespace Bus_Management_System
                 DropDownList ddl_gateEdit = (DropDownList)e.Row.FindControl("ddl_gateEdit");
                 if (ddl_gateEdit != null)
                 {
-                    ddl_gateEdit.DataSource = bl.GetGates();
+                    DataSet ds = new DataSet();
+                    bl.GetGates(ref ds);
+                    ddl_gateEdit.DataSource = ds;
                     ddl_gateEdit.DataValueField = "Id";
                     ddl_gateEdit.DataTextField = "GateNb";
                     ddl_gateEdit.DataBind();
@@ -224,22 +249,27 @@ namespace Bus_Management_System
                     // ustawnienie wartości startowej wyświetlania na podstawie danych z ciasteczka Alocator
                     ddl_gateEdit.SelectedIndex = ddl_gateEdit.Items.IndexOf(ddl_gateEdit.Items.FindByText((string)Session["Gate"]));
                     ddl_gateEdit.Dispose();
+                    ds.Dispose();
                     success = true;
                 }
                 if (e.Row.RowType == DataControlRowType.Footer)
                 {
+                    DataSet ds = new DataSet();
                     DropDownList ddl_gateAdd = (DropDownList)e.Row.FindControl("ddl_gateAdd");
-                    ddl_gateAdd.DataSource = bl.GetGates();
+                    bl.GetGates(ref ds);
+                    ddl_gateAdd.DataSource = ds;
                     ddl_gateAdd.DataValueField = "Id";
                     ddl_gateAdd.DataTextField = "GateNb";
                     ddl_gateAdd.DataBind();
                     ddl_gateAdd.Dispose();
+                    ds.Dispose();
                     success = true;
                 }
             }
             catch (Exception FillGateDDL_ex)
             {
                 Response.Write("<script> alert('Błąd - FillGateDDL()') </script>");
+                success = false;
             }
             return success;
         }
@@ -261,10 +291,11 @@ namespace Bus_Management_System
             }
             try
             {
-                ds = bl.GetBus(1, (string)Session["Bus"]);
+                bl.GetBus(1, (string)Session["Bus"], ref ds);
                 if (ds.Tables[0].Rows.Count == 0 && (string)Session["Bus"] != "")
                 {
-                    ds = bl.GetBus(2, (string)Session["Bus"]);
+                    ds.Clear();
+                    bl.GetBus(2, (string)Session["Bus"], ref ds);
                     ddl.DataSource = ds;
                     ddl.DataValueField = "Id";
                     ddl.DataTextField = "VehicleNb";
@@ -287,6 +318,7 @@ namespace Bus_Management_System
                 Response.Write("<script> alert('Błąd - FillBusDDL()') </script>");
             }
             ddl.Dispose();
+            ds.Dispose();
             return success;
         }
 
@@ -357,6 +389,12 @@ namespace Bus_Management_System
                 Label busNb = (Label)row.FindControl("lb_bus");
                 Session["Bus"] = busNb.Text;
 
+                row.Dispose();
+                oper.Dispose();
+                iataName.Dispose();
+                gateNb.Dispose();
+                ppsNb.Dispose();
+                busNb.Dispose();
             }
             catch (Exception Gv_Alocator_RowEditing_ex)
             {
@@ -374,43 +412,53 @@ namespace Bus_Management_System
             {
                 NewOperation newOp = new NewOperation();
                 DateTime zeroDate = new DateTime(1999, 01, 01);
-                DateTime dt = new DateTime();
+                DateTime dateTime = new DateTime();
 
                 DropDownList ddl_OperationAdd = (DropDownList)gv_Alocator.FooterRow.FindControl("ddl_operationAdd");
                 newOp.Operation = Convert.ToInt32(ddl_OperationAdd.SelectedValue);
+                ddl_OperationAdd.Dispose();
 
                 TextBox tb_FlightNbAdd = (TextBox)gv_Alocator.FooterRow.FindControl("tb_flightNbAdd");
                 newOp.FlightNb = tb_FlightNbAdd.Text;
+                tb_FlightNbAdd.Dispose();
 
                 TextBox tb_GodzinaRozkładowaAdd = (TextBox)gv_Alocator.FooterRow.FindControl("tb_godzinaRozkładowaAdd");
-                if (!DateTime.TryParseExact(tb_GodzinaRozkładowaAdd.Text, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out dt))
+                if (!DateTime.TryParseExact(tb_GodzinaRozkładowaAdd.Text, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out dateTime))
                 {
                     // w przypadku błędu konwersji daty
                     Response.Write("<script> alert('Błąd - format daty wydaje się być nieprawidłowy' ) </script>");
                     return;
                 }
-                newOp.GodzinaRozkładowa = dt;
+                newOp.GodzinaRozkładowa = dateTime;
+                tb_GodzinaRozkładowaAdd.Dispose();
 
                 DropDownList ddl_AirPortAdd = (DropDownList)gv_Alocator.FooterRow.FindControl("ddl_airPortAdd");
                 newOp.AirPort = Convert.ToInt32(ddl_AirPortAdd.SelectedValue);
+                ddl_AirPortAdd.Dispose();
 
                 TextBox tb_PaxAdd = (TextBox)gv_Alocator.FooterRow.FindControl("tb_paxAdd");
                 newOp.Pax = Convert.ToInt32(tb_PaxAdd.Text);
+                tb_PaxAdd.Dispose();
 
                 DropDownList ddl_GateAdd = (DropDownList)gv_Alocator.FooterRow.FindControl("ddl_gateAdd");
                 newOp.Gate = Convert.ToInt32(ddl_GateAdd.SelectedValue);
+                ddl_GateAdd.Dispose();
 
                 DropDownList ddl_PpsAdd = (DropDownList)gv_Alocator.FooterRow.FindControl("ddl_ppsAdd");
                 newOp.PPS = Convert.ToInt32(ddl_PpsAdd.SelectedValue);
+                ddl_PpsAdd.Dispose();
 
                 DropDownList ddl_BusAdd = (DropDownList)gv_Alocator.FooterRow.FindControl("ddl_busAdd");
                 newOp.Bus = Convert.ToInt32(ddl_BusAdd.SelectedValue);
+                ddl_BusAdd.Dispose();
 
                 TextBox tb_RadioGateAdd = (TextBox)gv_Alocator.FooterRow.FindControl("tb_radioGateAdd");
                 newOp.RadioGate = tb_RadioGateAdd.Text;
+                tb_RadioGateAdd.Dispose();
 
                 TextBox tb_RadioNeonAdd = (TextBox)gv_Alocator.FooterRow.FindControl("tb_radioNeonAdd");
                 newOp.RadioNeon = tb_RadioNeonAdd.Text;
+                tb_RadioNeonAdd.Dispose();
 
                 newOp.BusNb = ddl_BusAdd.SelectedItem.ToString();
 
@@ -508,7 +556,8 @@ namespace Bus_Management_System
         {
             //Bus status: 0 - Not Available, 1 - Empty, 2 - Free, 3 - In Work
 
-            DataSet ds = bl.GetBus(4, (string)Session["Bus"]);
+            DataSet ds = new DataSet();
+            bl.GetBus(4, (string)Session["Bus"], ref ds);
             string numer = "";
             string str = "";
             int status = -1;
@@ -605,14 +654,14 @@ namespace Bus_Management_System
         // Sprawdzenie formatu wprowadzonej godziny operacji
         private DateTime CheckTimeFormat(string time)
         {
-            DateTime dt = new DateTime();
-            if (!DateTime.TryParseExact(time, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out dt))
+            DateTime dateTime = new DateTime();
+            if (!DateTime.TryParseExact(time, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out dateTime))
             {
                 // w przypadku błędu konwersji daty
                 Response.Write("<script> alert('Błąd - format daty wydaje się być nieprawidłowy' ) </script>");
                 Response.Redirect("Alocator.aspx");
             }
-            return dt;
+            return dateTime;
         }
     }
 }

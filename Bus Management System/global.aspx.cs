@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Web;
 
 namespace Bus_Management_System
 {
@@ -79,6 +78,7 @@ namespace Bus_Management_System
                     ClearTextbox();
                     Response.Write("<script> alert('Błąd - proszę wprowadzić inne poświadczenia' ) </script>");
                 }
+                dt.Dispose();
             }
         }
 

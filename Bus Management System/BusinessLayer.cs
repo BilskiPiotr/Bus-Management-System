@@ -413,50 +413,55 @@ namespace Bus_Management_System
         // pobranie informacji do ddl OperationList panelu Alokator
         public void GetOperationList(ref DataSet ds)
         {
-            SqlCommand sqlCmd = new SqlCommand();
-            sqlCmd.CommandText = "SELECT * FROM OperationType";
-            try
+           using (SqlCommand sqlCmd = new SqlCommand())
             {
-                dal.GetDataSet(sqlCmd, ref ds);
-                sqlCmd.Dispose();
-            }
-            catch (Exception ex)
-            {
+                sqlCmd.CommandText = "SELECT * FROM OperationType";
+                try
+                {
+                    dal.GetDataSet(sqlCmd, ref ds);
+                    sqlCmd.Dispose();
+                }
+                catch (Exception GetOperationList_ex)
+                {
+                }
             }
         }
 
         public bool DeleteOperation(string bus, int opId)
         {
-            SqlCommand sqlCmd = new SqlCommand();
-            bool result = false;
-            sqlCmd.CommandText = "UPDATE Vehicles SET Work_Status = @work_status WHERE VehicleNb = @vehicleNb";
-            sqlCmd.Parameters.AddWithValue("@work_status", 0);
-            sqlCmd.Parameters.AddWithValue("@vehicleNb", bus);
-            try
+            using (SqlCommand sqlCmd = new SqlCommand())
             {
-                dal.QueryExecution(sqlCmd);
-                sqlCmd.CommandText = "";
-                sqlCmd.Parameters.Clear();
-                result = true;
-            }
-            catch (Exception ex)
-            {
-                sqlCmd.Dispose();
-            }
-            if (result)
-            {
-                sqlCmd.CommandText = "DELETE FROM Operations WHERE Id=@Id";
-                sqlCmd.Parameters.AddWithValue("@Id", opId);
+                sqlCmd.CommandText = "UPDATE Vehicles SET Work_Status = @work_status WHERE VehicleNb = @vehicleNb";
+                sqlCmd.Parameters.AddWithValue("@work_status", 0);
+                sqlCmd.Parameters.AddWithValue("@vehicleNb", bus);
                 try
                 {
                     dal.QueryExecution(sqlCmd);
+                    sqlCmd.CommandText = "";
                     sqlCmd.Parameters.Clear();
+                    result = true;
+                }
+                catch (Exception DeleteOperation_ex1)
+                {
+                    result = false;
                     sqlCmd.Dispose();
                 }
-                catch
+
+                if (result)
                 {
-                    sqlCmd.Dispose();
-                    result = false;
+                    sqlCmd.CommandText = "DELETE FROM Operations WHERE Id=@Id";
+                    sqlCmd.Parameters.AddWithValue("@Id", opId);
+                    try
+                    {
+                        dal.QueryExecution(sqlCmd);
+                        sqlCmd.Dispose();
+                        result = true;
+                    }
+                    catch (Exception DeleteOperation_ex)
+                    {
+                        sqlCmd.Dispose();
+                        result = false;
+                    }
                 }
             }
             return result;
@@ -466,48 +471,33 @@ namespace Bus_Management_System
         public bool AlocatorRowUpdate(string id, DateTime godzinaRozkladowa, string operation, string flightNb, string airPort,    
                                       string pax, string gate, string pps, string bus, string radioGate, string radioNeon)
         {
-            SqlCommand sqlCmd = new SqlCommand();
-            bool result = false;
-            DateTime updateDate = DateTime.Now;
-            sqlCmd.CommandText = "UPDATE Operations SET Operation = @operation, " +
-                                 "FlightNb = @flightNb, " +
-                                 "GodzinaRozkladowa = @opTime, " +
-                                 "AirPort = @airPort, " +
-                                 "Pax = @pax, " +
-                                 "Gate = @gate, " +
-                                 "PPS = @pps, " +
-                                 "Bus = @bus, " +
-                                 "RadioGate = @radioGate, " +
-                                 "RadioNeon = @radioNeon, " +
-                                 "Created = @editDate " +
-                                 "WHERE Id=@id ";
-            sqlCmd.Parameters.AddWithValue("@operation", Convert.ToInt32(operation));
-            sqlCmd.Parameters.AddWithValue("@flightNb", flightNb);
-            sqlCmd.Parameters.AddWithValue("@opTime", godzinaRozkladowa);
-            sqlCmd.Parameters.AddWithValue("@airPort", Convert.ToInt32(airPort));
-            sqlCmd.Parameters.AddWithValue("@pax", Convert.ToInt32(pax));
-            sqlCmd.Parameters.AddWithValue("@gate", Convert.ToInt32(gate));
-            sqlCmd.Parameters.AddWithValue("@pps", Convert.ToInt32(pps));
-            sqlCmd.Parameters.AddWithValue("@bus", Convert.ToInt32(bus));
-            sqlCmd.Parameters.AddWithValue("@radioGate", radioGate);
-            sqlCmd.Parameters.AddWithValue("@radioNeon", radioNeon);
-            sqlCmd.Parameters.AddWithValue("@editDate", updateDate);
-            sqlCmd.Parameters.AddWithValue("@id", Convert.ToInt32(id));
-            try
+            using (SqlCommand sqlCmd = new SqlCommand())
             {
-                dal.QueryExecution(sqlCmd);
-                sqlCmd.CommandText = "";
-                sqlCmd.Parameters.Clear();
-                result = true;
-            }
-            catch (Exception ex)
-            {
-                result = false;
-            }
-            if (result)
-            {
-                sqlCmd.CommandText = "UPDATE Vehicles SET Work_Status = 1 WHERE Id = @bus ";
+                DateTime updateDate = DateTime.Now;
+                sqlCmd.CommandText = "UPDATE Operations SET Operation = @operation, " +
+                                     "FlightNb = @flightNb, " +
+                                     "GodzinaRozkladowa = @opTime, " +
+                                     "AirPort = @airPort, " +
+                                     "Pax = @pax, " +
+                                     "Gate = @gate, " +
+                                     "PPS = @pps, " +
+                                     "Bus = @bus, " +
+                                     "RadioGate = @radioGate, " +
+                                     "RadioNeon = @radioNeon, " +
+                                     "Created = @editDate " +
+                                     "WHERE Id=@id ";
+                sqlCmd.Parameters.AddWithValue("@operation", Convert.ToInt32(operation));
+                sqlCmd.Parameters.AddWithValue("@flightNb", flightNb);
+                sqlCmd.Parameters.AddWithValue("@opTime", godzinaRozkladowa);
+                sqlCmd.Parameters.AddWithValue("@airPort", Convert.ToInt32(airPort));
+                sqlCmd.Parameters.AddWithValue("@pax", Convert.ToInt32(pax));
+                sqlCmd.Parameters.AddWithValue("@gate", Convert.ToInt32(gate));
+                sqlCmd.Parameters.AddWithValue("@pps", Convert.ToInt32(pps));
                 sqlCmd.Parameters.AddWithValue("@bus", Convert.ToInt32(bus));
+                sqlCmd.Parameters.AddWithValue("@radioGate", radioGate);
+                sqlCmd.Parameters.AddWithValue("@radioNeon", radioNeon);
+                sqlCmd.Parameters.AddWithValue("@editDate", updateDate);
+                sqlCmd.Parameters.AddWithValue("@id", Convert.ToInt32(id));
                 try
                 {
                     dal.QueryExecution(sqlCmd);
@@ -515,9 +505,26 @@ namespace Bus_Management_System
                     sqlCmd.Parameters.Clear();
                     result = true;
                 }
-                catch (Exception ex)
+                catch (Exception AlocatorRowUpdate_ex1)
                 {
+                    sqlCmd.Dispose();
                     result = false;
+                }
+                if (result)
+                {
+                    sqlCmd.CommandText = "UPDATE Vehicles SET Work_Status = 1 WHERE Id = @bus ";
+                    sqlCmd.Parameters.AddWithValue("@bus", Convert.ToInt32(bus));
+                    try
+                    {
+                        dal.QueryExecution(sqlCmd);
+                        sqlCmd.Dispose();
+                        result = true;
+                    }
+                    catch (Exception AlocatorRowUpdate_ex2)
+                    {
+                        sqlCmd.Dispose();
+                        result = false;
+                    }
                 }
             }
             return result;
@@ -526,57 +533,52 @@ namespace Bus_Management_System
         // nanoszenie na bazę danych informacji o kolejnych etapach wykonania operacji
         public bool BusOperationAction(int command, string bus)
         {
-            SqlCommand sqlCmd = new SqlCommand();
-            bool result = false;
-
-            switch (command)
+            using (SqlCommand sqlCmd = new SqlCommand())
             {
-                case 1:
-                    {
-                        sqlCmd.CommandText = "UPDATE Operations SET Accepted = @ActionTime WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)";
-                    }
-                    break;
-                case 2:
-                    {
-                        sqlCmd.CommandText = "UPDATE Operations SET StartLoad = @ActionTime WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)";
-                    }
-                    break;
-                case 3:
-                    {
-                        sqlCmd.CommandText = "UPDATE Operations SET StartDrive = @ActionTime WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)";
-                    }
-                    break;
-                case 4:
-                    {
-                        sqlCmd.CommandText = "UPDATE Operations SET StartUnload = @ActionTime WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)";
-                    }
-                    break;
-                case 5:
-                    {
-                        sqlCmd.CommandText = "UPDATE Operations SET EndOp = @ActionTime, Finished = @finished WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)";
-                        sqlCmd.Parameters.AddWithValue("@finished", 1);
-                    }
-                    break;
-                case 6:
-                    {
-
-                    }
-                    break;
+                switch (command)
+                {
+                    case 1:
+                        {
+                            sqlCmd.CommandText = "UPDATE Operations SET Accepted = @ActionTime WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)";
+                        }
+                        break;
+                    case 2:
+                        {
+                            sqlCmd.CommandText = "UPDATE Operations SET StartLoad = @ActionTime WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)";
+                        }
+                        break;
+                    case 3:
+                        {
+                            sqlCmd.CommandText = "UPDATE Operations SET StartDrive = @ActionTime WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)";
+                        }
+                        break;
+                    case 4:
+                        {
+                            sqlCmd.CommandText = "UPDATE Operations SET StartUnload = @ActionTime WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)";
+                        }
+                        break;
+                    case 5:
+                        {
+                            sqlCmd.CommandText = "UPDATE Operations SET EndOp = @ActionTime, Finished = @finished WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)";
+                            sqlCmd.Parameters.AddWithValue("@finished", 1);
+                        }
+                        break;
+                }
+                try
+                {
+                    sqlCmd.Parameters.AddWithValue("@busNb", bus);
+                    sqlCmd.Parameters.Add("@ActionTime", SqlDbType.DateTime).Value = DateTime.Now;
+                    dal.QueryExecution(sqlCmd);
+                    sqlCmd.Dispose();
+                    result = true;
+                }
+                catch (Exception BusOperationAction_Ex)
+                {
+                    sqlCmd.Dispose();
+                    result = false;
+                }
+                return result;
             }
-            try
-            {
-                sqlCmd.Parameters.AddWithValue("@busNb", bus);
-                sqlCmd.Parameters.Add("@ActionTime", SqlDbType.DateTime).Value = DateTime.Now;
-                dal.QueryExecution(sqlCmd);
-                result = true;
-            }
-            catch (Exception BusOperationAction_Ex)
-            {
-
-            }
-            sqlCmd.Parameters.Clear();
-            sqlCmd.Dispose();
-            return result;
         }
     }
 }

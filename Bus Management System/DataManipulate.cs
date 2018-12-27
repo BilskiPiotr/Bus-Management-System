@@ -7,6 +7,7 @@ namespace Bus_Management_System
 {
     public class DataManipulate : Bus
     {
+        DataSet ds = new DataSet();
         // przeliczenie współrzędnych pobranych z urządzenia GPS do czytelnych współrzędnych w stopniach
         public void TranslateCoordToDegree(double latitude, double longitude)
         {
@@ -28,23 +29,21 @@ namespace Bus_Management_System
         // pobranie danych lokalizacyjnych stanowiska postojowego samolotu
         public void GetPPSData(int ppsId)
         {
-            DataSet ds = new DataSet();
             bl.GetPPS(ppsId, ref ds);
             Session["Pps"] = ds.Tables[0].Rows[0].Field<string>("StationNb");
             Session["PpsLat"] = Convert.ToDouble(ds.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
             Session["PpsLon"] = Convert.ToDouble(ds.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
-            ds.Dispose();
+            ds.Clear();
         }
 
         // pobranie danych lokalizacyjnych wyjścia pasażerskiego
         public void GetGateData(int gateId)
         {
-            DataSet ds = new DataSet();
             bl.GetGate(gateId, ref ds);
             Session["Gate"] = ds.Tables[0].Rows[0].Field<string>("GateNb");
             Session["GateLat"] = Convert.ToDouble(ds.Tables[0].Rows[0].Field<string>("GPS_Latitude"), CultureInfo.InvariantCulture);
             Session["GateLon"] = Convert.ToDouble(ds.Tables[0].Rows[0].Field<string>("GPS_Longitude"), CultureInfo.InvariantCulture);
-            ds.Dispose();
+            ds.Clear();
         }
 
         //ustawienie wartości aktualnej operacji w zmiennej sesyjnej
@@ -63,13 +62,12 @@ namespace Bus_Management_System
         // ustalenie stref bezpieczeństwa dla obsługiwanego portu
         public void GetSpecyficAirPortData(int airPort)
         {
-            DataSet ds = new DataSet();
             bl.GetAirPort(airPort, ref ds);
             Session["AirPort"] = ds.Tables[0].Rows[0].Field<string>("IATA_Name");
             Session["Shengen"] = Convert.ToInt32(bl.GetCountry(ds.Tables[0].Rows[0].Field<int>("Shengen")));
             Session["PortName"] = ds.Tables[0].Rows[0].Field<string>("Full_Name");
             Session["Country"] = ds.Tables[0].Rows[0].Field<string>("Country_name");
-            ds.Dispose();
+            ds.Clear();
         }
 
         // Ustalenie na jakim etapie jest aktualna operacja
