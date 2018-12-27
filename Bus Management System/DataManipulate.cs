@@ -47,14 +47,14 @@ namespace Bus_Management_System
         }
 
         //ustawienie wartości aktualnej operacji w zmiennej sesyjnej
-        public void GetOperationData(DataSet ds)
+        public void GetOperationData(DataSet dsInn)
         {
-            Session["Operation"] = ds.Tables[0].Rows[0].Field<int>("Operation");
-            Session["FlightNb"] = ds.Tables[0].Rows[0].Field<string>("FlightNb");
-            Session["Pax"] = ds.Tables[0].Rows[0].Field<int>("Pax").ToString();
-            Session["RadioGate"] = ds.Tables[0].Rows[0].Field<string>("RadioGate").ToString();
-            Session["RadioNeon"] = ds.Tables[0].Rows[0].Field<string>("RadioNeon").ToString();
-            Session["GodzinaRozkladowa"] = (ds.Tables[0].Rows[0].Field<DateTime>("GodzinaRozkladowa")).ToString("HH:mm");
+            Session["Operation"] = dsInn.Tables[0].Rows[0].Field<int>("Operation");
+            Session["FlightNb"] = dsInn.Tables[0].Rows[0].Field<string>("FlightNb");
+            Session["Pax"] = dsInn.Tables[0].Rows[0].Field<int>("Pax").ToString();
+            Session["RadioGate"] = dsInn.Tables[0].Rows[0].Field<string>("RadioGate").ToString();
+            Session["RadioNeon"] = dsInn.Tables[0].Rows[0].Field<string>("RadioNeon").ToString();
+            Session["GodzinaRozkladowa"] = (dsInn.Tables[0].Rows[0].Field<DateTime>("GodzinaRozkladowa")).ToString("HH:mm");
 
             GetSpecyficAirPortData(ds.Tables[0].Rows[0].Field<int>("AirPort"));
         }
@@ -71,7 +71,7 @@ namespace Bus_Management_System
         }
 
         // Ustalenie na jakim etapie jest aktualna operacja
-        public void SetOperationStatus(DataSet ds)
+        public void SetOperationStatus(DataSet dsInn)
         {
             /* operationStatus wartości możliwe:
              * 0 - brak zlecenia       <-
@@ -83,32 +83,32 @@ namespace Bus_Management_System
              */
             int operationStatus = 0;
             string data = "";
-            data = ds.Tables[0].Rows[0].Field<DateTime>("Created").ToString("HH:mm");
+            data = dsInn.Tables[0].Rows[0].Field<DateTime>("Created").ToString("HH:mm");
             Session["Created"] = data;
             if (data != "00:00")
                 operationStatus = operationStatus + 1;
             //Session["Created"] = (ds.Tables[0].Rows[0].Field<DateTime>("Created")).ToString("HH:mm");
-            data = ds.Tables[0].Rows[0].Field<DateTime>("Accepted").ToString("HH:mm");
+            data = dsInn.Tables[0].Rows[0].Field<DateTime>("Accepted").ToString("HH:mm");
             Session["Accepted"] = data;
             if (data != "00:00")
                 operationStatus = operationStatus + 1;
             //Session["Accepted"] = (ds.Tables[0].Rows[0].Field<DateTime>("Accepted")).ToString("HH:mm");
-            data = ds.Tables[0].Rows[0].Field<DateTime>("StartLoad").ToString("HH:mm");
+            data = dsInn.Tables[0].Rows[0].Field<DateTime>("StartLoad").ToString("HH:mm");
             Session["StartLoad"] = data;
             if (data != "00:00")
                 operationStatus = operationStatus + 1;
             //Session["StartLoad"] = (ds.Tables[0].Rows[0].Field<DateTime>("StartLoad")).ToString("HH:mm");
-            data = ds.Tables[0].Rows[0].Field<DateTime>("StartDrive").ToString("HH:mm");
+            data = dsInn.Tables[0].Rows[0].Field<DateTime>("StartDrive").ToString("HH:mm");
             Session["StartDrive"] = data;
             if (data != "00:00")
                 operationStatus = operationStatus + 1;
             //Session["StartDrive"] = (ds.Tables[0].Rows[0].Field<DateTime>("StartDrive")).ToString("HH:mm");
-            data = ds.Tables[0].Rows[0].Field<DateTime>("StartUnload").ToString("HH:mm");
+            data = dsInn.Tables[0].Rows[0].Field<DateTime>("StartUnload").ToString("HH:mm");
             Session["StartUnload"] = data;
             if (data != "00:00")
                 operationStatus = operationStatus + 1;
             //Session["StartUnload"] = (ds.Tables[0].Rows[0].Field<DateTime>("StartUnload")).ToString("HH:mm");
-            data = ds.Tables[0].Rows[0].Field<DateTime>("EndOp").ToString("HH:mm");
+            data = dsInn.Tables[0].Rows[0].Field<DateTime>("EndOp").ToString("HH:mm");
             Session["EdnOp"] = data;
             if (data != "00:00")
                 operationStatus = operationStatus + 1;

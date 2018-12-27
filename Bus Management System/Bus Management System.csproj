@@ -74,7 +74,6 @@
     <Content Include="audio\danger.mp3" />
     <Content Include="audio\w_ns_z.mp3" />
     <Content Include="audio\w_s_z.mp3" />
-    <Content Include="js\audioKom01.js" />
     <Content Include="libman.json" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\sysbus-management.com.pl - Web Deploy.pubxml" />
@@ -92,7 +91,6 @@
     <Content Include="css\bus.css" />
     <Content Include="css\style.css" />
     <Content Include="global.aspx" />
-    <Content Include="js\get_location.js" />
     <Content Include="pictures\3scl.png" />
     <Content Include="pictures\3scp.png" />
     <Content Include="pictures\3snl.png" />
@@ -125,9 +123,6 @@
       <DependentUpon>Bus.aspx</DependentUpon>
     </Compile>
     <Compile Include="BusinessLayer.cs" />
-    <Compile Include="Cleaning.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
     <Compile Include="DataAccessLayer.cs" />
     <Compile Include="DataManipulate.cs">
       <SubType>ASPXCodeBehind</SubType>
