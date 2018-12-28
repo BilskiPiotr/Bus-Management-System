@@ -44,7 +44,6 @@ namespace Bus_Management_System
                 newLine += "Distance to NonShengen; ";
                 newLine += "Predicted Distance; ";
                 newLine += "Alert Nb; ";
-                newLine += "Loop Time; ";
                 newLine += "Measurement Time";
 
                 using (StreamWriter writer = new StreamWriter(dataLogic, true))
@@ -72,8 +71,8 @@ namespace Bus_Management_System
             newLine += (string)Session["StartDrive"] + "; ";
             newLine += (string)Session["StartUnload"] + "; ";
             newLine += (string)Session["EndOp"] + "; ";
-            newLine += (string)Session["StartLat"] + "; ";
-            newLine += (string)Session["StartLon"] + "; ";
+            newLine += (double)Session["StartLat"] + "; ";
+            newLine += (double)Session["StartLon"] + "; ";
             newLine += (double)Session["CurrentLat"] + "; ";
             newLine += (double)Session["CurrentLon"] + "; ";
             newLine += (double)Session["Speed"] + "; ";
@@ -89,7 +88,6 @@ namespace Bus_Management_System
                 newLine += (int)Session["Alert"] + "; ";
             else
                 newLine += " ; ";
-            newLine += (int)Session["LoopTime"] + "; ";
             newLine += DateTime.Now.ToString("HH:mm:ss");
 
             string dataLogic = (string)Session["LogFilePath"];

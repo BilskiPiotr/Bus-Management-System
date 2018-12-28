@@ -20,19 +20,6 @@
     overflow: hidden;
 }
 
-.bus-clock 
-{
-    width: 25%;
-    overflow: hidden;
-    text-align: right;
-}
-
-.busClockLabel 
-{
-    color: white;
-    font-weight: bold;
-}
-
 .bus-Menu a 
 {
     float: left;

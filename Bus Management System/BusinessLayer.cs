@@ -182,8 +182,7 @@ namespace Bus_Management_System
                 {
                     case 1:
                         {
-                            sqlCmd.CommandText = "SELECT Id, VehicleNb FROM Vehicles WHERE Bus_Status = @busStatus AND Work_Status = @workStatus";
-                            sqlCmd.Parameters.AddWithValue("@busStatus", 2);
+                            sqlCmd.CommandText = "SELECT Id, VehicleNb FROM Vehicles WHERE Work_Status = @workStatus";
                             sqlCmd.Parameters.AddWithValue("@workStatus", 0);
                         }
                         break;
@@ -398,7 +397,9 @@ namespace Bus_Management_System
                      "INNER JOIN AirPorts AS d ON a.AirPort = d.Id " +
                      "INNER JOIN Gates AS e ON a.Gate = e.Id " +
                      "INNER JOIN Vehicles AS f ON a.Bus = f.Id " +
-                     "INNER JOIN Countries AS g ON a.AirPort = d.Id  AND d.Country_Id = g.Id";
+                     "INNER JOIN Countries AS g ON a.AirPort = d.Id  AND d.Country_Id = g.Id " +
+                     "WHERE a.Finished = @finished";
+                sqlCmd.Parameters.AddWithValue("@finished", 0);
                 try
                 {
                     dal.GetDataSet(sqlCmd, ref ds);
@@ -561,6 +562,12 @@ namespace Bus_Management_System
                         {
                             sqlCmd.CommandText = "UPDATE Operations SET EndOp = @ActionTime, Finished = @finished WHERE Bus = (SELECT Id FROM Vehicles WHERE VehicleNb = @busNb)";
                             sqlCmd.Parameters.AddWithValue("@finished", 1);
+                        }
+                        break;
+                    case 6:
+                        {
+                            sqlCmd.CommandText = "UPDATE Vehicles SET Work_Status = @status WHERE VehicleNb = @busNb";
+                            sqlCmd.Parameters.AddWithValue("@status", 0);
                         }
                         break;
                 }

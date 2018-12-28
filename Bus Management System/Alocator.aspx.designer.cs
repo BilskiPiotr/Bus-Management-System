@@ -49,6 +49,24 @@ namespace Bus_Management_System {
         protected global::System.Web.UI.WebControls.Label lb_loggedUserDesc;
         
         /// <summary>
+        /// Kontrolka AlocatorHomeUP.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel AlocatorHomeUP;
+        
+        /// <summary>
+        /// Kontrolka AlocatorHomeTimer.
+        /// </summary>
+        /// <remarks>
+        /// Pole generowane automatycznie.
+        /// By zmodyfikować deklaracje pola przenieś ją z pliku projektanta do pliku codebehind.
+        /// </remarks>
+        protected global::System.Web.UI.Timer AlocatorHomeTimer;
+        
+        /// <summary>
         /// Kontrolka lb_Vehicle1.
         /// </summary>
         /// <remarks>

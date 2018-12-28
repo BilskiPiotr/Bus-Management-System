@@ -50,6 +50,12 @@ namespace Bus_Management_System
             }
         }
 
+        // pętla odświeżająca Update Panel
+        protected void AlocatorHomeTimer_Tick(object sender, EventArgs e)
+        {
+            BindGrid();
+        }
+
         // pobranie aktualnych danych
         private void BindGrid()
         {
@@ -465,7 +471,6 @@ namespace Bus_Management_System
                 try
                 {
                     success = bl.AddNewOperation(newOp);
-
                 }
                 catch (Exception Gv_Alocator_RowCommand_ex)
                 {
@@ -483,6 +488,7 @@ namespace Bus_Management_System
             {
                 btn_addNewOperation.Visible = true;
                 gv_Alocator.ShowFooter = false;
+                AlocatorHomeTimer.Enabled = true;
                 BindGrid();
             }
         }
@@ -530,6 +536,7 @@ namespace Bus_Management_System
         {
             btn_addNewOperation.Enabled = true;
             gv_Alocator.EditIndex = -1;
+            AlocatorHomeTimer.Enabled = true;
             BindGrid();
         }
 
@@ -539,6 +546,7 @@ namespace Bus_Management_System
             btn_addNewOperation.Visible = false;
             btn_cancelNewOperation.Visible = true;
             gv_Alocator.ShowFooter = true;
+            AlocatorHomeTimer.Enabled = false;
             BindGrid();
         }
 
@@ -548,6 +556,7 @@ namespace Bus_Management_System
             btn_addNewOperation.Visible = true;
             btn_cancelNewOperation.Visible = false;
             gv_Alocator.ShowFooter = false;
+            AlocatorHomeTimer.Enabled = true;
             BindGrid();
         }
 

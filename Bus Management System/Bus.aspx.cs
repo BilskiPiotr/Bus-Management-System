@@ -51,10 +51,6 @@ namespace Bus_Management_System
         {
             DataManipulate dm = new DataManipulate();
 
-            // pomiar czasu wykonywania timera
-            int start, stop;
-            start = Environment.TickCount & Int32.MaxValue;
-
             // sprawdzenie, czy użytkownik jest poprawnie zalogowany
             if (Session["Name"] != null)
             {
@@ -113,8 +109,6 @@ namespace Bus_Management_System
             }
 
             // obsługa zmiennych testowych
-            stop = Environment.TickCount & Int32.MaxValue;
-            Session["LoopTime"] = stop - start;
             Reporting rp = new Reporting();
             rp.SaveUserFieldsValues();
             ds.Clear();
@@ -259,6 +253,7 @@ namespace Bus_Management_System
         // podstawienie odpowiedniego dzwieku do alertu
         private void BusAlert(int alert)
         {
+            HtmlGenericControl sound;
             string audioAlert = "";
 
             switch (alert)
@@ -283,16 +278,12 @@ namespace Bus_Management_System
                     audioAlert = "";
                     break;
             };
-            try
+            if (audioAlert != "")
             {
-                HtmlGenericControl sound = new HtmlGenericControl("<embed src=\"" + audioAlert + "\" type=\"audio/mp3\" autostart =\"true\" hidden=\"true\" showcontrols=\"0\" volume=\"-1\"></embed>");
-                BusHomeUP.ContentTemplateContainer.Controls.Remove(sound);
+                sound = new HtmlGenericControl("<embed src=\"" + audioAlert + "\" type=\"audio/mp3\" autostart =\"true\" hidden=\"true\" showcontrols=\"0\" volume=\"-1\"></embed>");
                 BusHomeUP.ContentTemplateContainer.Controls.Add(sound);
+                //sound.Dispose();
             }
-            catch (Exception ex)
-            { }
-
-            //sound.Dispose();
         }
 
         // ustawienie kolorów aktywnych dla wszystrkich przycisków na stronie bus
@@ -300,13 +291,13 @@ namespace Bus_Management_System
         {
             DataManipulate dm = new DataManipulate();
             UpdateGPSData();
-            if ((int)Session["OperationStatus"] == 2)
+            if ((int)Session["OperationStatus"] == 2 || (int)Session["OperationStatus"] == 4)
                 {
+                dm.CheckDistance((int)Session["OperationStatus"]);
+                dm.SetPredictedDistance();
                 if ((string)Session["StartLocLatDegree"] == null || (string)Session["StartLocLonDegree"] == null || (string)Session["StartLocLatDegree"] == "" || (string)Session["StartLocLonDegree"] == "")
                     dm.TranslateCoordToDegree((double)Session["CurrentLat"], (double)Session["CurrentLon"]);
                 }
-            dm.CheckDistance((int)Session["OperationStatus"]);
-            dm.SetPredictedDistance();
             SetGraficsElements();
             SetDataControls();
             SetAlert();
@@ -317,6 +308,8 @@ namespace Bus_Management_System
         // ustawienie aktywności kontrolek na panelu
         private void SetButtonsStatus()
         {
+            BusPause.Style.Add("background-color", "#1a993d");
+
             switch ((int)Session["OperationStatus"])
             {
                 case 0:
@@ -341,6 +334,8 @@ namespace Bus_Management_System
                         busAccept.Click -= new EventHandler(BusAccept_Click);
                         busStartLoad.Style.Add("background-color", "#1a993d");
                         busStartLoad.Click += new EventHandler(BusStartLoad_Click);
+                        Session["StartLat"] = (double)Session["CurrentLat"];
+                        Session["StartLon"] = (double)Session["CurrentLon"];
                         busMINEtable.Visible = false;
                         busDriveTable.Visible = true;
                     }
@@ -925,12 +920,16 @@ namespace Bus_Management_System
         protected void BusEndOp_Click(object sender, EventArgs e)
         {
             bl.BusOperationAction(5, (string)Session["Bus"]);
+            bl.BusOperationAction(6, (string)Session["Bus"]);
             Session["OperationStatus"] = 0;
         }
 
         protected void BusPause_Click(object sender, EventArgs e)
         {
-
+            if (BusPause.Text == "PAUSE")
+                BusPause.Text = "END PAUSE";
+            else
+                BusPause.Text = "PAUSE";
         }
     }
 }

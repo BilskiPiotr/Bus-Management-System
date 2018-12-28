@@ -30,7 +30,6 @@
         {
             if (navigator.geolocation)
             {
-                //navigator.geolocation.getCurrentPosition(KonstruujArray, function () { }, { enableHighAccuracy: true });
                 navigator.geolocation.watchPosition(KonstruujArray, function () { }, { enableHighAccuracy: true });
             }
             else 
@@ -49,19 +48,7 @@
             document.getElementById("<%=HiddenField2.ClientID%>").value = lon;
             document.getElementById("<%=HiddenField3.ClientID%>").value = acc;
             document.getElementById("<%=HiddenField4.ClientID%>").value = spe;
-<%--            dane[0] = document.getElementById("<%=HiddenField1.ClientID%>").value;
-            dane[1] = document.getElementById("<%=HiddenField2.ClientID%>").value;
-            dane[2] = document.getElementById("<%=HiddenField3.ClientID%>").value;
-            dane[3] = document.getElementById("<%=HiddenField4.ClientID%>").value;
-            PageMethods.PrzeliczArray(dane, OnSuccess);--%>
         }
-        //function OnSuccess(response, userContext, methodName)
-        //{
-        //    lat = "";
-        //    lon = "";
-        //    acc = "";
-        //    spe = "";
-        //}
     }
 </script>
 
@@ -127,27 +114,27 @@
                                                                      GridLines="Horizontal"
                                                                      Visible="true">
                                             <asp:TableRow CssClass="busTable1Row1" runat="server">
-                                                <asp:TableCell Id="R1C2" runat="server" RowSpan="5" Width="15%" BackColor="SkyBlue"></asp:TableCell>
-                                                <asp:TableCell Id="R1C3" runat="server" ColSpan="3" ForeColor="DarkBlue" Font-Size="36px" Font-Bold="true" HorizontalAlign="Center">00:00</asp:TableCell>
-                                                <asp:TableCell Id="R1C4" runat="server" RowSpan="5" Width="15%" BackColor="SkyBlue"></asp:TableCell>
+                                                <asp:TableCell Id="R1C2" runat="server" RowSpan="5" Width="15%" BackColor="#FFFFCC"></asp:TableCell>
+                                                <asp:TableCell Id="R1C3" runat="server" ColSpan="3" ForeColor="DarkBlue" BackColor="#FFFFCC" Font-Size="36px" Font-Bold="true" HorizontalAlign="Center"></asp:TableCell>
+                                                <asp:TableCell Id="R1C4" runat="server" RowSpan="5" Width="15%" BackColor="#FFFFCC"></asp:TableCell>
                                             </asp:TableRow>
                                             <asp:TableRow CssClass="busTable1Row2" runat="server">
-                                                <asp:TableCell Id="R2C2" runat="server" ForeColor="Black" Font-Size="10px" Width="19%" HorizontalAlign="Center">Nr Rejsu</asp:TableCell>
-                                                <asp:TableCell Id="R2C3" runat="server" ForeColor="Black" Font-Size="10px" Width="19%" HorizontalAlign="Center">Godzina</asp:TableCell>
-                                                <asp:TableCell Id="R2C4" runat="server" ForeColor="Black" Font-Size="10px" Width="19%" HorizontalAlign="Center">liczba PAX</asp:TableCell>
+                                                <asp:TableCell Id="R2C2" runat="server" ForeColor="Black" BackColor="#FFFFCC" Font-Size="10px" Width="19%" HorizontalAlign="Center">Nr Rejsu</asp:TableCell>
+                                                <asp:TableCell Id="R2C3" runat="server" ForeColor="Black" BackColor="#FFFFCC" Font-Size="10px" Width="19%" HorizontalAlign="Center">Godzina</asp:TableCell>
+                                                <asp:TableCell Id="R2C4" runat="server" ForeColor="Black" BackColor="#FFFFCC" Font-Size="10px" Width="19%" HorizontalAlign="Center">liczba PAX</asp:TableCell>
                                             </asp:TableRow>
                                             <asp:TableRow CssClass="busTable1Row3" runat="server">
-                                                <asp:TableCell Id="R3C2" runat="server" ForeColor="DarkBlue" Font-Size="16px" Font-Bold="true" Width="19%" HorizontalAlign="Center">XX0000</asp:TableCell>
-                                                <asp:TableCell Id="R3C3" runat="server" ForeColor="DarkBlue" Font-Size="16px" Font-Bold="true" Width="19%" HorizontalAlign="Center">00:00</asp:TableCell>
-                                                <asp:TableCell Id="R3C4" runat="server" ForeColor="DarkBlue" Font-Size="16px" Font-Bold="true" Width="19%" HorizontalAlign="Center">000</asp:TableCell>
+                                                <asp:TableCell Id="R3C2" runat="server" ForeColor="DarkBlue" BackColor="#FFFFCC" Font-Size="16px" Font-Bold="true" Width="19%" HorizontalAlign="Center"></asp:TableCell>
+                                                <asp:TableCell Id="R3C3" runat="server" ForeColor="DarkBlue" BackColor="#FFFFCC" Font-Size="16px" Font-Bold="true" Width="19%" HorizontalAlign="Center"></asp:TableCell>
+                                                <asp:TableCell Id="R3C4" runat="server" ForeColor="DarkBlue" BackColor="#FFFFCC" Font-Size="16px" Font-Bold="true" Width="19%" HorizontalAlign="Center"></asp:TableCell>
                                             </asp:TableRow>
                                             <asp:TableRow CssClass="busTable1Row4" runat="server">
-                                                <asp:TableCell Id="R4C2" runat="server" Back-Color="" ForeColor="Black" Font-Size="16px" Font-Bold="true" HorizontalAlign="right">XXX</asp:TableCell>
-                                                <asp:TableCell Id="R4C3" runat="server" ForeColor="Black" Font-Size="20px" Font-Bold="true" HorizontalAlign="center">>>></asp:TableCell>
-                                                <asp:TableCell Id="R4C4" runat="server" ForeColor="Black" Font-Size="16px" Font-Bold="true" HorizontalAlign="left">XXX</asp:TableCell>
+                                                <asp:TableCell Id="R4C2" runat="server" ForeColor="Black" BackColor="#FFFFCC" Font-Size="16px" Font-Bold="true" HorizontalAlign="right"></asp:TableCell>
+                                                <asp:TableCell Id="R4C3" runat="server" ForeColor="Black" BackColor="#FFFFCC" Font-Size="20px" Font-Bold="true" HorizontalAlign="center"></asp:TableCell>
+                                                <asp:TableCell Id="R4C4" runat="server" ForeColor="Black" BackColor="#FFFFCC" Font-Size="16px" Font-Bold="true" HorizontalAlign="left"></asp:TableCell>
                                             </asp:TableRow>
                                             <asp:TableRow CssClass="busTable1Row5" runat="server">
-                                                <asp:TableCell Id="R5C3" runat="server" ColSpan="3" ForeColor="DarkBlue" Font-Size="36px" Font-Bold="true" HorizontalAlign="Center">PPS-GATE</asp:TableCell>
+                                                <asp:TableCell Id="R5C3" runat="server" ColSpan="3" ForeColor="DarkBlue" BackColor="#FFFFCC" Font-Size="36px" Font-Bold="true" HorizontalAlign="Center"></asp:TableCell>
                                             </asp:TableRow>
                                         </asp:Table>
 
@@ -186,7 +173,7 @@
                                         <div class="bus-2ndLine">
                                             <asp:Button Id="busStartUnload" CssClass="bus-Buttons" runat="server" Text="UNLOAD" BackColor="Silver"/>
                                             <asp:Button Id="busEndOp" CssClass="bus-Buttons" runat="server" Text="END" BackColor="Silver"/>
-                                            <asp:Button Id="BusPause" CssClass="bus-Buttons" runat="server" Text="PAUSE" BackColor="Silver" OnClientClick="return confirm('Are you sure?');" OnClick="BusPause_Click"/>
+                                            <asp:Button Id="BusPause" CssClass="bus-Buttons" runat="server" Text="PAUSE" BackColor="Silver" OnClick="BusPause_Click"/>
                                         </div>
                                     </div>
                                 </div>

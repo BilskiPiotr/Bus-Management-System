@@ -136,6 +136,8 @@ namespace Bus_Management_System
                     Session["CurrentLon"] = 0.0d;
                     Session["PredictedDistance"] = 0.0d;
                     Session["Interval"] = 0;
+                    Session["StartLat"] = 0.0d;
+                    Session["StartLon"] = 0.0d;
                     result = true;
                 }
                 else
