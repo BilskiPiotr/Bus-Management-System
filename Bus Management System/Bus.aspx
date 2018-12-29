@@ -20,7 +20,6 @@
         var lon = "";
         var acc = "";
         var spe = "";
-
         var error = "";
         var dane = new Array();
 
@@ -30,7 +29,7 @@
         {
             if (navigator.geolocation)
             {
-                navigator.geolocation.watchPosition(KonstruujArray, function () { }, { enableHighAccuracy: true });
+                navigator.geolocation.watchPosition(NewLocCoords, function () { }, { enableHighAccuracy: true });
             }
             else 
             {
@@ -38,7 +37,7 @@
             }
         }
 
-        function KonstruujArray(coordinates) 
+        function NewLocCoords(coordinates) 
         {
             lat = coordinates.coords.latitude;
             lon = coordinates.coords.longitude;
