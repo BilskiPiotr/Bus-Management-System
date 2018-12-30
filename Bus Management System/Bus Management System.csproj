@@ -123,6 +123,9 @@
       <DependentUpon>Bus.aspx</DependentUpon>
     </Compile>
     <Compile Include="BusinessLayer.cs" />
+    <Compile Include="Cleaning.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="DataAccessLayer.cs" />
     <Compile Include="DataManipulate.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -139,7 +142,6 @@
     <Compile Include="Reporting.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="User.cs" />
     <Compile Include="VerifyLayer.cs" />
   </ItemGroup>
   <ItemGroup>
