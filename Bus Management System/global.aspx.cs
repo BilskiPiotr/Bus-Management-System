@@ -26,9 +26,12 @@ namespace Bus_Management_System
         // weryfikacja logowania
         protected void Bt_submitLogin_Click(object sender, EventArgs e)
         {
+            string imie = inp_name.Text.Trim();
+            imie = imie.Replace(" ", "");
+
             VerifyLayer vl = new VerifyLayer
             {
-                Imię = inp_name.Text.Trim(),
+                Imię = imie,
                 Nazwisko = inp_2ndName.Text.Trim(),
                 Pesel = inp_pesel.Text.Trim()
             };
