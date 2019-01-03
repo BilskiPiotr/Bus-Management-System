@@ -7,7 +7,7 @@ namespace Bus_Management_System
 {
     public class DataManipulate : Bus
     {
-        private DataSet ds = new DataSet();
+        DataSet ds = new DataSet();
         // przeliczenie współrzędnych pobranych z urządzenia GPS do czytelnych współrzędnych w stopniach
         public void TranslateCoordToDegree(double latitude, double longitude)
         {

@@ -6,7 +6,7 @@ namespace Bus_Management_System
     public class Reporting : Bus
     {
         // przygotowanie i obrobka pliku tekstowego z logami operacji
-        public void PrepareLogFile(string data)
+        public void PrepareLogFile(/*User loggedUser, */string data)
         {
             // tworzymy nazwę pliku ktory bedzie uzupelniany danymi
             string dataLogic = Server.MapPath("~/logi/" + (string)Session["FirstName"] + "_" + (string)Session["LastName"] + "__" + data + ".txt");
@@ -57,7 +57,7 @@ namespace Bus_Management_System
         }
 
         // dodajemy do pliku log sesji dane z kontrolek
-        public void SaveUserFieldsValues()
+        public void SaveUserFieldsValues(/*User loggedUser*/)
         {
             string newLine = Environment.NewLine;
             if (Session["Operation"] != null)
