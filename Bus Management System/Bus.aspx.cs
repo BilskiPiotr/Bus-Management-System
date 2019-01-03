@@ -117,7 +117,7 @@ namespace Bus_Management_System
         }
 
         // naniesienie aktualnych danych lokalizacyjnych
-        public void UpdateGPSData()
+        private void UpdateGPSData()
         {
             if (HiddenField1.Value != "")
                 Session["CurrentLat"] = double.Parse(HiddenField1.Value, CultureInfo.InvariantCulture);
@@ -281,6 +281,7 @@ namespace Bus_Management_System
             if (audioAlert != "")
             {
                 sound = new HtmlGenericControl("<embed src=\"" + audioAlert + "\" type=\"audio/mp3\" autostart =\"true\" hidden=\"true\" showcontrols=\"0\" volume=\"-1\"></embed>");
+                BusHomeUP.ContentTemplateContainer.Controls.Remove(sound);
                 BusHomeUP.ContentTemplateContainer.Controls.Add(sound);
                 //sound.Dispose();
             }

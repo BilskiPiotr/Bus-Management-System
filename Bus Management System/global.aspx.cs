@@ -120,6 +120,15 @@ namespace Bus_Management_System
                 Session["Interval"] = 0;
                 Session["Bus"] = "";
                 Session["Id"] = iD;
+                Session["Operation"] = 0;
+                Session["Pps"] = "";
+                Session["AirPort"] = 0;
+                Session["Gate"] = "";
+                Session["GodzinaRozkladowa"] = "";
+                Session["FlightNb"] = "";
+                Session["Pax"] = "";
+                Session["RadioGate"] = "";
+                Session["RadioNeon"] = "";
                 if ((string)Session["AdminPrivileges"] == "2")
                 {
                     Session["OperationStatus"] = 0;
@@ -141,20 +150,16 @@ namespace Bus_Management_System
                     Session["Interval"] = 0;
                     Session["StartLat"] = 0.0d;
                     Session["StartLon"] = 0.0d;
+                    Session["Speed"] = 0.0d;
+                    Session["Accuracy"] = 0.0d;
+                    Session["StartLocLatDegree"] = "";
+                    Session["StartLocLonDegree"] = "";
+                    Session["LogFilePath"] = "";
                     result = true;
                 }
                 else
                     if ((string)Session["AdminPrivileges"] == "1")
                 {
-                    Session["Operation"] = 0;
-                    Session["Pps"] = "";
-                    Session["AirPort"] = 0;
-                    Session["Gate"] = "";
-                    Session["GodzinaRozkladowa"] = "";
-                    Session["FlightNb"] = "";
-                    Session["Pax"] = "";
-                    Session["RadioGate"] = "";
-                    Session["RadioNeon"] = "";
                     result = true;
                 }
 
