@@ -28,12 +28,16 @@ namespace Bus_Management_System
         {
             string imie = inp_name.Text.Trim();
             imie = imie.Replace(" ", "");
+            string nazwisko = inp_2ndName.Text.Trim();
+            nazwisko = nazwisko.Replace(" ", "");
+            string pesel = inp_pesel.Text.Trim();
+            pesel = pesel.Replace(" ", "");
 
             VerifyLayer vl = new VerifyLayer
             {
                 Imię = imie,
-                Nazwisko = inp_2ndName.Text.Trim(),
-                Pesel = inp_pesel.Text.Trim()
+                Nazwisko = nazwisko,
+                Pesel = pesel
             };
             int iD = 0;
             //int CompanyId = 0;

@@ -776,16 +776,18 @@ namespace Bus_Management_System
                 {
                     case 0:                         // shengen
                         {
-                            if ((double)Session["PredictedDistance"] > 100.0d)
+                            if (((double)Session["PredictedDistance"] > 100.0d) && (int)Session["OperationStatus"] == 4)
                             {
                                 if ((double)Session["OldDistanceN"] >= (double)Session["DistanceN"])
                                 {
                                     if(((double)Session["DistanceN"] - (3 * (double)Session["speed"])) < 80.0d)
                                     {
                                         SetColorAlert();
-                                        if (((double)Session["DistanceN"] - (3 * (double)Session["speed"])) > 30.0d)
+                                        if (((double)Session["DistanceN"] - (3 * (double)Session["speed"])) > 25.0d)
                                             Session["Alert"] = 3;
-                                        if (((double)Session["DistanceN"] - (3 * (double)Session["speed"])) <= 30.0d && (double)Session["speed"] < 0.8d)
+                                        if (((double)Session["DistanceN"] - (3 * (double)Session["speed"])) <= 25.0d && (double)Session["speed"] > 0.8d)
+                                            Session["Alert"] = 3;
+                                        if (((double)Session["DistanceN"] - (3 * (double)Session["speed"])) <= 25.0d && (double)Session["speed"] < 0.8d)
                                             Session["Alert"] = 1;
                                     }
                                     else
@@ -798,9 +800,11 @@ namespace Bus_Management_System
                                     if (((double)Session["DistanceN"] + (3 * (double)Session["speed"])) < 80.0d)
                                     {
                                         SetColorAlert();
-                                        if (((double)Session["DistanceN"] + (3 * (double)Session["speed"])) > 30.0d)
+                                        if (((double)Session["DistanceN"] + (3 * (double)Session["speed"])) > 25.0d)
                                             Session["Alert"] = 3;
-                                        if (((double)Session["DistanceN"] + (3 * (double)Session["speed"])) <= 30.0d && (double)Session["speed"] < 0.8d)
+                                        if (((double)Session["DistanceN"] + (3 * (double)Session["speed"])) <= 25.0d && (double)Session["speed"] > 0.8d)
+                                            Session["Alert"] = 3;
+                                        if (((double)Session["DistanceN"] + (3 * (double)Session["speed"])) <= 25.0d && (double)Session["speed"] < 0.8d)
                                             Session["Alert"] = 1;
                                     }
                                     else
@@ -817,16 +821,18 @@ namespace Bus_Management_System
                         break;
                     case 1:                     // nonShengen
                         {
-                            if ((double)Session["PredictedDistance"] > 100.0d)
+                            if (((double)Session["PredictedDistance"] > 100.0d) && (int)Session["OperationStatus"] == 4)
                             {
                                 if ((double)Session["OldDistanceS"] >= (double)Session["DistanceS"])
                                 {
                                     if (((double)Session["DistanceS"] - (3 * (double)Session["speed"])) < 80.0d)
                                     {
                                         SetColorAlert();
-                                        if (((double)Session["DistanceS"] - (3 * (double)Session["speed"])) > 30.0d)
-                                            Session["Alert"] = 3;
-                                        if (((double)Session["DistanceS"] - (3 * (double)Session["speed"])) <= 30.0d && (double)Session["speed"] < 0.8d)
+                                        if (((double)Session["DistanceS"] - (3 * (double)Session["speed"])) > 25.0d)
+                                            Session["Alert"] = 2;
+                                        if (((double)Session["DistanceS"] - (3 * (double)Session["speed"])) <= 25.0d && (double)Session["speed"] > 0.8d)
+                                            Session["Alert"] = 2;
+                                        if (((double)Session["DistanceS"] - (3 * (double)Session["speed"])) <= 25.0d && (double)Session["speed"] < 0.8d)
                                             Session["Alert"] = 1;
                                     }
                                     else
@@ -839,9 +845,11 @@ namespace Bus_Management_System
                                     if (((double)Session["DistanceS"] + (3 * (double)Session["speed"])) < 80.0d)
                                     {
                                         SetColorAlert();
-                                        if (((double)Session["DistanceS"] + (3 * (double)Session["speed"])) > 30.0d)
-                                            Session["Alert"] = 3;
-                                        if (((double)Session["DistanceS"] + (3 * (double)Session["speed"])) <= 30.0d && (double)Session["speed"] < 0.8d)
+                                        if (((double)Session["DistanceS"] + (3 * (double)Session["speed"])) > 25.0d)
+                                            Session["Alert"] = 2;
+                                        if (((double)Session["DistanceS"] + (3 * (double)Session["speed"])) <= 25.0d && (double)Session["speed"] > 0.8d)
+                                            Session["Alert"] = 2;
+                                        if (((double)Session["DistanceS"] + (3 * (double)Session["speed"])) <= 25.0d && (double)Session["speed"] < 0.8d)
                                             Session["Alert"] = 1;
                                     }
                                     else
