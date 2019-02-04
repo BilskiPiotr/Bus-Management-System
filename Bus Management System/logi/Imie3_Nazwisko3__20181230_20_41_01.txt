@@ -1,0 +1,8 @@
+
+Operation; Operation Status; Created; Accepted; Start Load; Start Drive; Start Unload; End Operation; Start Latitude; Start Longitude; Current Latitude; Current Longitude; Speed; Accuracy; Old Distance to Target; Distance to Target; Old Distance to Shengen; Distance to Shengen; Old Distance to NonShengen; Distance to NonShengen; Predicted Distance; Alert Nb; Measurement Time
+
+2; 1; 10:55; 00:00; 00:00; 00:00; 00:00; ; 0; 0; 52,1740015; 20,9685132; 0; 48; 0; 0; 0; 0; 0; 0; 0; 0; 20:41:11
+
+2; 1; 10:55; 00:00; 00:00; 00:00; 00:00; ; 0; 0; 52,1740015; 20,9685132; 0; 48; 0; 0; 0; 0; 0; 0; 0; 0; 20:41:13
+
+2; 1; 10:55; 00:00; 00:00; 00:00; 00:00; ; 0; 0; 52,1740015; 20,9685132; 0; 48; 0; 0; 0; 0; 0; 0; 0; 0; 20:41:16
