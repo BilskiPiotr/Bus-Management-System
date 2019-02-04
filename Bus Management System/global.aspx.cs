@@ -40,7 +40,6 @@ namespace Bus_Management_System
                 Pesel = pesel
             };
             int iD = 0;
-            //int CompanyId = 0;
 
             // user nie istnieje, albo wprowadzono dane z błedem
             if (!bl.VerifyUser(vl, ref iD))
